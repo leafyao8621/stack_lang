@@ -42,8 +42,8 @@ static int process_num_var(FILE *fin, struct Token **cur, int *n_tok) {
         
         *iter = in;
     }
+    *iter = 0;
     if (len > 2) {
-        iter[1] = 0;
         printf("%s variable name too long\n", buf);
         return 1;
     }
@@ -52,7 +52,8 @@ static int process_num_var(FILE *fin, struct Token **cur, int *n_tok) {
         return 1;
     }
     (*cur)->type = TOKEN_NUM_VAR;
-    (*cur)->data.num_var = nv + (buf[0] - 'a') * 26 + (buf[1] - 'a');
+    (*cur)->data.num_var = nv + (buf[0] - 'a') +
+                           (buf[1] ? (buf[1] + 1 - 'a') * 26 : 0);
     ++(*cur);
     printf("num var %s\n", buf);
     return 0;
@@ -135,9 +136,9 @@ static int process_cmd(FILE *fin, struct Token **cur, int *n_tok) {
         return 1;
     }
     *iter = 0;
-    (*cur)->type = TOKEN_OP;
+    (*cur)->type = TOKEN_CMD;
     if (!strcmp(buf, "print")) {
-        (*cur)->data.op = TOKEN_OP_ADD;
+        (*cur)->data.cmd.type = TOKEN_CMD_PRINT;
     } else {
         printf("%s is not a valid command\n", buf);
         return 1;
@@ -193,5 +194,6 @@ int parser_parse(const char *fn) {
         }
     }
     fclose(fin);
+    iter->type = TOKEN_HALT;
     return 0;
 }

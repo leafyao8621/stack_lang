@@ -29,7 +29,7 @@
 #define TOKEN_CMD 4
 #define TOKEN_CMD_PRINT 0
 
-extern short nv[676];
+extern short nv[702];
 extern char memory[320000];
 
 struct Token {
