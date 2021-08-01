@@ -3,9 +3,9 @@
 A stack based interpreted language. Uses RPN
 
 Operators implemented:
-* +
-* -
-* *
+* \+
+* \-
+* \*
 * /
 * = (assignment)
 
