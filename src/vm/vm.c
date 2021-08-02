@@ -231,6 +231,134 @@ int process_op(struct Token *tok, struct Token **sp) {
         (**sp).data.num = op1 < op2;
         ++(*sp);
         break;
+    case TOKEN_OP_GEQ:
+        if (*sp - stack < 2) {
+            puts("Invalid number of operands");
+            return 1;
+        }
+        *sp -= 2;
+        switch ((*sp)[0].type) {
+        case TOKEN_NUM:
+            op1 = (*sp)[0].data.num;
+            break;
+        case TOKEN_NUM_VAR:
+            op1 = *(*sp)[0].data.num_var;
+            break;
+        default:
+            puts("Invalid operand");
+            return 1;
+        }
+        switch ((*sp)[1].type) {
+        case TOKEN_NUM:
+            op2 = (*sp)[1].data.num;
+            break;
+        case TOKEN_NUM_VAR:
+            op2 = *(*sp)[1].data.num_var;
+            break;
+        default:
+            puts("Invalid operand");
+            return 1;
+        }
+        (**sp).type = TOKEN_NUM;
+        (**sp).data.num = op1 >= op2;
+        ++(*sp);
+        break;
+    case TOKEN_OP_LEQ:
+        if (*sp - stack < 2) {
+            puts("Invalid number of operands");
+            return 1;
+        }
+        *sp -= 2;
+        switch ((*sp)[0].type) {
+        case TOKEN_NUM:
+            op1 = (*sp)[0].data.num;
+            break;
+        case TOKEN_NUM_VAR:
+            op1 = *(*sp)[0].data.num_var;
+            break;
+        default:
+            puts("Invalid operand");
+            return 1;
+        }
+        switch ((*sp)[1].type) {
+        case TOKEN_NUM:
+            op2 = (*sp)[1].data.num;
+            break;
+        case TOKEN_NUM_VAR:
+            op2 = *(*sp)[1].data.num_var;
+            break;
+        default:
+            puts("Invalid operand");
+            return 1;
+        }
+        (**sp).type = TOKEN_NUM;
+        (**sp).data.num = op1 <= op2;
+        ++(*sp);
+        break;
+    case TOKEN_OP_EQUAL:
+        if (*sp - stack < 2) {
+            puts("Invalid number of operands");
+            return 1;
+        }
+        *sp -= 2;
+        switch ((*sp)[0].type) {
+        case TOKEN_NUM:
+            op1 = (*sp)[0].data.num;
+            break;
+        case TOKEN_NUM_VAR:
+            op1 = *(*sp)[0].data.num_var;
+            break;
+        default:
+            puts("Invalid operand");
+            return 1;
+        }
+        switch ((*sp)[1].type) {
+        case TOKEN_NUM:
+            op2 = (*sp)[1].data.num;
+            break;
+        case TOKEN_NUM_VAR:
+            op2 = *(*sp)[1].data.num_var;
+            break;
+        default:
+            puts("Invalid operand");
+            return 1;
+        }
+        (**sp).type = TOKEN_NUM;
+        (**sp).data.num = op1 == op2;
+        ++(*sp);
+        break;
+    case TOKEN_OP_UNEQUAL:
+        if (*sp - stack < 2) {
+            puts("Invalid number of operands");
+            return 1;
+        }
+        *sp -= 2;
+        switch ((*sp)[0].type) {
+        case TOKEN_NUM:
+            op1 = (*sp)[0].data.num;
+            break;
+        case TOKEN_NUM_VAR:
+            op1 = *(*sp)[0].data.num_var;
+            break;
+        default:
+            puts("Invalid operand");
+            return 1;
+        }
+        switch ((*sp)[1].type) {
+        case TOKEN_NUM:
+            op2 = (*sp)[1].data.num;
+            break;
+        case TOKEN_NUM_VAR:
+            op2 = *(*sp)[1].data.num_var;
+            break;
+        default:
+            puts("Invalid operand");
+            return 1;
+        }
+        (**sp).type = TOKEN_NUM;
+        (**sp).data.num = op1 != op2;
+        ++(*sp);
+        break;
     }
     return 0;
 }
@@ -283,6 +411,30 @@ int process_cmd(struct Token **tok, struct Token **sp) {
             *tok = code + (*tok)->data.cmd.data;
         }
         break;
+    case TOKEN_CMD_WHILE:
+        break;
+    case TOKEN_CMD_DO:
+        if (*sp - stack < 1) {
+            puts("_do no condition");
+            return 1;
+        }
+        --(*sp);
+        switch ((*sp)->type) {
+        case TOKEN_NUM:
+            if (!(*sp)->data.num) {
+                *tok = code + (*tok)->data.cmd.data;
+            }
+            break;
+        case TOKEN_NUM_VAR:
+            if (!*(*sp)->data.num_var) {
+                *tok = code + (*tok)->data.cmd.data;
+            }
+            break;
+        }
+        break;
+    default:
+        puts("Invalid cmd");
+        return 1;
     }
     return 0;
 }
@@ -291,7 +443,7 @@ int vm_run(char verbose) {
     struct Token *sp = stack;
     for (struct Token *i = code; i->type; ++i) {
         int ret = 0;
-        
+
         switch (i->type) {
         case TOKEN_NUM:
             if (verbose) {

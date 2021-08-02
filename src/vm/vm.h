@@ -31,6 +31,8 @@
 #define TOKEN_CMD_IF 1
 #define TOKEN_CMD_ELSE 2
 #define TOKEN_CMD_END 3
+#define TOKEN_CMD_WHILE 4
+#define TOKEN_CMD_DO 5
 
 extern short nv[702];
 extern char memory[320000];

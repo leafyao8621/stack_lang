@@ -4,7 +4,7 @@ OBJ = $(SRC:.c=.o)
 BIN = sli
 
 %.o: %.c
-	$(CC) -c $< -o $@
+	$(CC) -g -c $< -o $@
 
 $(BIN): $(OBJ)
 	$(CC) $(OBJ) -o $(BIN)

@@ -47,7 +47,7 @@ static int process_num_var(FILE *fin,
          !feof(fin) && len < 320000 &&
          in >= 'a' && in <= 'z';
          ++len, ++iter, in = fgetc(fin)) {
-        
+
         *iter = in;
     }
     *iter = 0;
@@ -194,7 +194,32 @@ static int process_cmd(FILE *fin,
         case TOKEN_CMD_ELSE:
             (***sp).data.cmd.data = (*cur) - code;
             break;
+        case TOKEN_CMD_DO:
+            if (*sp <= stack) {
+                puts("_end unbalanced, missing _while");
+                return 1;
+            }
+            --(*sp);
+            if ((***sp).data.cmd.type != TOKEN_CMD_WHILE) {
+                puts("_end unbalanced, not _while");
+                return 1;
+            }
+            (*cur)->data.cmd.data = (***sp).data.cmd.data;
+            (*((*sp)[1])).data.cmd.data = (*cur) - code;
+            break;
+        default:
+            puts("_end unbalanced");
+            return 1;
         }
+    } else if (!strcmp(buf, "while")) {
+        (*cur)->data.cmd.type = TOKEN_CMD_WHILE;
+        (*cur)->data.cmd.data = (*cur) - code;
+        **sp = *cur;
+        ++(*sp);
+    } else if (!strcmp(buf, "do")) {
+        (*cur)->data.cmd.type = TOKEN_CMD_DO;
+        **sp = *cur;
+        ++(*sp);
     } else {
         printf("%s is not a valid command\n", buf);
         return 1;
