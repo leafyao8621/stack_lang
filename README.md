@@ -8,6 +8,11 @@ Operators implemented:
 * \*
 * /
 * = (assignment)
+* \>
+* \<
 
 Commands Implemented:
-* !print
+* _print
+* _if
+* _else
+* _end
