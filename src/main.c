@@ -7,10 +7,13 @@ int main(int argc, const char **argv) {
         puts("No file");
         return 1;
     }
-    if (parser_parse(argv[1])) {
+    if (parser_parse(argv[1], 0)) {
         puts("No file or ill_formated");
         return 2;
     }
-    vm_run();
+    if (vm_run(0)) {
+        puts("Failed to run");
+        return 3;
+    }
     return 0;
 }

@@ -28,6 +28,9 @@
 
 #define TOKEN_CMD 4
 #define TOKEN_CMD_PRINT 0
+#define TOKEN_CMD_IF 1
+#define TOKEN_CMD_ELSE 2
+#define TOKEN_CMD_END 3
 
 extern short nv[702];
 extern char memory[320000];
@@ -47,6 +50,6 @@ struct Token {
 
 extern struct Token code[320000];
 
-int vm_run(void);
+int vm_run(char verbose);
 
 #endif
