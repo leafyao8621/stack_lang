@@ -35,13 +35,23 @@
 #define TOKEN_CMD_DO 5
 
 extern short nv[702];
+extern char *sv[26];
 extern char memory[320000];
+
+struct Array {
+    short *head;
+    short offset;
+};
+
+extern struct Array av[26];
 
 struct Token {
     char type;
     union {
         short num;
         short *num_var;
+        char **str_var;
+        struct Array *arr_var;
         char op;
         struct {
             char type;

@@ -2,6 +2,8 @@
 #include "vm.h"
 
 short nv[702];
+char *sv[26];
+struct Array av[26];
 char memory[320000];
 static struct Token stack[100];
 struct Token code[320000];
