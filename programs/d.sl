@@ -1,7 +1,7 @@
 @a 30 _alloc
 0 #i =
 _while #i 30 < _do
-    #i @a #i [] =
+    #i 3 % @a #i [] =
     #i 1 + #i =
 _end
 

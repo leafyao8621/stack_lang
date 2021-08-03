@@ -143,6 +143,38 @@ int process_op(struct Token *tok, struct Token **sp) {
         (**sp).data.num = op1 / op2;
         ++(*sp);
         break;
+    case TOKEN_OP_MOD:
+        if (*sp - stack < 2) {
+            puts("Invalid number of operands");
+            return 1;
+        }
+        *sp -= 2;
+        switch ((*sp)[0].type) {
+        case TOKEN_NUM:
+            op1 = (*sp)[0].data.num;
+            break;
+        case TOKEN_NUM_VAR:
+            op1 = *(*sp)[0].data.num_var;
+            break;
+        default:
+            puts("Invalid operand");
+            return 1;
+        }
+        switch ((*sp)[1].type) {
+        case TOKEN_NUM:
+            op2 = (*sp)[1].data.num;
+            break;
+        case TOKEN_NUM_VAR:
+            op2 = *(*sp)[1].data.num_var;
+            break;
+        default:
+            puts("Invalid operand");
+            return 1;
+        }
+        (**sp).type = TOKEN_NUM;
+        (**sp).data.num = op1 % op2;
+        ++(*sp);
+        break;
     case TOKEN_OP_ASSIGN:
         if (*sp - stack < 2) {
             puts("Invalid number of operands");

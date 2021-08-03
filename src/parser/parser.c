@@ -120,6 +120,7 @@ static int process_op(FILE *fin, struct Token **cur, int *n_tok, char verbose) {
         case '|':
         case '[':
         case ']':
+        case '%':
             cont = 1;
             break;
         }
@@ -147,6 +148,8 @@ static int process_op(FILE *fin, struct Token **cur, int *n_tok, char verbose) {
         (*cur)->data.op = TOKEN_OP_MULTIPLY;
     } else if (!strcmp(buf, "/")) {
         (*cur)->data.op = TOKEN_OP_DIVIDE;
+    } else if (!strcmp(buf, "%")) {
+        (*cur)->data.op = TOKEN_OP_MOD;
     } else if (!strcmp(buf, "=")) {
         (*cur)->data.op = TOKEN_OP_ASSIGN;
     } else if (!strcmp(buf, "==")) {
@@ -323,6 +326,7 @@ int parser_parse(const char *fn, char verbose) {
         case '|':
         case '[':
         case ']':
+        case '%':
             *buf = in;
             ret = process_op(fin, &iter, &n_tok, verbose);
             break;
