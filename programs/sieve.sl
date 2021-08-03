@@ -1,5 +1,6 @@
 100 #n =
 @a #n _alloc
+0 #su =
 2 #i =
 _while #i #n < _do
     #i _print
@@ -18,4 +19,6 @@ _while #i #n < _do
             _end
         _end
     _end
+    #su 1 + #su =
 _end
+#su _print
