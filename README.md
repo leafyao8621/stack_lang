@@ -7,7 +7,8 @@ Operators implemented:
 * \-
 * \*
 * /
-* = (assignment)
+* %
+* =
 * \>
 * \<
 * \>=
