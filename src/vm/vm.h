@@ -7,7 +7,9 @@
 
 #define TOKEN_NUM_VAR 2
 
-#define TOKEN_OP 3
+#define TOKEN_ARR_VAR 3
+
+#define TOKEN_OP 4
 #define TOKEN_OP_ADD 0
 #define TOKEN_OP_SUBTRACT 1
 #define TOKEN_OP_MULTIPLY 2
@@ -25,18 +27,23 @@
 #define TOKEN_OP_LAND 14
 #define TOKEN_OP_BOR 15
 #define TOKEN_OP_LOR 16
+#define TOKEN_OP_BNOT 17
+#define TOKEN_OP_LNOT 18
+#define TOKEN_OP_IDX 19
 
-#define TOKEN_CMD 4
+#define TOKEN_CMD 5
 #define TOKEN_CMD_PRINT 0
 #define TOKEN_CMD_IF 1
 #define TOKEN_CMD_ELSE 2
 #define TOKEN_CMD_END 3
 #define TOKEN_CMD_WHILE 4
 #define TOKEN_CMD_DO 5
+#define TOKEN_CMD_ALLOC 6
 
 extern short nv[702];
 extern char *sv[26];
 extern char memory[320000];
+extern char *mp;
 
 struct Array {
     short *head;
@@ -50,6 +57,7 @@ struct Token {
     union {
         short num;
         short *num_var;
+        char *str;
         char **str_var;
         struct Array *arr_var;
         char op;

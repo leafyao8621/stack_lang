@@ -69,6 +69,37 @@ static int process_num_var(FILE *fin,
     return 0;
 }
 
+static int process_arr_var(FILE *fin,
+                           struct Token **cur,
+                           int *n_tok,
+                           char verbose) {
+    char *iter = buf;
+    int len = 0;
+    for (int in = fgetc(fin);
+         !feof(fin) && len < 320000 &&
+         in >= 'a' && in <= 'z';
+         ++len, ++iter, in = fgetc(fin)) {
+
+        *iter = in;
+    }
+    *iter = 0;
+    if (len > 1) {
+        printf("%s variable name too long\n", buf);
+        return 1;
+    }
+    if (++(*n_tok) > 320000) {
+        puts("Too many tokens");
+        return 1;
+    }
+    (*cur)->type = TOKEN_ARR_VAR;
+    (*cur)->data.arr_var = av + (buf[0] - 'a');
+    ++(*cur);
+    if (verbose) {
+        printf("arr var %s\n", buf);
+    }
+    return 0;
+}
+
 static int process_op(FILE *fin, struct Token **cur, int *n_tok, char verbose) {
     char *iter = buf + 1;
     int len = 1;
@@ -87,6 +118,8 @@ static int process_op(FILE *fin, struct Token **cur, int *n_tok, char verbose) {
         case '>':
         case '&':
         case '|':
+        case '[':
+        case ']':
             cont = 1;
             break;
         }
@@ -128,6 +161,22 @@ static int process_op(FILE *fin, struct Token **cur, int *n_tok, char verbose) {
         (*cur)->data.op = TOKEN_OP_GEQ;
     } else if (!strcmp(buf, "<=")) {
         (*cur)->data.op = TOKEN_OP_LEQ;
+    } else if (!strcmp(buf, "<<")) {
+        (*cur)->data.op = TOKEN_OP_LSHIFT;
+    } else if (!strcmp(buf, "&")) {
+        (*cur)->data.op = TOKEN_OP_BAND;
+    } else if (!strcmp(buf, "&&")) {
+        (*cur)->data.op = TOKEN_OP_LAND;
+    } else if (!strcmp(buf, "|")) {
+        (*cur)->data.op = TOKEN_OP_BOR;
+    } else if (!strcmp(buf, "||")) {
+        (*cur)->data.op = TOKEN_OP_LOR;
+    } else if (!strcmp(buf, "~")) {
+        (*cur)->data.op = TOKEN_OP_BNOT;
+    } else if (!strcmp(buf, "!")) {
+        (*cur)->data.op = TOKEN_OP_LNOT;
+    } else if (!strcmp(buf, "[]")) {
+        (*cur)->data.op = TOKEN_OP_IDX;
     } else {
         printf("%s is not a valid operator\n", buf);
         return 1;
@@ -220,6 +269,10 @@ static int process_cmd(FILE *fin,
         (*cur)->data.cmd.type = TOKEN_CMD_DO;
         **sp = *cur;
         ++(*sp);
+    } else if (!strcmp(buf, "alloc")) {
+        (*cur)->data.cmd.type = TOKEN_CMD_ALLOC;
+        **sp = *cur;
+        ++(*sp);
     } else {
         printf("%s is not a valid command\n", buf);
         return 1;
@@ -236,6 +289,7 @@ int parser_parse(const char *fn, char verbose) {
     int n_tok = 0;
     struct Token *iter = code;
     struct Token **sp = stack;
+    mp = memory;
     for (int in = fgetc(fin); !feof(fin); in = fgetc(fin)) {
         int ret = 0;
         switch (in) {
@@ -255,6 +309,9 @@ int parser_parse(const char *fn, char verbose) {
         case '#':
             ret = process_num_var(fin, &iter, &n_tok, verbose);
             break;
+        case '@':
+            ret = process_arr_var(fin, &iter, &n_tok, verbose);
+            break;
         case '+':
         case '-':
         case '*':
@@ -264,6 +321,8 @@ int parser_parse(const char *fn, char verbose) {
         case '>':
         case '&':
         case '|':
+        case '[':
+        case ']':
             *buf = in;
             ret = process_op(fin, &iter, &n_tok, verbose);
             break;
