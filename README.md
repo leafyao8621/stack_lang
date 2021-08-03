@@ -14,6 +14,15 @@ Operators implemented:
 * \<=
 * ==
 * !=
+* \>\>
+* \<\<
+* ~
+* !
+* &
+* &&
+* |
+* ||
+* []
 
 Commands Implemented:
 * _print
@@ -22,3 +31,4 @@ Commands Implemented:
 * _end
 * _while
 * _do
+* _alloc
