@@ -1,4 +1,4 @@
-0 #a =
+#a 0 =
 _while #a 100 < _do
     #a 10 < _if
         1 _print
@@ -9,5 +9,5 @@ _while #a 100 < _do
             #a _print
         _end
     _end
-    #a 1 + #a =
+    #a #a 1 + =
 _end

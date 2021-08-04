@@ -1,24 +1,24 @@
-100 #n =
+#n 100 =
 @a #n _alloc
-0 #su =
-2 #i =
+#su 0 =
+#i 2 =
 _while #i #n < _do
     #i _print
-    #i #j =
+    #j #i =
     _while #j #n < _do
-        1 @a #j [] =
-        #j #i + #j =
+        @a #j [] 1 =
+        #j #j #i + =
     _end
-    1 #c =
+    #c 1 =
     _while #c _do
-        0 #c =
-        #i 1 + #i =
+        #c 0 =
+        #i #i 1 + =
         #i #n < _if
             @a #i [] _if
-                1 #c =
+                #c 1 =
             _end
         _end
     _end
-    #su 1 + #su =
+    #su #su 1 + =
 _end
 #su _print

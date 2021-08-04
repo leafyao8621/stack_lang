@@ -182,25 +182,25 @@ int process_op(struct Token *tok, struct Token **sp) {
         }
         *sp -= 2;
         switch ((*sp)[0].type) {
-        case TOKEN_NUM:
-            op1 = (*sp)[0].data.num;
-            break;
         case TOKEN_NUM_VAR:
-            op1 = *(*sp)[0].data.num_var;
+            op1_num_var = (*sp)[0].data.num_var;
             break;
         default:
             puts("Invalid operand");
             return 1;
         }
         switch ((*sp)[1].type) {
+        case TOKEN_NUM:
+            op2 = (*sp)[1].data.num;
+            break;
         case TOKEN_NUM_VAR:
-            op2_num_var = (*sp)[1].data.num_var;
+            op2 = *(*sp)[1].data.num_var;
             break;
         default:
             puts("Invalid operand");
             return 1;
         }
-        *op2_num_var = op1;
+        *op1_num_var = op2;
         break;
     case TOKEN_OP_GREATER:
         if (*sp - stack < 2) {

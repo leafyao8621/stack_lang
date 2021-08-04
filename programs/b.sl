@@ -1,6 +1,6 @@
-90 #a =
+#a 90 =
 #a _print
-#a 1 + #bc =
+#bc #a 1 + =
 #bc _print
 
 #a #bc > _if
