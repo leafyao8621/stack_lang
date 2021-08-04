@@ -19,7 +19,7 @@
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.stacklang",
-				"match": "\\b(_if|_while|_do|_end|_print)\\b"
+				"match": "\\b(_if|_else|_while|_do|_end|_print)\\b"
 			}]
 		},
 		"strings": {
