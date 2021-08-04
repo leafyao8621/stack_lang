@@ -166,6 +166,8 @@ static int process_op(FILE *fin, struct Token **cur, int *n_tok, char verbose) {
         (*cur)->data.op = TOKEN_OP_LEQ;
     } else if (!strcmp(buf, "<<")) {
         (*cur)->data.op = TOKEN_OP_LSHIFT;
+    } else if (!strcmp(buf, ">>")) {
+        (*cur)->data.op = TOKEN_OP_RSHIFT;
     } else if (!strcmp(buf, "&")) {
         (*cur)->data.op = TOKEN_OP_BAND;
     } else if (!strcmp(buf, "&&")) {
