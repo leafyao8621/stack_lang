@@ -1,0 +1,56 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "stacklang",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#variables"
+		},
+		{
+			"include": "constants"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.stacklang",
+				"match": "\\b(_if|_while|_do|_end|_print)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.stacklang",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.stacklang",
+					"match": "\\\\."
+				}
+			]
+		},
+		"variables": {
+			"name": "variable.name.stacklang",
+			"patterns": [
+				{
+					"name": "variable.name",
+					"match": "#..?|@."
+				}
+			]
+		},
+		"constants": {
+			"name": "constant.numeric",
+			"patterns": [
+				{
+					"name": "constant.numeric",
+					"match": "[0-9]+"
+				}
+			]
+		}
+	},
+	"scopeName": "source.sl"
+}

@@ -1,0 +1,25 @@
+{
+    "name": "stacklang",
+    "displayName": "stack_lang",
+    "description": "",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.58.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "stacklang",
+            "aliases": ["stacklang", "stacklang"],
+            "extensions": [".sl"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "stacklang",
+            "scopeName": "source.sl",
+            "path": "./syntaxes/stacklang.tmLanguage.json"
+        }]
+    }
+}
