@@ -3,7 +3,7 @@
 #su 0 =
 #i 2 =
 _while #i #n < _do
-    #i _print
+    #i _println
     #j #i =
     _while #j #n < _do
         @a #j [] 1 =
@@ -21,4 +21,4 @@ _while #i #n < _do
     _end
     #su #su 1 + =
 _end
-#su _print
+#su _println

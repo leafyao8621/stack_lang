@@ -4,12 +4,15 @@
 #define TOKEN_HALT 0
 
 #define TOKEN_NUM 1
-
 #define TOKEN_NUM_VAR 2
 
-#define TOKEN_ARR_VAR 3
+#define TOKEN_CHAR 3
+#define TOKEN_STR 4
+#define TOKEN_STR_VAR 5
 
-#define TOKEN_OP 4
+#define TOKEN_ARR_VAR 6
+
+#define TOKEN_OP 7
 #define TOKEN_OP_ADD 0
 #define TOKEN_OP_SUBTRACT 1
 #define TOKEN_OP_MULTIPLY 2
@@ -32,14 +35,15 @@
 #define TOKEN_OP_LNOT 19
 #define TOKEN_OP_IDX 20
 
-#define TOKEN_CMD 5
+#define TOKEN_CMD 8
 #define TOKEN_CMD_PRINT 0
-#define TOKEN_CMD_IF 1
-#define TOKEN_CMD_ELSE 2
-#define TOKEN_CMD_END 3
-#define TOKEN_CMD_WHILE 4
-#define TOKEN_CMD_DO 5
-#define TOKEN_CMD_ALLOC 6
+#define TOKEN_CMD_PRINTLN 1
+#define TOKEN_CMD_IF 2
+#define TOKEN_CMD_ELSE 3
+#define TOKEN_CMD_END 4
+#define TOKEN_CMD_WHILE 5
+#define TOKEN_CMD_DO 6
+#define TOKEN_CMD_ALLOC 7
 
 extern short nv[702];
 extern char *sv[26];

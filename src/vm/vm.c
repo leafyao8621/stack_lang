@@ -679,6 +679,21 @@ int process_cmd(struct Token **tok, struct Token **sp) {
         --(*sp);
         switch ((*sp)->type) {
         case TOKEN_NUM:
+            printf("%hd", (*sp)->data.num);
+            break;
+        case TOKEN_NUM_VAR:
+            printf("%hd", *(*sp)->data.num_var);
+            break;
+        }
+        break;
+    case TOKEN_CMD_PRINTLN:
+        if (*sp - stack < 1) {
+            puts("Invalid number of operands");
+            return 1;
+        }
+        --(*sp);
+        switch ((*sp)->type) {
+        case TOKEN_NUM:
             printf("%hd\n", (*sp)->data.num);
             break;
         case TOKEN_NUM_VAR:

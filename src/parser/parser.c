@@ -218,6 +218,8 @@ static int process_cmd(FILE *fin,
     (*cur)->type = TOKEN_CMD;
     if (!strcmp(buf, "print")) {
         (*cur)->data.cmd.type = TOKEN_CMD_PRINT;
+    } else if (!strcmp(buf, "println")) {
+        (*cur)->data.cmd.type = TOKEN_CMD_PRINTLN;
     } else if (!strcmp(buf, "if")) {
         (*cur)->data.cmd.type = TOKEN_CMD_IF;
         **sp = *cur;
