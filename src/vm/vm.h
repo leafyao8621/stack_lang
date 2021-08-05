@@ -62,6 +62,7 @@ struct Token {
     union {
         short num;
         short *num_var;
+        char chr;
         char *str;
         char **str_var;
         struct Array *arr_var;
