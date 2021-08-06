@@ -1,5 +1,10 @@
 #a 10 2 + 5 * 10 - 2 / =
-#a _print
+#a _println
 #bc #a 1 - =
-#bc _print
+#bc _println
 
+#a 1 =
+#a ! _println
+
+#a 1 =
+#a ~ _println

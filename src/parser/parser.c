@@ -188,6 +188,8 @@ static int process_op(FILE *fin, struct Token **cur, int *n_tok, char verbose) {
         case '[':
         case ']':
         case '%':
+        case '!':
+        case '~':
             cont = 1;
             break;
         }
@@ -404,6 +406,8 @@ int parser_parse(const char *fn, char verbose) {
         case '[':
         case ']':
         case '%':
+        case '!':
+        case '~':
             *buf = in;
             ret = process_op(fin, &iter, &n_tok, verbose);
             break;
