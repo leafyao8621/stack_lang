@@ -37,6 +37,42 @@ static int process_num(FILE *fin,
     return 0;
 }
 
+static int process_str(FILE *fin,
+                       struct Token **cur,
+                       int *n_tok,
+                       char verbose) {
+    char *iter = buf;
+    int len = 0;
+    for (int in = fgetc(fin);
+         !feof(fin) && len < 320000 && in != '"';
+         ++len, ++iter, in = fgetc(fin)) {
+        *iter = in;
+    }
+    if (len == 320000) {
+        puts("String too long");
+        return 1;
+    }
+    ++len;
+    if (mp + len - memory > 320000) {
+        puts("Out of memory");
+        return 1;
+    }
+    if (++(*n_tok) > 320000) {
+        puts("Too many tokens");
+        return 1;
+    }
+    *iter = 0;
+    (*cur)->type = TOKEN_STR;
+    memcpy(mp, buf, len);
+    (*cur)->data.str = mp;
+    mp += len;
+    ++(*cur);
+    if (verbose) {
+        printf("str %s\n", buf);
+    }
+    return 0;
+}
+
 static int process_num_var(FILE *fin,
                            struct Token **cur,
                            int *n_tok,
@@ -96,6 +132,37 @@ static int process_arr_var(FILE *fin,
     ++(*cur);
     if (verbose) {
         printf("arr var %s\n", buf);
+    }
+    return 0;
+}
+
+static int process_str_var(FILE *fin,
+                           struct Token **cur,
+                           int *n_tok,
+                           char verbose) {
+    char *iter = buf;
+    int len = 0;
+    for (int in = fgetc(fin);
+         !feof(fin) && len < 320000 &&
+         in >= 'a' && in <= 'z';
+         ++len, ++iter, in = fgetc(fin)) {
+
+        *iter = in;
+    }
+    *iter = 0;
+    if (len > 1) {
+        printf("%s variable name too long\n", buf);
+        return 1;
+    }
+    if (++(*n_tok) > 320000) {
+        puts("Too many tokens");
+        return 1;
+    }
+    (*cur)->type = TOKEN_STR_VAR;
+    (*cur)->data.str_var = sv + (buf[0] - 'a');
+    ++(*cur);
+    if (verbose) {
+        printf("str var %s\n", buf);
     }
     return 0;
 }
@@ -313,11 +380,17 @@ int parser_parse(const char *fn, char verbose) {
             *buf = in;
             ret = process_num(fin, &iter, &n_tok, verbose);
             break;
+        case '"':
+            ret = process_str(fin, &iter, &n_tok, verbose);
+            break;
         case '#':
             ret = process_num_var(fin, &iter, &n_tok, verbose);
             break;
         case '@':
             ret = process_arr_var(fin, &iter, &n_tok, verbose);
+            break;
+        case '$':
+            ret = process_str_var(fin, &iter, &n_tok, verbose);
             break;
         case '+':
         case '-':

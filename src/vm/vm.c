@@ -14,6 +14,11 @@ int process_op(struct Token *tok, struct Token **sp) {
     short op2 = 0;
     short *op1_num_var = 0;
     short *op2_num_var = 0;
+    char *op1_str = 0;
+    char *op2_str = 0;
+    char **op1_str_var = 0;
+    char **op2_str_var = 0;
+    char str = 0;
     switch (tok->data.op) {
     case TOKEN_OP_ADD:
         if (*sp - stack < 2) {
@@ -185,22 +190,41 @@ int process_op(struct Token *tok, struct Token **sp) {
         case TOKEN_NUM_VAR:
             op1_num_var = (*sp)[0].data.num_var;
             break;
-        default:
-            puts("Invalid operand");
-            return 1;
-        }
-        switch ((*sp)[1].type) {
-        case TOKEN_NUM:
-            op2 = (*sp)[1].data.num;
-            break;
-        case TOKEN_NUM_VAR:
-            op2 = *(*sp)[1].data.num_var;
+        case TOKEN_STR_VAR:
+            op1_str_var = (*sp)[0].data.str_var;
+            str = 1;
             break;
         default:
             puts("Invalid operand");
             return 1;
         }
-        *op1_num_var = op2;
+        if (!str) {
+            switch ((*sp)[1].type) {
+            case TOKEN_NUM:
+                op2 = (*sp)[1].data.num;
+                break;
+            case TOKEN_NUM_VAR:
+                op2 = *(*sp)[1].data.num_var;
+                break;
+            default:
+                puts("Invalid operand");
+                return 1;
+            }
+            *op1_num_var = op2;
+        } else {
+            switch ((*sp)[1].type) {
+            case TOKEN_STR:
+                op2_str = (*sp)[1].data.str;
+                break;
+            case TOKEN_STR_VAR:
+                op2_str = *(*sp)[1].data.str_var;
+                break;
+            default:
+                puts("Invalid operand");
+                return 1;
+            }
+            *op1_str_var = op2_str;
+        }
         break;
     case TOKEN_OP_GREATER:
         if (*sp - stack < 2) {
@@ -684,6 +708,12 @@ int process_cmd(struct Token **tok, struct Token **sp) {
         case TOKEN_NUM_VAR:
             printf("%hd", *(*sp)->data.num_var);
             break;
+        case TOKEN_STR:
+            printf("%s", (*sp)->data.str);
+            break;
+        case TOKEN_STR_VAR:
+            printf("%s", *(*sp)->data.str_var);
+            break;
         }
         break;
     case TOKEN_CMD_PRINTLN:
@@ -698,6 +728,12 @@ int process_cmd(struct Token **tok, struct Token **sp) {
             break;
         case TOKEN_NUM_VAR:
             printf("%hd\n", *(*sp)->data.num_var);
+            break;
+        case TOKEN_STR:
+            printf("%s\n", (*sp)->data.str);
+            break;
+        case TOKEN_STR_VAR:
+            printf("%s\n", *(*sp)->data.str_var);
             break;
         }
         break;
@@ -809,6 +845,20 @@ int vm_run(char verbose) {
                 printf("num var offset %d val %d \n",
                        i->data.num_var - nv,
                        *i->data.num_var);
+            }
+            *(sp++) = *i;
+            break;
+        case TOKEN_STR:
+            if (verbose) {
+                printf("str %s\n", i->data.str);
+            }
+            *(sp++) = *i;
+            break;
+        case TOKEN_STR_VAR:
+            if (verbose) {
+                printf("str var offset %d val %s \n",
+                       i->data.str_var - sv,
+                       *i->data.str_var);
             }
             *(sp++) = *i;
             break;
