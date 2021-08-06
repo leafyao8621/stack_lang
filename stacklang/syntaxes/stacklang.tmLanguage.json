@@ -38,7 +38,7 @@
 			"patterns": [
 				{
 					"name": "variable.name",
-					"match": "#..?|@."
+					"match": "#..?|@.|\\$."
 				}
 			]
 		},
