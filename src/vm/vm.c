@@ -662,6 +662,10 @@ int process_op(struct Token *tok, struct Token **sp) {
         case TOKEN_ARR_VAR:
             op1_num_var = (*sp)[0].data.arr_var->head;
             break;
+        case TOKEN_STR_VAR:
+            op1_str = *(*sp)[0].data.str_var;
+            str = 1;
+            break;
         default:
             puts("Invalid operand");
             return 1;
@@ -677,12 +681,17 @@ int process_op(struct Token *tok, struct Token **sp) {
             puts("Invalid operand");
             return 1;
         }
-        if (op2 < 0 || op2 >= (*sp)[0].data.arr_var->offset) {
-            puts("Index out of bound");
-            return 1;
+        if (!str) {
+            if (op2 < 0 || op2 >= (*sp)[0].data.arr_var->offset) {
+                puts("Index out of bound");
+                return 1;
+            }
+            (**sp).type = TOKEN_NUM_VAR;
+            (**sp).data.num_var = op1_num_var + op2;
+        } else {
+            (**sp).type = TOKEN_CHAR;
+            (**sp).data.chr = op1_str[op2];
         }
-        (**sp).type = TOKEN_NUM_VAR;
-        (**sp).data.num_var = op1_num_var + op2;
         ++(*sp);
         break;
     }
@@ -708,6 +717,9 @@ int process_cmd(struct Token **tok, struct Token **sp) {
         case TOKEN_NUM_VAR:
             printf("%hd", *(*sp)->data.num_var);
             break;
+        case TOKEN_CHAR:
+            printf("%c", (*sp)->data.chr);
+            break;
         case TOKEN_STR:
             printf("%s", (*sp)->data.str);
             break;
@@ -728,6 +740,9 @@ int process_cmd(struct Token **tok, struct Token **sp) {
             break;
         case TOKEN_NUM_VAR:
             printf("%hd\n", *(*sp)->data.num_var);
+            break;
+        case TOKEN_CHAR:
+            printf("%c\n", (*sp)->data.chr);
             break;
         case TOKEN_STR:
             printf("%s\n", (*sp)->data.str);
