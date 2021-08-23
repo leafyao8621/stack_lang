@@ -4,8 +4,8 @@
 #include "parser.h"
 #include "../vm/vm.h"
 
-static char buf[320000];
-static struct Token *stack[1000];
+static char buf[100];
+static struct Token *stack[100];
 
 static int process_num(FILE *fin,
                        struct Token **cur,
@@ -14,12 +14,12 @@ static int process_num(FILE *fin,
     char *iter = buf + 1;
     int len = 1;
     for (int in = fgetc(fin);
-         !feof(fin) && len < 320000 &&
+         !feof(fin) && len < 100 &&
          in >= '0' && in <= '9';
          ++len, ++iter, in = fgetc(fin)) {
         *iter = in;
     }
-    if (len == 320000) {
+    if (len == 100) {
         puts("Number literal too long");
         return 1;
     }
@@ -44,11 +44,11 @@ static int process_str(FILE *fin,
     char *iter = buf;
     int len = 0;
     for (int in = fgetc(fin);
-         !feof(fin) && len < 320000 && in != '"';
+         !feof(fin) && len < 100 && in != '"';
          ++len, ++iter, in = fgetc(fin)) {
         *iter = in;
     }
-    if (len == 320000) {
+    if (len == 100) {
         puts("String too long");
         return 1;
     }
@@ -80,7 +80,7 @@ static int process_num_var(FILE *fin,
     char *iter = buf;
     int len = 0;
     for (int in = fgetc(fin);
-         !feof(fin) && len < 320000 &&
+         !feof(fin) && len < 100 &&
          in >= 'a' && in <= 'z';
          ++len, ++iter, in = fgetc(fin)) {
 
@@ -112,7 +112,7 @@ static int process_arr_var(FILE *fin,
     char *iter = buf;
     int len = 0;
     for (int in = fgetc(fin);
-         !feof(fin) && len < 320000 &&
+         !feof(fin) && len < 100 &&
          in >= 'a' && in <= 'z';
          ++len, ++iter, in = fgetc(fin)) {
 
@@ -143,7 +143,7 @@ static int process_str_var(FILE *fin,
     char *iter = buf;
     int len = 0;
     for (int in = fgetc(fin);
-         !feof(fin) && len < 320000 &&
+         !feof(fin) && len < 100 &&
          in >= 'a' && in <= 'z';
          ++len, ++iter, in = fgetc(fin)) {
 
@@ -172,7 +172,7 @@ static int process_op(FILE *fin, struct Token **cur, int *n_tok, char verbose) {
     int len = 1;
     char cont = 1;
     for (int in = fgetc(fin);
-         !feof(fin) && len < 320000 && cont;
+         !feof(fin) && len < 100 && cont;
          ++len, ++iter, in = fgetc(fin)) {
         cont = 0;
         switch (in) {
@@ -270,12 +270,12 @@ static int process_cmd(FILE *fin,
     char *iter = buf;
     int len = 0;
     for (int in = fgetc(fin);
-         !feof(fin) && len < 320000 &&
+         !feof(fin) && len < 100 &&
          in >= 'a' && in <= 'z';
          ++len, ++iter, in = fgetc(fin)) {
         *iter = in;
     }
-    if (len == 320000) {
+    if (len == 100) {
         puts("Command too long");
         return 1;
     }
