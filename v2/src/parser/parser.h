@@ -3,10 +3,16 @@
 
 #include <stdint.h>
 
+#include "../util/util.h"
+
+typedef struct Token {
+    uint8_t type;
+} Token;
+
+DEF_DARRAY(Token)
+
 struct Parser {
-    struct Token {
-        uint8_t type;
-    }*tokens;
+    DArrayToken tokens;
 };
 
 #endif
