@@ -36,5 +36,4 @@ int DArray_##Type_push(DArray##Type *darray, Type *item) {\
     return 0;\
 }
 
-
 #endif

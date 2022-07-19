@@ -12,7 +12,7 @@ typedef struct Token {
 DEF_DARRAY(Token)
 
 struct Parser {
-    DArrayToken tokens;
+    DArrayToken tokens, stack;
 };
 
 #endif
