@@ -5,14 +5,16 @@
 
 #include "../util/util.h"
 
+typedef uint8_t Type;
+
 typedef struct Token {
-    uint8_t type;
+    Type type;
 } Token;
 
 DEF_DARRAY(Token)
 
-struct Parser {
+typedef struct Parser {
     DArrayToken tokens, stack;
-};
+} Parser;
 
 #endif
