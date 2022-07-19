@@ -11,8 +11,9 @@ typedef struct DArray##Type {\
     Type *data;\
 } DArray##Type;
 
-#define DEF_DRRAY_INITIALIZE(Type)\
+#define DEF_DRRAY_FUNCTIONS(Type)\
 int DArray_##Type_initialize(DArray##Type *darray);\
+int DArray_##Type_push(DArray##Type *darray, Type *item);\
 int DArray_##Type_initialize(DArray##Type *darray) {\
     if (!darray) {\
         return ERR_NULL_PTR;\
@@ -24,10 +25,7 @@ int DArray_##Type_initialize(DArray##Type *darray) {\
         return ERR_OUT_OF_MEMORY;\
     }\
     return 0;\
-}
-
-#define DEF_DRRAY_PUSH(Type)\
-int DArray_##Type_push(DArray##Type *darray, Type *item);\
+}\
 int DArray_##Type_push(DArray##Type *darray, Type *item) {\
     if (!darray || !item) {\
         return ERR_NULL_PTR;\
