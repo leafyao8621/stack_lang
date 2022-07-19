@@ -10,4 +10,7 @@ typedef struct Generator {
     DArrayType stack;
 } Generator;
 
+int generator_initialize(Generator *generator);
+int generator_finalize(Generator *generator);
+
 #endif

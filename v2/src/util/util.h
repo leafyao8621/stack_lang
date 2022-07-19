@@ -12,10 +12,10 @@ typedef struct DArray##Type {\
 } DArray##Type;
 
 #define DEF_DRRAY_FUNCTIONS(Type)\
-int DArray_##Type_initialize(DArray##Type *darray);\
-int DArray_##Type_push(DArray##Type *darray, Type *item);\
-int DArray_##Type_finalize(DArray##Type *darray);\
-int DArray_##Type_initialize(DArray##Type *darray) {\
+int DArray##Type##_initialize(DArray##Type *darray);\
+int DArray##Type##_push(DArray##Type *darray, Type *item);\
+int DArray##Type##_finalize(DArray##Type *darray);\
+int DArray##Type##_initialize(DArray##Type *darray) {\
     if (!darray) {\
         return ERR_NULL_PTR;\
     }\
@@ -27,14 +27,14 @@ int DArray_##Type_initialize(DArray##Type *darray) {\
     }\
     return 0;\
 }\
-int DArray_##Type_push(DArray##Type *darray, Type *item) {\
+int DArray##Type##_##push(DArray##Type *darray, Type *item) {\
     if (!darray || !item) {\
         return ERR_NULL_PTR;\
     }\
     \
     return 0;\
 }\
-int DArray_##Type_finalize(DArray##Type *darray) {\
+int DArray##Type##_##finalize(DArray##Type *darray) {\
     if (!darray) {\
         return ERR_NULL_PTR;\
     }\

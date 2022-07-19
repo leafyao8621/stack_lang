@@ -17,4 +17,7 @@ typedef struct Parser {
     DArrayToken tokens, stack;
 } Parser;
 
+int parser_initialize(Parser *parser);
+int parser_finalize(Parser *parser);
+
 #endif
