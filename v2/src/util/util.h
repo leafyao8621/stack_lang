@@ -27,14 +27,14 @@ int DArray##Type##_initialize(DArray##Type *darray) {\
     }\
     return 0;\
 }\
-int DArray##Type##_##push(DArray##Type *darray, Type *item) {\
+int DArray##Type##_push(DArray##Type *darray, Type *item) {\
     if (!darray || !item) {\
         return ERR_NULL_PTR;\
     }\
     \
     return 0;\
 }\
-int DArray##Type##_##finalize(DArray##Type *darray) {\
+int DArray##Type##_finalize(DArray##Type *darray) {\
     if (!darray) {\
         return ERR_NULL_PTR;\
     }\
