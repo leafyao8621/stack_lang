@@ -11,11 +11,9 @@ BIN_COMPILER = slc
 $(BIN_COMPILER): $(OBJ_COMPILER)
 	$(CC) $(OBJ_COMPILER) -o $(BIN_COMPILER)
 
-.PHONY: clean all valgrind
+.PHONY: clean all
 all: $(BIN_COMPILER)
 	@echo "compiled"
 clean:
 	@rm $(OBJ_COMPILER)
 	@rm $(BIN_COMPILER)
-valgrind: all
-	@valgrind -s ./$(BIN_COMPILER)

@@ -20,7 +20,7 @@ int DArray##Type##_initialize(DArray##Type *darray, size_t capacity) {\
         return ERR_NULL_PTR;\
     }\
     darray->size = 0;\
-    darray->capacity = 1000;\
+    darray->capacity = capacity;\
     darray->data = malloc(sizeof(Type) * capacity);\
     if (!darray->data) {\
         return ERR_OUT_OF_MEMORY;\

@@ -1,18 +1,29 @@
 #include "parser.h"
 
 DEF_DRRAY_FUNCTIONS(Token)
+DEF_DRRAY_FUNCTIONS(Character)
 
-int parser_initialize(Parser *parser) {
-    if (!parser) {
+int parser_initialize(Parser *parser, String ifn) {
+    if (!parser || !ifn) {
         return ERR_NULL_PTR;
+    }
+    parser->fin = fopen(ifn, "r");
+    if (!parser->fin) {
+        return ERR_FILE_IO;
     }
     int ret = DArrayToken_initialize(&parser->tokens, 1000);
     if (ret) {
         return ret;
     }
-    ret = DArrayToken_initialize(&parser->stack, 1000);
+    ret = DArrayToken_initialize(&parser->stack, 5);
     if (ret) {
         DArrayToken_finalize(&parser->tokens);
+        return ret;
+    }
+    ret = DArrayCharacter_initialize(&parser->str_buf, 2);
+    if (ret) {
+        DArrayToken_finalize(&parser->tokens);
+        DArrayToken_finalize(&parser->stack);
         return ret;
     }
     return 0;
@@ -29,6 +40,24 @@ int parser_finalize(Parser *parser) {
     ret = DArrayToken_finalize(&parser->stack);
     if (ret) {
         return ret;
+    }
+    ret = DArrayCharacter_finalize(&parser->str_buf);
+    if (ret) {
+        return ret;
+    }
+    fclose(parser->fin);
+    return 0;
+}
+
+int parser_parse(Parser *parser) {
+    if (!parser) {
+        return ERR_NULL_PTR;
+    }
+    for (char i = 0; i < 10; ++i) {
+        DArrayCharacter_push(&parser->str_buf, &i);
+    }
+    for (size_t i = 0; i < 10; ++i) {
+        printf("%hhd\n", parser->str_buf.data[i]);
     }
     return 0;
 }

@@ -1,6 +1,8 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
+#include <stdio.h>
+
 #include "../util/util.h"
 
 typedef uint8_t Type;
@@ -21,9 +23,11 @@ typedef struct Parser {
     DArrayCharacter str_buf;
     HashSetString int_name, arr_name;
     HashMapStringString str_name;
+    FILE *fin;
 } Parser;
 
-int parser_initialize(Parser *parser);
+int parser_initialize(Parser *parser, String fn);
+int parser_parse(Parser *parser);
 int parser_finalize(Parser *parser);
 
 #endif
