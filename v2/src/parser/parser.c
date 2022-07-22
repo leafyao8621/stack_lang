@@ -2,6 +2,7 @@
 
 DEF_DRRAY_FUNCTIONS(Token)
 DEF_DRRAY_FUNCTIONS(Character)
+DEF_HASHSET_FUNCTIONS(String)
 
 int parser_initialize(Parser *parser, String ifn) {
     if (!parser || !ifn) {
@@ -52,12 +53,6 @@ int parser_finalize(Parser *parser) {
 int parser_parse(Parser *parser) {
     if (!parser) {
         return ERR_NULL_PTR;
-    }
-    for (char i = 0; i < 10; ++i) {
-        DArrayCharacter_push(&parser->str_buf, &i);
-    }
-    for (size_t i = 0; i < 10; ++i) {
-        printf("%hhd\n", parser->str_buf.data[i]);
     }
     return 0;
 }
