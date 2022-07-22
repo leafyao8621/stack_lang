@@ -6,7 +6,7 @@ int generator_initialize(Generator *generator) {
     if (!generator) {
         return ERR_NULL_PTR;
     }
-    int ret = DArrayType_initialize(&generator->stack);
+    int ret = DArrayType_initialize(&generator->stack, 1000);
     if (ret) {
         return ret;
     }
