@@ -1,7 +1,7 @@
 CC = clang
 CFLAGS = -Wall -Wextra -Weverything -pedantic -Werror
 SRC = $(wildcard src/*/*.c) $(wildcard src/*/*/*.c)
-SRC_COMPILER = src/parser/parser.c $(wildcard src/compiler/*.c) $(wildcard src/compiler/*/*.c)
+SRC_COMPILER = src/parser/parser.c $(wildcard src/compiler/*.c) $(wildcard src/compiler/*/*.c) $(wildcard src/util/*/*.c)
 OBJ_COMPILER = $(SRC_COMPILER:.c=.o)
 BIN_COMPILER = slc
 

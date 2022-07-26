@@ -5,10 +5,13 @@
 #include <stdbool.h>
 
 #define DEF_HASHSET(Type)\
+typedef struct HashSet##Type##Node {\
+    Type item;\
+    uint64_t in_use;\
+} HashSet##Type##Node;\
 typedef struct HashSet##Type {\
     size_t size, capacity;\
-    Type *data;\
-    uint64_t in_use;\
+    HashSet##Type##Node *data;\
     size_t (*hash)(Type*);\
 } HashSet##Type;
 
@@ -32,7 +35,7 @@ int HashSet##Type##_initialize(\
     hashset->size = 0;\
     hashset->capacity = capacity;\
     hashset->hash = hash;\
-    hashset->data = malloc(sizeof(Type) * capacity);\
+    hashset->data = calloc(capacity, sizeof(HashSet##Type##Node));\
     if (!hashset->data) {\
         return ERR_OUT_OF_MEMORY;\
     }\
@@ -42,6 +45,17 @@ int HashSet##Type##_insert(HashSet##Type *hashset, Type *item) {\
     if (!hashset || !item) {\
         return ERR_NULL_PTR;\
     }\
+    size_t idx = hashset->hash(item) % hashset->capacity;\
+    HashSet##Type##Node *iter = hashset->data + idx;\
+    for (\
+        ;\
+        idx < hashset->capacity &&\
+        iter->in_use;\
+        ++idx,\
+        ++iter\
+    );\
+    iter->item = *item;\
+    iter->in_use = true;\
     return 0;\
 }\
 int HashSet##Type##_check(HashSet##Type *hashset, Type *item, bool *out) {\

@@ -8,7 +8,6 @@ typedef struct HashMap##Key##Value##Node {\
     Key key;\
     Value value;\
     uint64_t in_use;\
-    size_t (*hash)(Key*);\
 } HashMap##Key##Value##Node;\
 typedef struct HashMap##Key##Value {\
     size_t size, capacity;\
