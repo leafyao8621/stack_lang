@@ -1,5 +1,5 @@
-#ifndef DARRAY_H_
-#define DARRAY_H_
+#ifndef UTIL_DARRAY_H_
+#define UTIL_DARRAY_H_
 
 #include <stdlib.h>
 

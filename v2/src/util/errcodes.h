@@ -1,5 +1,5 @@
-#ifndef ERRCODES_H_
-#define ERRCODES_H_
+#ifndef UTIL_ERRCODES_H_
+#define UTIL_ERRCODES_H_
 
 #define ERR_NULL_PTR 1
 #define ERR_OUT_OF_MEMORY 2

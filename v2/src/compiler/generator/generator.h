@@ -1,5 +1,5 @@
-#ifndef GENERATOR_H_
-#define GENERATOR_H_
+#ifndef GENERATOR_GENERATOR_H_
+#define GENERATOR_GENERATOR_H_
 
 #include "../../parser/parser.h"
 
