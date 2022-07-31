@@ -28,7 +28,11 @@ int parser_initialize(Parser *parser, String ifn) {
         return ret;
     }
     ret =
-        HashSetString_initialize(&parser->int_name, 100, hash_function_string);
+        HashSetString_initialize(
+            &parser->int_name,
+            3, hash_function_string,
+            eq_function_string
+        );
     if (ret) {
         DArrayToken_finalize(&parser->tokens);
         DArrayToken_finalize(&parser->stack);
@@ -75,9 +79,39 @@ int parser_parse(Parser *parser) {
     DArrayCharacter_push(&parser->str_buf, "b");
     DArrayCharacter_push(&parser->str_buf, "c");
     DArrayCharacter_push(&parser->str_buf, "");
+    DArrayCharacter_push(&parser->str_buf, "a");
+    DArrayCharacter_push(&parser->str_buf, "b");
+    DArrayCharacter_push(&parser->str_buf, "c");
+    DArrayCharacter_push(&parser->str_buf, "d");
+    DArrayCharacter_push(&parser->str_buf, "");
+    DArrayCharacter_push(&parser->str_buf, "b");
+    DArrayCharacter_push(&parser->str_buf, "c");
+    DArrayCharacter_push(&parser->str_buf, "d");
+    DArrayCharacter_push(&parser->str_buf, "e");
+    DArrayCharacter_push(&parser->str_buf, "");
+    DArrayCharacter_push(&parser->str_buf, "c");
+    DArrayCharacter_push(&parser->str_buf, "d");
+    DArrayCharacter_push(&parser->str_buf, "e");
+    DArrayCharacter_push(&parser->str_buf, "f");
+    DArrayCharacter_push(&parser->str_buf, "");
+    DArrayCharacter_push(&parser->str_buf, "b");
+    DArrayCharacter_push(&parser->str_buf, "c");
+    DArrayCharacter_push(&parser->str_buf, "d");
+    DArrayCharacter_push(&parser->str_buf, "");
     char *str = parser->str_buf.data;
     HashSetString_insert(&parser->int_name, &str);
     str += 5;
     HashSetString_insert(&parser->int_name, &str);
+    str += 4;
+    HashSetString_insert(&parser->int_name, &str);
+    str += 5;
+    HashSetString_insert(&parser->int_name, &str);
+    str += 5;
+    HashSetString_insert(&parser->int_name, &str);
+    str += 5;
+    HashSetString_insert(&parser->int_name, &str);
+    for (size_t i = 0; i < parser->int_name.capacity; ++i) {
+        printf("in_use: %lu\nitem: %s\n", parser->int_name.data[i].in_use, parser->int_name.data[i].item);
+    }
     return 0;
 }

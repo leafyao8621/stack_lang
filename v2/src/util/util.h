@@ -5,5 +5,6 @@
 #include "hash_set.h"
 #include "hash_map.h"
 #include "hash/hash.h"
+#include "eq/eq.h"
 
 #endif
