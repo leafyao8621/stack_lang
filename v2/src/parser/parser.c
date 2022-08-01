@@ -113,5 +113,12 @@ int parser_parse(Parser *parser) {
     for (size_t i = 0; i < parser->int_name.capacity; ++i) {
         printf("in_use: %lu\nitem: %s\n", parser->int_name.data[i].in_use, parser->int_name.data[i].item);
     }
+    bool out = false;
+    str = "cdef";
+    HashSetString_check(&parser->int_name, &str, &out);
+    printf("cdef: %d\n", out);
+    str = "abcde";
+    HashSetString_check(&parser->int_name, &str, &out);
+    printf("abcde: %d\n", out);
     return 0;
 }

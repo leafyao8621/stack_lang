@@ -118,6 +118,21 @@ int HashSet##Type##_check(HashSet##Type *hashset, Type *item, bool *out) {\
     if (!hashset || !item || !out) {\
         return ERR_NULL_PTR;\
     }\
+    size_t idx = hashset->hash(item) % hashset->capacity;\
+    HashSet##Type##Node *iter = hashset->data + idx;\
+    for (\
+        ;\
+        idx < hashset->capacity &&\
+        iter->in_use &&\
+        !hashset->eq(&iter->item, item);\
+        ++idx,\
+        ++iter\
+    );\
+    if (idx == hashset->capacity || !iter->in_use) {\
+        *out = false;\
+    } else {\
+        *out = true;\
+    }\
     return 0;\
 }\
 int HashSet##Type##_finalize(HashSet##Type *hashset) {\
