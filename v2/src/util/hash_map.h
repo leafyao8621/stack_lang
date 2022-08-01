@@ -13,6 +13,7 @@ typedef struct HashMap##Key##Value {\
     size_t size, capacity;\
     HashMap##Key##Value##Node *data;\
     size_t (*hash)(Key*);\
+    bool (*eq)(Key*, Key*);\
 } HashMap##Key##Value;
 
 #endif
