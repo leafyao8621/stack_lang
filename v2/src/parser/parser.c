@@ -30,7 +30,7 @@ int parser_initialize(Parser *parser, String ifn) {
     ret =
         HashSetString_initialize(
             &parser->int_name,
-            3, hash_function_string,
+            1, hash_function_string,
             eq_function_string
         );
     if (ret) {

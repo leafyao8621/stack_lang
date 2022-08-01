@@ -89,6 +89,18 @@ int HashSet##Type##_insert(HashSet##Type *hashset, Type *item) {\
                 iter_new->item = iter_old->item;\
                 iter_new->in_use = true;\
             }\
+            idx = hashset->hash(item) % hashset->capacity;\
+            iter = buf + idx;\
+            for (\
+                ;\
+                idx < new_capacity &&\
+                iter->in_use;\
+                ++idx,\
+                ++iter\
+            );\
+            if (idx == new_capacity) {\
+                cont = true;\
+            }\
             if (cont) {\
                 new_capacity <<= 1;\
                 free(buf);\
@@ -97,15 +109,6 @@ int HashSet##Type##_insert(HashSet##Type *hashset, Type *item) {\
         free(hashset->data);\
         hashset->data = buf;\
         hashset->capacity = new_capacity;\
-        idx = hashset->hash(item) % hashset->capacity;\
-        iter = hashset->data + idx;\
-        for (\
-            ;\
-            idx < hashset->capacity &&\
-            iter->in_use;\
-            ++idx,\
-            ++iter\
-        );\
     }\
     iter->item = *item;\
     iter->in_use = true;\
