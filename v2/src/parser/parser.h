@@ -8,6 +8,7 @@
 typedef uint8_t Type;
 typedef char Character;
 typedef char *String;
+typedef size_t Size;
 
 typedef struct Token {
     Type type;
@@ -17,12 +18,14 @@ DEF_DARRAY(Token)
 DEF_DARRAY(Character)
 DEF_HASHSET(String)
 DEF_HASHMAP(String, String)
+DEF_HASHMAP(String, Size)
 
 typedef struct Parser {
     DArrayToken tokens, stack;
     DArrayCharacter str_buf;
-    HashSetString int_name, arr_name;
+    HashSetString int_name;
     HashMapStringString str_name;
+    HashMapStringSize arr_name;
     FILE *fin;
 } Parser;
 
