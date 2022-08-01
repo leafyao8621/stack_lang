@@ -64,6 +64,9 @@ int HashSet##Type##_insert(HashSet##Type *hashset, Type *item) {\
         bool cont = false;\
         do {\
             buf = calloc(new_capacity, sizeof(HashSet##Type##Node));\
+            if (!buf) {\
+                return ERR_OUT_OF_MEMORY;\
+            }\
             cont = false;\
             HashSet##Type##Node *iter_old = hashset->data;\
             for (size_t i = 0; i < hashset->capacity; ++i, ++iter_old) {\
