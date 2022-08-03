@@ -38,7 +38,7 @@
 			"patterns": [
 				{
 					"name": "variable.name",
-					"match": "#..?|@.|\\$."
+					"match": "#[A-Za-z][0-9A-Za-z_]*|@[A-Za-z][0-9A-Za-z_]*|\\$[A-Za-z][0-9A-Za-z_]*"
 				}
 			]
 		},

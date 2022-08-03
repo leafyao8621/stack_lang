@@ -5,26 +5,33 @@
 
 #include "../util/util.h"
 
-typedef uint8_t Type;
+typedef uint64_t Type;
 typedef char Character;
 typedef char *String;
 typedef size_t Size;
 
 typedef struct Token {
     Type type;
+    union {
+        int64_t int_lit;
+        String str_lit;
+        String int_name;
+        String str_name;
+        char str_char;
+        String arr_name;
+    } data;
 } Token;
 
 DEF_DARRAY(Token)
 DEF_DARRAY(Character)
 DEF_HASHSET(String)
-DEF_HASHMAP(String, String)
 DEF_HASHMAP(String, Size)
 
 typedef struct Parser {
     DArrayToken tokens, stack;
     DArrayCharacter str_buf;
     HashSetString int_name;
-    HashMapStringString str_name;
+    HashSetString str_name;
     HashMapStringSize arr_name;
     FILE *fin;
 } Parser;
