@@ -6,8 +6,20 @@ int main(int argc, char **argv) {
         puts("Usage: in_file out_file");
         return 1;
     }
-    generator_initialize(&generator, argv[1], argv[2]);
-    generator_generate(&generator);
-    generator_finalize(&generator);
+    int ret = generator_initialize(&generator, argv[1], argv[2]);
+    if (ret) {
+        printf("errcode: %d\n", ret);
+        return 1;
+    }
+    ret = generator_generate(&generator);
+    if (ret) {
+        printf("errcode: %d\n", ret);
+        return 1;
+    }
+    ret = generator_finalize(&generator);
+    if (ret) {
+        printf("errcode: %d\n", ret);
+        return 1;
+    }
     return 0;
 }

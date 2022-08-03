@@ -19,7 +19,6 @@ int generator_initialize(Generator *generator, String ifn, String ofn) {
         DArrayType_finalize(&generator->stack);
         return ret;
     }
-    
     return 0;
 }
 
@@ -44,6 +43,10 @@ int generator_generate(Generator *generator) {
         return ERR_NULL_PTR;
     }
     int ret = parser_parse(&generator->parser);
+    if (ret) {
+        return ret;
+    }
+    ret = parser_log(&generator->parser, stdout);
     if (ret) {
         return ret;
     }

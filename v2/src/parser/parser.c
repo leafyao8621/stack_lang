@@ -31,7 +31,7 @@ int parser_initialize(Parser *parser, String ifn) {
     ret =
         HashSetString_initialize(
             &parser->int_name,
-            1, hash_function_string,
+            100, hash_function_string,
             eq_function_string
         );
     if (ret) {
@@ -43,7 +43,7 @@ int parser_initialize(Parser *parser, String ifn) {
     ret =
         HashSetString_initialize(
             &parser->str_name,
-            1, hash_function_string,
+            100, hash_function_string,
             eq_function_string
         );
     if (ret) {
@@ -51,6 +51,20 @@ int parser_initialize(Parser *parser, String ifn) {
         DArrayToken_finalize(&parser->stack);
         DArrayCharacter_finalize(&parser->str_buf);
         HashSetString_finalize(&parser->int_name);
+        return ret;
+    }
+    ret =
+        HashMapStringSize_initialize(
+            &parser->arr_name,
+            100, hash_function_string,
+            eq_function_string
+        );
+    if (ret) {
+        DArrayToken_finalize(&parser->tokens);
+        DArrayToken_finalize(&parser->stack);
+        DArrayCharacter_finalize(&parser->str_buf);
+        HashSetString_finalize(&parser->int_name);
+        HashSetString_finalize(&parser->str_name);
         return ret;
     }
     return 0;
@@ -80,7 +94,69 @@ int parser_finalize(Parser *parser) {
     if (ret) {
         return ret;
     }
+    ret = HashMapStringSize_finalize(&parser->arr_name);
     fclose(parser->fin);
+    return 0;
+}
+
+static int handle_int_name(Parser *parser) {
+    int i = 0;
+    int ret = 0;
+    for (
+        int ii = fgetc(parser->fin);
+        !feof(parser->fin) &&
+        ii != ' ' &&
+        ii != '\t' &&
+        ii != '\n';
+        ++i,
+        ii = fgetc(parser->fin)
+    ) {
+        if (!i) {
+            if (
+                (ii >= 'A' && ii <= 'Z') ||
+                (ii >= 'a' && ii <= 'z')
+            ) {
+                char cur = (char)ii;
+                ret = DArrayCharacter_push(&parser->str_buf, &cur);
+                if (ret) {
+                    return ret;
+                }
+            } else {
+                return ERR_INVALID_VAR_NAME;
+            }
+        } else {
+            if (
+                (ii >= 'A' && ii <= 'Z') ||
+                (ii >= 'a' && ii <= 'z') ||
+                (ii >= '0' && ii <= '9') ||
+                ii == '_'
+            ) {
+                char cur = (char)ii;
+                ret = DArrayCharacter_push(&parser->str_buf, &cur);
+                if (ret) {
+                    return ret;
+                }
+            } else {
+                return ERR_INVALID_VAR_NAME;
+            }
+        }
+    }
+    ret = DArrayCharacter_push(&parser->str_buf, "");
+    if (ret) {
+        return ret;
+    }
+    String str = parser->str_buf.data + parser->str_buf.size - i - 1;
+    Token token;
+    token.type = TOKEN_INT_NAME;
+    token.data.int_name = str;
+    ret = DArrayToken_push(&parser->tokens, &token);
+    if (ret) {
+        return ret;
+    }
+    ret = HashSetString_insert(&parser->int_name, &str);
+    if (ret) {
+        return ret;
+    }
     return 0;
 }
 
@@ -88,6 +164,46 @@ int parser_parse(Parser *parser) {
     if (!parser) {
         return ERR_NULL_PTR;
     }
+    int ret = 0;
+    for (
+        int i = fgetc(parser->fin);
+        !feof(parser->fin);
+        i = fgetc(parser->fin)
+    ) {
+        switch (i) {
+        case '#':
+            ret = handle_int_name(parser);
+            break;
+        }
+        if (ret) {
+            return ret;
+        }
+    }
+    return 0;
+}
 
+int parser_log(Parser *parser, FILE *fout) {
+    if (!parser || !fout) {
+        return ERR_NULL_PTR;
+    }
+    fputs("int_name:\n", fout);
+    for (size_t i = 0; i < parser->int_name.capacity; ++i) {
+        if (parser->int_name.data[i].in_use) {
+            fprintf(fout, "%s\n", parser->int_name.data[i].item);
+        }
+    }
+    fputs("tokens:\n", fout);
+    for (size_t i = 0; i < parser->tokens.size; ++i) {
+        fprintf(fout, "idx: %lu\n", i);
+        switch (parser->tokens.data[i].type) {
+        case TOKEN_INT_NAME:
+            fprintf(
+                fout,
+                "INT_NAME\n%s\n",
+                parser->tokens.data[i].data.int_name
+            );
+            break;
+        }
+    }
     return 0;
 }

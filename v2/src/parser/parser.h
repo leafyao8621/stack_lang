@@ -5,10 +5,21 @@
 
 #include "../util/util.h"
 
+#define TOKEN_INT_LIT 0
+#define TOKEN_STR_LIT 1
+#define TOKEN_INT_NAME 2
+#define TOKEN_STR_NAME 3
+#define TOKEN_STR_CHAR 4
+#define TOKEN_ARR_NAME 5
+#define TOKEN_OPERATOR 6
+#define TOKEN_COMMAND 7
+
 typedef uint64_t Type;
 typedef char Character;
 typedef char *String;
 typedef size_t Size;
+typedef uint8_t Operator;
+typedef uint8_t Command;
 
 typedef struct Token {
     Type type;
@@ -17,8 +28,10 @@ typedef struct Token {
         String str_lit;
         String int_name;
         String str_name;
-        char str_char;
+        Character str_char;
         String arr_name;
+        Operator operator;
+        Command command;
     } data;
 } Token;
 
@@ -38,6 +51,7 @@ typedef struct Parser {
 
 int parser_initialize(Parser *parser, String fn);
 int parser_parse(Parser *parser);
+int parser_log(Parser *parser, FILE *fout);
 int parser_finalize(Parser *parser);
 
 #endif
