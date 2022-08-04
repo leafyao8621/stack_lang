@@ -5,6 +5,30 @@ DEF_DRRAY_FUNCTIONS(Character)
 DEF_HASHSET_FUNCTIONS(String)
 DEF_HASHMAP_FUNCTIONS(String, Size)
 
+static const char *lookup[21] = {
+    "+",
+    "-",
+    "*",
+    "/",
+    "%%",
+    "=",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "==",
+    "!=",
+    ">>",
+    "<<",
+    "~",
+    "!",
+    "&",
+    "&&",
+    "|",
+    "||",
+    "[]"
+};
+
 int parser_initialize(Parser *parser, String ifn) {
     if (!parser || !ifn) {
         return ERR_NULL_PTR;
@@ -222,7 +246,6 @@ static int handle_str_name(Parser *parser) {
 }
 
 static int handle_int_lit(Parser *parser, bool negative) {
-    printf("cur: %c\n", parser->str_buf.data[parser->str_buf.size - 1]);
     size_t i = negative ? 2 : 1;
     int ret = 0;
     for (
@@ -249,7 +272,6 @@ static int handle_int_lit(Parser *parser, bool negative) {
         return ret;
     }
     String str = parser->str_buf.data + parser->str_buf.size - i - 1;
-    puts(str);
     Token token;
     token.type = TOKEN_INT_LIT;
     token.data.int_lit = atol(str);
@@ -356,6 +378,12 @@ static int handle_operator(Parser *parser) {
         }
         token.data.operator = TOKEN_OPERATOR_DIVIDE;
         break;
+    case '%':
+        if (cur != ' ' && cur != '\t' && cur != '\n') {
+            return ERR_INVALID_OPERATOR;
+        }
+        token.data.operator = TOKEN_OPERATOR_MODULO;
+        break;
     case '=':
         switch (cur) {
         case '=':
@@ -369,6 +397,94 @@ static int handle_operator(Parser *parser) {
         default:
             return ERR_INVALID_OPERATOR;
         }
+        break;
+    case '>':
+        switch (cur) {
+        case '=':
+            token.data.operator = TOKEN_OPERATOR_GTE;
+            break;
+        case '>':
+            token.data.operator = TOKEN_OPERATOR_RSHIFT;
+            break;
+        case ' ':
+        case '\t':
+        case '\n':
+            token.data.operator = TOKEN_OPERATOR_GT;
+            break;
+        default:
+            return ERR_INVALID_OPERATOR;
+        }
+        break;
+    case '<':
+        switch (cur) {
+        case '=':
+            token.data.operator = TOKEN_OPERATOR_LTE;
+            break;
+        case '>':
+            token.data.operator = TOKEN_OPERATOR_LSHIFT;
+            break;
+        case ' ':
+        case '\t':
+        case '\n':
+            token.data.operator = TOKEN_OPERATOR_LT;
+            break;
+        default:
+            return ERR_INVALID_OPERATOR;
+        }
+        break;
+    case '!':
+        switch (cur) {
+        case '=':
+            token.data.operator = TOKEN_OPERATOR_NEQ;
+            break;
+        case ' ':
+        case '\t':
+        case '\n':
+            token.data.operator = TOKEN_OPERATOR_LNOT;
+            break;
+        default:
+            return ERR_INVALID_OPERATOR;
+        }
+        break;
+    case '~':
+        if (cur != ' ' && cur != '\t' && cur != '\n') {
+            return ERR_INVALID_OPERATOR;
+        }
+        token.data.operator = TOKEN_OPERATOR_BNOT;
+        break;
+    case '&':
+        switch (cur) {
+        case '&':
+            token.data.operator = TOKEN_OPERATOR_LAND;
+            break;
+        case ' ':
+        case '\t':
+        case '\n':
+            token.data.operator = TOKEN_OPERATOR_BAND;
+            break;
+        default:
+            return ERR_INVALID_OPERATOR;
+        }
+        break;
+    case '|':
+        switch (cur) {
+        case '&':
+            token.data.operator = TOKEN_OPERATOR_LOR;
+            break;
+        case ' ':
+        case '\t':
+        case '\n':
+            token.data.operator = TOKEN_OPERATOR_BOR;
+            break;
+        default:
+            return ERR_INVALID_OPERATOR;
+        }
+        break;
+    case '[':
+        if (cur != ']') {
+            return ERR_INVALID_OPERATOR;
+        }
+        token.data.operator = TOKEN_OPERATOR_IDX;
         break;
     }
     ret = DArrayToken_push(&parser->tokens, &token);
@@ -495,8 +611,9 @@ int parser_log(Parser *parser, FILE *fout) {
         case TOKEN_OPERATOR:
             fprintf(
                 fout,
-                "OPERATOR\n%hhu\n",
-                parser->tokens.data[i].data.operator
+                "OPERATOR\ncode: %hhu\nsymb: %s\n",
+                parser->tokens.data[i].data.operator,
+                lookup[parser->tokens.data[i].data.operator]
             );
             break;
         }
