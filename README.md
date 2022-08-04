@@ -33,4 +33,4 @@ Commands Implemented:
 * _end
 * _while
 * _do
-* _alloc
+* _alloc (Removed in v2)
