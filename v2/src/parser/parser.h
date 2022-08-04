@@ -36,12 +36,22 @@
 #define TOKEN_OPERATOR_LOR 19
 #define TOKEN_OPERATOR_IDX 20
 
+#define TOKEN_COMMAND_PRINT 0
+#define TOKEN_COMMAND_PRINTLN 1
+#define TOKEN_COMMAND_IF 2
+#define TOKEN_COMMAND_ELSE 3
+#define TOKEN_COMMAND_WHILE 4
+#define TOKEN_COMMAND_DO 5
+#define TOKEN_COMMAND_END_IF 6
+#define TOKEN_COMMAND_END_LOOP 7
+
 typedef uint64_t Type;
 typedef char Character;
 typedef char *String;
 typedef size_t Size;
 typedef uint8_t Operator;
-typedef uint8_t Command;
+typedef uint64_t CommandType;
+typedef int64_t Offset;
 
 typedef struct Token {
     Type type;
@@ -53,7 +63,29 @@ typedef struct Token {
         Character str_char;
         String arr_name;
         Operator operator;
-        Command command;
+        struct {
+            CommandType type;
+            union {
+                struct {
+                    Offset offset;
+                    size_t idx;
+                } command_if;
+                struct {
+                    Offset offset;
+                    size_t idx;
+                } command_else;
+                size_t command_while;
+                struct {
+                    Offset offset;
+                    size_t idx;
+                } command_do;
+                size_t end_if;
+                struct {
+                    Offset offset;
+                    size_t idx;
+                } command_end_loop;
+            } data;
+        } command;
     } data;
 } Token;
 
@@ -63,6 +95,7 @@ DEF_HASHSET(String)
 DEF_HASHMAP(String, Size)
 
 typedef struct Parser {
+    size_t idx_if, idx_else, idx_while, idx_do, idx_end_if, idx_end_loop;
     DArrayToken tokens, stack;
     DArrayCharacter str_buf;
     HashSetString int_name;

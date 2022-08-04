@@ -33,6 +33,12 @@ int parser_initialize(Parser *parser, String ifn) {
     if (!parser || !ifn) {
         return ERR_NULL_PTR;
     }
+    parser->idx_if = 0;
+    parser->idx_else = 0;
+    parser->idx_while = 0;
+    parser->idx_do = 0;
+    parser->idx_end_if = 0;
+    parser->idx_end_loop = 0;
     parser->fin = fopen(ifn, "r");
     if (!parser->fin) {
         return ERR_FILE_IO;
