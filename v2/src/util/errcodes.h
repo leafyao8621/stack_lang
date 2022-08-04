@@ -6,7 +6,8 @@
 #define ERR_FILE_IO 3
 #define ERR_INVALID_VAR_NAME 4
 #define ERR_INVALID_STR_LIT 5
+#define ERR_INVALID_OPERATOR 6
 
-extern const char *errcode_lookup[6];
+extern const char *errcode_lookup[7];
 
 #endif

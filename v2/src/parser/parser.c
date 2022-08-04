@@ -221,8 +221,9 @@ static int handle_str_name(Parser *parser) {
     return 0;
 }
 
-static int handle_int_lit(Parser *parser) {
-    size_t i = 1;
+static int handle_int_lit(Parser *parser, bool negative) {
+    printf("cur: %c\n", parser->str_buf.data[parser->str_buf.size - 1]);
+    size_t i = negative ? 2 : 1;
     int ret = 0;
     for (
         int ii = fgetc(parser->fin);
@@ -248,6 +249,7 @@ static int handle_int_lit(Parser *parser) {
         return ret;
     }
     String str = parser->str_buf.data + parser->str_buf.size - i - 1;
+    puts(str);
     Token token;
     token.type = TOKEN_INT_LIT;
     token.data.int_lit = atol(str);
@@ -315,6 +317,67 @@ static int handle_str_lit(Parser *parser) {
     return 0;
 }
 
+static int handle_operator(Parser *parser) {
+    char last = parser->str_buf.data[parser->str_buf.size - 1];
+    Token token;
+    token.type = TOKEN_OPERATOR;
+    int in = fgetc(parser->fin);
+    char cur = (char)in;
+    int ret = 0;
+    switch (last) {
+    case '+':
+        if (cur != ' ' && cur != '\t' && cur != '\n') {
+            return ERR_INVALID_OPERATOR;
+        }
+        token.data.operator = TOKEN_OPERATOR_ADD;
+        break;
+    case '-':
+        if (cur >= '0' && cur <= '9') {
+            ret = DArrayCharacter_push(&parser->str_buf, &cur);
+            if (ret) {
+                return ret;
+            }
+            return handle_int_lit(parser, true);
+        }
+        if (cur != ' ' && cur != '\t' && cur != '\n') {
+            return ERR_INVALID_OPERATOR;
+        }
+        token.data.operator = TOKEN_OPERATOR_SUBTRACT;
+        break;
+    case '*':
+        if (cur != ' ' && cur != '\t' && cur != '\n') {
+            return ERR_INVALID_OPERATOR;
+        }
+        token.data.operator = TOKEN_OPERATOR_MULTIPLY;
+        break;
+    case '/':
+        if (cur != ' ' && cur != '\t' && cur != '\n') {
+            return ERR_INVALID_OPERATOR;
+        }
+        token.data.operator = TOKEN_OPERATOR_DIVIDE;
+        break;
+    case '=':
+        switch (cur) {
+        case '=':
+            token.data.operator = TOKEN_OPERATOR_EQ;
+            break;
+        case ' ':
+        case '\t':
+        case '\n':
+            token.data.operator = TOKEN_OPERATOR_ASSIGN;
+            break;
+        default:
+            return ERR_INVALID_OPERATOR;
+        }
+        break;
+    }
+    ret = DArrayToken_push(&parser->tokens, &token);
+    if (ret) {
+        return ret;
+    }
+    return 0;
+}
+
 int parser_parse(Parser *parser) {
     if (!parser) {
         return ERR_NULL_PTR;
@@ -348,10 +411,30 @@ int parser_parse(Parser *parser) {
             if (ret) {
                 return ret;
             }
-            ret = handle_int_lit(parser);
+            ret = handle_int_lit(parser, false);
             break;
         case '"':
             ret = handle_str_lit(parser);
+            break;
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '%':
+        case '=':
+        case '>':
+        case '<':
+        case '!':
+        case '~':
+        case '&':
+        case '|':
+        case '[':
+            cur = (char)i;
+            ret = DArrayCharacter_push(&parser->str_buf, &cur);
+            if (ret) {
+                return ret;
+            }
+            ret = handle_operator(parser);
             break;
         }
         if (ret) {
@@ -407,6 +490,13 @@ int parser_log(Parser *parser, FILE *fout) {
                 fout,
                 "STR_LIT\n%s\n",
                 parser->tokens.data[i].data.str_lit
+            );
+            break;
+        case TOKEN_OPERATOR:
+            fprintf(
+                fout,
+                "OPERATOR\n%hhu\n",
+                parser->tokens.data[i].data.operator
             );
             break;
         }
