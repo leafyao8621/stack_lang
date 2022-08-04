@@ -13,7 +13,8 @@ int main(int argc, char **argv) {
     }
     ret = generator_generate(&generator);
     if (ret) {
-        printf("errcode: %d\n", ret);
+        printf("errcode: %d\ndescription: %s\n", ret, errcode_lookup[ret]);
+        generator_finalize(&generator);
         return 1;
     }
     ret = generator_finalize(&generator);

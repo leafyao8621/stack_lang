@@ -248,10 +248,66 @@ static int handle_int_lit(Parser *parser) {
         return ret;
     }
     String str = parser->str_buf.data + parser->str_buf.size - i - 1;
-    puts(str);
     Token token;
     token.type = TOKEN_INT_LIT;
     token.data.int_lit = atol(str);
+    ret = DArrayToken_push(&parser->tokens, &token);
+    if (ret) {
+        return ret;
+    }
+    return 0;
+}
+
+static int handle_str_lit(Parser *parser) {
+    size_t i = 0;
+    int ii = 0;
+    int ret = 0;
+    char cur = 0;
+    for (
+        ii = fgetc(parser->fin);
+        !feof(parser->fin) &&
+        ii != '"';
+        ++i,
+        ii = fgetc(parser->fin)
+    ) {
+        cur = (char)ii;
+        if (cur == '\\') {
+            ii = fgetc(parser->fin);
+            cur = (char)ii;
+            switch (cur) {
+            case 'n':
+                cur = '\n';
+                break;
+            case 't':
+                cur = '\t';
+                break;
+            case '"':
+                cur = '"';
+                break;
+            case '\\':
+                cur = '\\';
+                break;
+            default:
+                puts("fail");
+                return ERR_INVALID_STR_LIT;
+            }
+        }
+        ret = DArrayCharacter_push(&parser->str_buf, &cur);
+        if (ret) {
+            return ret;
+        }
+    }
+    if (ii != '"') {
+        return ERR_INVALID_STR_LIT;
+    }
+    ret = DArrayCharacter_push(&parser->str_buf, "");
+    if (ret) {
+        return ret;
+    }
+    String str = parser->str_buf.data + parser->str_buf.size - i - 1;
+    Token token;
+    token.type = TOKEN_STR_LIT;
+    token.data.str_lit = str;
     ret = DArrayToken_push(&parser->tokens, &token);
     if (ret) {
         return ret;
@@ -293,6 +349,9 @@ int parser_parse(Parser *parser) {
                 return ret;
             }
             ret = handle_int_lit(parser);
+            break;
+        case '"':
+            ret = handle_str_lit(parser);
             break;
         }
         if (ret) {
@@ -341,6 +400,13 @@ int parser_log(Parser *parser, FILE *fout) {
                 fout,
                 "INT_LIT\n%ld\n",
                 parser->tokens.data[i].data.int_lit
+            );
+            break;
+        case TOKEN_STR_LIT:
+            fprintf(
+                fout,
+                "STR_LIT\n%s\n",
+                parser->tokens.data[i].data.str_lit
             );
             break;
         }

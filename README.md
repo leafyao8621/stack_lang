@@ -27,6 +27,7 @@ Operators implemented:
 
 Commands Implemented:
 * _print
+* _println
 * _if
 * _else
 * _end
