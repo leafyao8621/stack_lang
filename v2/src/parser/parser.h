@@ -95,6 +95,7 @@ DEF_DARRAY(Character)
 DEF_DARRAY(String)
 DEF_HASHSET(String)
 DEF_HASHMAP(String, Size)
+DEF_HASHMAP(String, Idx)
 
 typedef struct Parser {
     size_t idx_if, idx_else, idx_while, idx_do, idx_end_if, idx_end_loop;
@@ -104,6 +105,7 @@ typedef struct Parser {
     HashSetString int_name;
     HashSetString str_name;
     HashMapStringSize arr_name;
+    HashMapStringIdx handler_lookup;
     FILE *fin;
 } Parser;
 
