@@ -2,6 +2,7 @@
 
 DEF_DRRAY_FUNCTIONS(Token)
 DEF_DRRAY_FUNCTIONS(Character)
+DEF_DRRAY_FUNCTIONS(String)
 DEF_HASHSET_FUNCTIONS(String)
 DEF_HASHMAP_FUNCTIONS(String, Size)
 
@@ -54,8 +55,10 @@ int parser_initialize(Parser *parser, String ifn) {
     }
     ret = DArrayCharacter_initialize(&parser->str_buf, 1000);
     if (ret) {
-        DArrayToken_finalize(&parser->tokens);
-        DArrayToken_finalize(&parser->stack);
+        return ret;
+    }
+    ret = DArrayString_initialize(&parser->str_lit, 100);
+    if (ret) {
         return ret;
     }
     ret =
@@ -65,9 +68,6 @@ int parser_initialize(Parser *parser, String ifn) {
             eq_function_string
         );
     if (ret) {
-        DArrayToken_finalize(&parser->tokens);
-        DArrayToken_finalize(&parser->stack);
-        DArrayCharacter_finalize(&parser->str_buf);
         return ret;
     }
     ret =
@@ -77,10 +77,6 @@ int parser_initialize(Parser *parser, String ifn) {
             eq_function_string
         );
     if (ret) {
-        DArrayToken_finalize(&parser->tokens);
-        DArrayToken_finalize(&parser->stack);
-        DArrayCharacter_finalize(&parser->str_buf);
-        HashSetString_finalize(&parser->int_name);
         return ret;
     }
     ret =
@@ -90,11 +86,6 @@ int parser_initialize(Parser *parser, String ifn) {
             eq_function_string
         );
     if (ret) {
-        DArrayToken_finalize(&parser->tokens);
-        DArrayToken_finalize(&parser->stack);
-        DArrayCharacter_finalize(&parser->str_buf);
-        HashSetString_finalize(&parser->int_name);
-        HashSetString_finalize(&parser->str_name);
         return ret;
     }
     return 0;
@@ -113,6 +104,10 @@ int parser_finalize(Parser *parser) {
         return ret;
     }
     ret = DArrayCharacter_finalize(&parser->str_buf);
+    if (ret) {
+        return ret;
+    }
+    ret = DArrayString_finalize(&parser->str_lit);
     if (ret) {
         return ret;
     }
@@ -270,7 +265,7 @@ static int handle_int_lit(Parser *parser, bool negative) {
                 return ret;
             }
         } else {
-            return ERR_INVALID_VAR_NAME;
+            return ERR_INVALID_INT_LIT;
         }
     }
     ret = DArrayCharacter_push(&parser->str_buf, "");
@@ -337,7 +332,11 @@ static int handle_str_lit(Parser *parser) {
     String str = parser->str_buf.data + parser->str_buf.size - i - 1;
     Token token;
     token.type = TOKEN_STR_LIT;
-    token.data.str_lit = str;
+    token.data.str_lit = parser->str_lit.size;
+    ret = DArrayString_push(&parser->str_lit, &str);
+    if (ret) {
+        return ret;
+    }
     ret = DArrayToken_push(&parser->tokens, &token);
     if (ret) {
         return ret;
@@ -500,6 +499,117 @@ static int handle_operator(Parser *parser) {
     return 0;
 }
 
+static int handle_arr_name(Parser *parser) {
+    size_t i = 0;
+    int ret = 0;
+    int ii = 0;
+    char cur = 0;
+    for (
+        ii = fgetc(parser->fin);
+        !feof(parser->fin) &&
+        ii != ' ' &&
+        ii != '[' &&
+        ii != '\t' &&
+        ii != '\n';
+        ++i,
+        ii = fgetc(parser->fin)
+    ) {
+        if (!i) {
+            if (
+                (ii >= 'A' && ii <= 'Z') ||
+                (ii >= 'a' && ii <= 'z')
+            ) {
+                cur = (char)ii;
+                ret = DArrayCharacter_push(&parser->str_buf, &cur);
+                if (ret) {
+                    return ret;
+                }
+            } else {
+                return ERR_INVALID_VAR_NAME;
+            }
+        } else {
+            if (
+                (ii >= 'A' && ii <= 'Z') ||
+                (ii >= 'a' && ii <= 'z') ||
+                (ii >= '0' && ii <= '9') ||
+                ii == '_'
+            ) {
+                cur = (char)ii;
+                ret = DArrayCharacter_push(&parser->str_buf, &cur);
+                if (ret) {
+                    return ret;
+                }
+            } else {
+                return ERR_INVALID_VAR_NAME;
+            }
+        }
+    }
+    ret = DArrayCharacter_push(&parser->str_buf, "");
+    if (ret) {
+        return ret;
+    }
+    String str = parser->str_buf.data + parser->str_buf.size - i - 1;
+    Token token;
+    token.type = TOKEN_ARR_NAME;
+    token.data.str_name = str;
+    bool found = false;
+    ret = HashMapStringSize_check(&parser->arr_name, &str, &found);
+    if (ret) {
+        return ret;
+    }
+    if (!found) {
+        cur = (char)ii;
+        if (cur != '[') {
+            return ERR_ARR_NOT_INITIALIZED;
+        }
+        i = 0;
+        for (
+            ii = fgetc(parser->fin);
+            !feof(parser->fin) &&
+            ii != ']' &&
+            ii != ' ' &&
+            ii != '\t' &&
+            ii != '\n';
+            ++i,
+            ii = fgetc(parser->fin)
+        ) {
+            if (ii >= '0' && ii <= '9') {
+                cur = (char)ii;
+                ret = DArrayCharacter_push(&parser->str_buf, &cur);
+                if (ret) {
+                    return ret;
+                }
+            } else {
+                return ERR_INVALID_ARR_SIZE;
+            }
+        }
+        cur = (char)ii;
+        if (cur != ']') {
+            return ERR_INVALID_ARR_SIZE;
+        }
+        ret = DArrayCharacter_push(&parser->str_buf, "");
+        if (ret) {
+            return ret;
+        }
+        String str_size = parser->str_buf.data + parser->str_buf.size - i - 1;
+        Size size = (Size)atol(str_size);
+        Size *tgt = 0;
+        ret = HashMapStringSize_fetch(&parser->arr_name, &str, &tgt);
+        if (ret) {
+            return ret;
+        }
+        *tgt = size;
+    }
+    ret = DArrayToken_push(&parser->tokens, &token);
+    if (ret) {
+        return ret;
+    }
+    ret = HashSetString_insert(&parser->str_name, &str);
+    if (ret) {
+        return ret;
+    }
+    return 0;
+}
 int parser_parse(Parser *parser) {
     if (!parser) {
         return ERR_NULL_PTR;
@@ -558,6 +668,12 @@ int parser_parse(Parser *parser) {
             }
             ret = handle_operator(parser);
             break;
+        case '@':
+            ret = handle_arr_name(parser);
+            if (ret) {
+                return ret;
+            }
+            break;
         }
         if (ret) {
             return ret;
@@ -569,6 +685,10 @@ int parser_parse(Parser *parser) {
 int parser_log(Parser *parser, FILE *fout) {
     if (!parser || !fout) {
         return ERR_NULL_PTR;
+    }
+    fputs("str_lit:\n", fout);
+    for (size_t i = 0; i < parser->str_lit.size; ++i) {
+        fprintf(fout, "idx: %lu\n%s\n", i, parser->str_lit.data[i]);
     }
     fputs("int_name:\n", fout);
     for (size_t i = 0; i < parser->int_name.capacity; ++i) {
@@ -582,9 +702,20 @@ int parser_log(Parser *parser, FILE *fout) {
             fprintf(fout, "%s\n", parser->str_name.data[i].item);
         }
     }
+    fputs("arr_name:\n", fout);
+    for (size_t i = 0; i < parser->arr_name.capacity; ++i) {
+        if (parser->arr_name.data[i].in_use) {
+            fprintf(
+                fout,
+                "name: %s\nsize: %lu\n",
+                parser->arr_name.data[i].key,
+                parser->arr_name.data[i].value
+            );
+        }
+    }
     fputs("tokens:\n", fout);
     for (size_t i = 0; i < parser->tokens.size; ++i) {
-        fprintf(fout, "idx: %lu\n", i);
+        fprintf(fout, "position: %lu\n", i);
         switch (parser->tokens.data[i].type) {
         case TOKEN_INT_NAME:
             fprintf(
@@ -610,16 +741,24 @@ int parser_log(Parser *parser, FILE *fout) {
         case TOKEN_STR_LIT:
             fprintf(
                 fout,
-                "STR_LIT\n%s\n",
-                parser->tokens.data[i].data.str_lit
+                "STR_LIT\nidx: %lu\nstr: %s\n",
+                parser->tokens.data[i].data.str_lit,
+                parser->str_lit.data[parser->tokens.data[i].data.str_lit]
             );
             break;
         case TOKEN_OPERATOR:
             fprintf(
                 fout,
-                "OPERATOR\ncode: %hhu\nsymb: %s\n",
+                "OPERATOR\nidx: %hhu\nsymb: %s\n",
                 parser->tokens.data[i].data.operator,
                 lookup[parser->tokens.data[i].data.operator]
+            );
+            break;
+        case TOKEN_ARR_NAME:
+            fprintf(
+                fout,
+                "ARR_NAME\n%s\n",
+                parser->tokens.data[i].data.arr_name
             );
             break;
         }

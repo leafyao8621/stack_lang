@@ -16,7 +16,6 @@ int generator_initialize(Generator *generator, String ifn, String ofn) {
     }
     ret = parser_initialize(&generator->parser, ifn);
     if (ret) {
-        DArrayType_finalize(&generator->stack);
         return ret;
     }
     return 0;

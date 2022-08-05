@@ -49,6 +49,7 @@ typedef uint64_t Type;
 typedef char Character;
 typedef char *String;
 typedef size_t Size;
+typedef size_t Idx;
 typedef uint8_t Operator;
 typedef uint64_t CommandType;
 typedef int64_t Offset;
@@ -57,7 +58,7 @@ typedef struct Token {
     Type type;
     union {
         int64_t int_lit;
-        String str_lit;
+        Idx str_lit;
         String int_name;
         String str_name;
         Character str_char;
@@ -68,21 +69,21 @@ typedef struct Token {
             union {
                 struct {
                     Offset offset;
-                    size_t idx;
+                    Idx idx;
                 } command_if;
                 struct {
                     Offset offset;
-                    size_t idx;
+                    Idx idx;
                 } command_else;
-                size_t command_while;
+                Idx command_while;
                 struct {
                     Offset offset;
-                    size_t idx;
+                    Idx idx;
                 } command_do;
-                size_t end_if;
+                Idx end_if;
                 struct {
                     Offset offset;
-                    size_t idx;
+                    Idx idx;
                 } command_end_loop;
             } data;
         } command;
@@ -91,6 +92,7 @@ typedef struct Token {
 
 DEF_DARRAY(Token)
 DEF_DARRAY(Character)
+DEF_DARRAY(String)
 DEF_HASHSET(String)
 DEF_HASHMAP(String, Size)
 
@@ -98,6 +100,7 @@ typedef struct Parser {
     size_t idx_if, idx_else, idx_while, idx_do, idx_end_if, idx_end_loop;
     DArrayToken tokens, stack;
     DArrayCharacter str_buf;
+    DArrayString str_lit;
     HashSetString int_name;
     HashSetString str_name;
     HashMapStringSize arr_name;

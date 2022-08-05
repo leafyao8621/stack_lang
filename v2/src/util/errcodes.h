@@ -7,7 +7,10 @@
 #define ERR_INVALID_VAR_NAME 4
 #define ERR_INVALID_STR_LIT 5
 #define ERR_INVALID_OPERATOR 6
+#define ERR_ARR_NOT_INITIALIZED 7
+#define ERR_INVALID_INT_LIT 8
+#define ERR_INVALID_ARR_SIZE 9
 
-extern const char *errcode_lookup[7];
+extern const char *errcode_lookup[10];
 
 #endif

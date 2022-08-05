@@ -1,7 +1,7 @@
 @arr[30]
 #i 0 =
 _while #i 30 < _do
-    @a #i [] #i 3 % =
+    @arr #i [] #i 3 % =
     #i #i 1 + =
 _end
 

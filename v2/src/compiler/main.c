@@ -9,6 +9,7 @@ int main(int argc, char **argv) {
     int ret = generator_initialize(&generator, argv[1], argv[2]);
     if (ret) {
         printf("errcode: %d\n", ret);
+        generator_finalize(&generator);
         return 1;
     }
     ret = generator_generate(&generator);
