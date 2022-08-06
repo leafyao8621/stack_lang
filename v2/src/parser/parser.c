@@ -31,7 +31,7 @@ static const char *lookup[21] = {
     "[]"
 };
 
-static String commands[8] = {
+static String commands[9] = {
     "input",
     "print",
     "println",
@@ -39,6 +39,7 @@ static String commands[8] = {
     "else",
     "while",
     "do",
+    "end",
     "end"
 };
 
