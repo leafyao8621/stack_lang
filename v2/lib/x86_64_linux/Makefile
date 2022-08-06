@@ -1,11 +1,16 @@
-AS = gcc
+AS = as
 LD = ld
 SRC = main.s
+OBJ = main.o
 BIN = main
 
-$(BIN): $(SRC)
-	$(AS) -o $(BIN) $(SRC)
+%.o: %.s
+	$(AS) $< -o $@
+
+$(BIN): $(OBJ)
+	$(LD) $(OBJ) -o $(BIN)
 
 .PHONY: clean
 clean:
+	@rm $(OBJ)
 	@rm $(BIN)
