@@ -31,16 +31,19 @@ static const char *lookup[21] = {
     "[]"
 };
 
+static String commands[8] = {
+    "input",
+    "print",
+    "println",
+    "if",
+    "else",
+    "while",
+    "do",
+    "end"
+};
+
 int parser_initialize(Parser *parser, String ifn) {
-    static String commands[7] = {
-        "print",
-        "println",
-        "if",
-        "else",
-        "while",
-        "do",
-        "end"
-    };
+    
     if (!parser || !ifn) {
         return ERR_NULL_PTR;
     }
@@ -108,7 +111,7 @@ int parser_initialize(Parser *parser, String ifn) {
         return ret;
     }
     String *iter = commands;
-    for (size_t i = 0; i < 7; ++i, ++iter) {
+    for (size_t i = 0; i < 8; ++i, ++iter) {
         Idx *ptr = 0;
         ret = HashMapStringIdx_fetch(&parser->handler_lookup, iter, &ptr);
         if (ret) {
@@ -646,7 +649,8 @@ static int handle_arr_name(Parser *parser) {
     return 0;
 }
 
-// static int (*handlers[7])(Parser*) = {
+// static int (*handlers[8])(Parser*) = {
+//     0,
 //     0,
 //     0,
 //     0,
@@ -655,6 +659,76 @@ static int handle_arr_name(Parser *parser) {
 //     0,
 //     0
 // };
+
+static int handle_command(Parser *parser) {
+    size_t i = 0;
+    int ret = 0;
+    for (
+        int ii = fgetc(parser->fin);
+        !feof(parser->fin) &&
+        ii != ' ' &&
+        ii != '\t' &&
+        ii != '\n';
+        ++i,
+        ii = fgetc(parser->fin)
+    ) {
+        if (!i) {
+            if (
+                (ii >= 'A' && ii <= 'Z') ||
+                (ii >= 'a' && ii <= 'z')
+            ) {
+                char cur = (char)ii;
+                ret = DArrayCharacter_push(&parser->str_buf, &cur);
+                if (ret) {
+                    return ret;
+                }
+            } else {
+                return ERR_INVALID_VAR_NAME;
+            }
+        } else {
+            if (
+                (ii >= 'A' && ii <= 'Z') ||
+                (ii >= 'a' && ii <= 'z') ||
+                (ii >= '0' && ii <= '9') ||
+                ii == '_'
+            ) {
+                char cur = (char)ii;
+                ret = DArrayCharacter_push(&parser->str_buf, &cur);
+                if (ret) {
+                    return ret;
+                }
+            } else {
+                return ERR_INVALID_VAR_NAME;
+            }
+        }
+    }
+    ret = DArrayCharacter_push(&parser->str_buf, "");
+    if (ret) {
+        return ret;
+    }
+    String str = parser->str_buf.data + parser->str_buf.size - i - 1;
+    bool found = false;
+    ret = HashMapStringIdx_check(&parser->handler_lookup, &str, &found);
+    if (ret) {
+        return ret;
+    }
+    if (!found) {
+        return ERR_INVALID_COMMAND;
+    }
+    Idx *idx = 0;
+    ret = HashMapStringIdx_fetch(&parser->handler_lookup, &str, &idx);
+    if (ret) {
+        return ret;
+    }
+    Token token;
+    token.type = TOKEN_COMMAND;
+    token.data.command.type = *idx;
+    ret = DArrayToken_push(&parser->tokens, &token);
+    if (ret) {
+        return ret;
+    }
+    return 0;
+}
 
 int parser_parse(Parser *parser) {
     if (!parser) {
@@ -716,6 +790,12 @@ int parser_parse(Parser *parser) {
             break;
         case '@':
             ret = handle_arr_name(parser);
+            if (ret) {
+                return ret;
+            }
+            break;
+        case '_':
+            ret = handle_command(parser);
             if (ret) {
                 return ret;
             }
@@ -805,6 +885,14 @@ int parser_log(Parser *parser, FILE *fout) {
                 fout,
                 "ARR_NAME\n%s\n",
                 parser->tokens.data[i].data.arr_name
+            );
+            break;
+        case TOKEN_COMMAND:
+            fprintf(
+                fout,
+                "COMMAND\nidx: %lu\nname: %s\n",
+                parser->tokens.data[i].data.command.type,
+                commands[parser->tokens.data[i].data.command.type]
             );
             break;
         }
