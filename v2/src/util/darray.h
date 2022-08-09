@@ -11,7 +11,7 @@ typedef struct DArray##Type {\
     Type *data;\
 } DArray##Type;
 
-#define DEF_DRRAY_FUNCTIONS(Type)\
+#define DEF_DARRAY_FUNCTIONS(Type)\
 int DArray##Type##_initialize(DArray##Type *darray, size_t capacity);\
 int DArray##Type##_push(DArray##Type *darray, Type *item);\
 int DArray##Type##_finalize(DArray##Type *darray);\
