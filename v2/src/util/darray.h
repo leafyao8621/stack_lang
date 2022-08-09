@@ -38,6 +38,16 @@ int DArray##Type##_push(DArray##Type *darray, Type *item) {\
     darray->data[darray->size++] = *item;\
     return 0;\
 }\
+int DArray##Type##_pop(DArray##Type *darray) {\
+    if (!darray) {\
+        return ERR_NULL_PTR;\
+    }\
+    if (!darray->size) {\
+        return ERR_EMPTY_DARRAY;\
+    }\
+    --darray->size;\
+    return 0;\
+}\
 int DArray##Type##_finalize(DArray##Type *darray) {\
     if (!darray) {\
         return ERR_NULL_PTR;\
