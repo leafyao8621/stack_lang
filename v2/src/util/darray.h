@@ -14,6 +14,7 @@ typedef struct DArray##Type {\
 #define DEF_DARRAY_FUNCTIONS(Type)\
 int DArray##Type##_initialize(DArray##Type *darray, size_t capacity);\
 int DArray##Type##_push(DArray##Type *darray, Type *item);\
+int DArray##Type##_pop(DArray##Type *darray);\
 int DArray##Type##_finalize(DArray##Type *darray);\
 int DArray##Type##_initialize(DArray##Type *darray, size_t capacity) {\
     if (!darray) {\
