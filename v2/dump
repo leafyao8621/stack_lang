@@ -1,0 +1,148 @@
+str_lit:
+int_name:
+bc
+var_a
+str_name:
+arr_name:
+tokens:
+position: 0
+INT_NAME
+var_a
+position: 1
+INT_LIT
+90
+position: 2
+OPERATOR
+idx: 5
+symb: =
+position: 3
+INT_NAME
+var_a
+position: 4
+COMMAND
+idx: 1
+name: print
+position: 5
+INT_NAME
+bc
+position: 6
+INT_NAME
+var_a
+position: 7
+INT_LIT
+1
+position: 8
+OPERATOR
+idx: 0
+symb: +
+position: 9
+OPERATOR
+idx: 5
+symb: =
+position: 10
+INT_NAME
+bc
+position: 11
+COMMAND
+idx: 1
+name: print
+position: 12
+INT_NAME
+var_a
+position: 13
+INT_NAME
+bc
+position: 14
+OPERATOR
+idx: 6
+symb: >
+position: 15
+COMMAND
+idx: 3
+name: if
+offset: 0
+idx: 0
+position: 16
+INT_LIT
+1
+position: 17
+COMMAND
+idx: 1
+name: print
+position: 18
+COMMAND
+idx: 4
+name: else
+position: 19
+INT_NAME
+var_a
+position: 20
+INT_LIT
+90
+position: 21
+OPERATOR
+idx: 8
+symb: >=
+position: 22
+COMMAND
+idx: 3
+name: if
+offset: 0
+idx: 1
+position: 23
+INT_LIT
+2
+position: 24
+COMMAND
+idx: 1
+name: print
+position: 25
+COMMAND
+idx: 4
+name: else
+position: 26
+INT_NAME
+var_a
+position: 27
+INT_LIT
+80
+position: 28
+OPERATOR
+idx: 6
+symb: >
+position: 29
+COMMAND
+idx: 3
+name: if
+offset: 0
+idx: 2
+position: 30
+INT_LIT
+3
+position: 31
+COMMAND
+idx: 1
+name: print
+position: 32
+COMMAND
+idx: 4
+name: else
+position: 33
+INT_LIT
+4
+position: 34
+COMMAND
+idx: 1
+name: print
+position: 35
+COMMAND
+idx: 7
+name: end
+position: 36
+COMMAND
+idx: 7
+name: end
+position: 37
+COMMAND
+idx: 7
+name: end

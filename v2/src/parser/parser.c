@@ -1,8 +1,9 @@
 #include "parser.h"
 
-DEF_DRRAY_FUNCTIONS(Token)
-DEF_DRRAY_FUNCTIONS(Character)
-DEF_DRRAY_FUNCTIONS(String)
+DEF_DARRAY_FUNCTIONS(Token)
+DEF_DARRAY_FUNCTIONS(Character)
+DEF_DARRAY_FUNCTIONS(String)
+DEF_DARRAY_FUNCTIONS(Idx)
 DEF_HASHSET_FUNCTIONS(String)
 DEF_HASHMAP_FUNCTIONS(String, Size)
 DEF_HASHMAP_FUNCTIONS(String, Idx)
@@ -62,9 +63,9 @@ int parser_initialize(Parser *parser, String ifn) {
     if (ret) {
         return ret;
     }
-    ret = DArrayToken_initialize(&parser->stack, 5);
+    ret = DArrayIdx_initialize(&parser->stack, 100);
     if (ret) {
-        DArrayToken_finalize(&parser->tokens);
+        DArrayIdx_finalize(&parser->stack);
         return ret;
     }
     ret = DArrayCharacter_initialize(&parser->str_buf, 1000);
@@ -131,7 +132,7 @@ int parser_finalize(Parser *parser) {
     if (ret) {
         return ret;
     }
-    ret = DArrayToken_finalize(&parser->stack);
+    ret = DArrayIdx_finalize(&parser->stack);
     if (ret) {
         return ret;
     }
@@ -650,16 +651,28 @@ static int handle_arr_name(Parser *parser) {
     return 0;
 }
 
-// static int (*handlers[8])(Parser*) = {
-//     0,
-//     0,
-//     0,
-//     0,
-//     0,
-//     0,
-//     0,
-//     0
-// };
+static int handle_command_if(Parser *parser) {
+    Idx idx = parser->tokens.size - 1;
+    Token *token = parser->tokens.data + idx;
+    token->data.command.data.command_if.idx = parser->idx_if++;
+    token->data.command.data.command_if.offset = 0;
+    int ret = DArrayIdx_push(&parser->stack, &idx);
+    if (ret) {
+        return 0;
+    }
+    return 0;
+}
+
+static int (*handlers[8])(Parser*) = {
+    0,
+    0,
+    0,
+    handle_command_if,
+    0,
+    0,
+    0,
+    0
+};
 
 static int handle_command(Parser *parser) {
     size_t i = 0;
@@ -727,6 +740,12 @@ static int handle_command(Parser *parser) {
     ret = DArrayToken_push(&parser->tokens, &token);
     if (ret) {
         return ret;
+    }
+    if (handlers[*idx]) {
+        ret = handlers[*idx](parser);
+        if (ret) {
+            return ret;
+        }
     }
     return 0;
 }
@@ -895,6 +914,16 @@ int parser_log(Parser *parser, FILE *fout) {
                 parser->tokens.data[i].data.command.type,
                 commands[parser->tokens.data[i].data.command.type]
             );
+            switch (parser->tokens.data[i].data.command.type) {
+            case TOKEN_COMMAND_IF:
+                fprintf(
+                    fout,
+                    "offset: %ld\nidx: %lu\n",
+                    parser->tokens.data[i].data.command.data.command_if.offset,
+                    parser->tokens.data[i].data.command.data.command_if.idx
+                );
+                break;
+            }
             break;
         }
     }

@@ -94,13 +94,15 @@ typedef struct Token {
 DEF_DARRAY(Token)
 DEF_DARRAY(Character)
 DEF_DARRAY(String)
+DEF_DARRAY(Idx)
 DEF_HASHSET(String)
 DEF_HASHMAP(String, Size)
 DEF_HASHMAP(String, Idx)
 
 typedef struct Parser {
     size_t idx_if, idx_else, idx_while, idx_do, idx_end_if, idx_end_loop;
-    DArrayToken tokens, stack;
+    DArrayToken tokens;
+    DArrayIdx stack;
     DArrayCharacter str_buf;
     DArrayString str_lit;
     HashSetString int_name;

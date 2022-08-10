@@ -11,7 +11,8 @@
 #define ERR_INVALID_INT_LIT 8
 #define ERR_INVALID_ARR_SIZE 9
 #define ERR_INVALID_COMMAND 10
+#define ERR_EMPTY_DARRAY 11
 
-extern const char *errcode_lookup[11];
+extern const char *errcode_lookup[12];
 
 #endif

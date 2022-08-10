@@ -11,7 +11,7 @@ typedef struct DArray##Type {\
     Type *data;\
 } DArray##Type;
 
-#define DEF_DRRAY_FUNCTIONS(Type)\
+#define DEF_DARRAY_FUNCTIONS(Type)\
 int DArray##Type##_initialize(DArray##Type *darray, size_t capacity);\
 int DArray##Type##_push(DArray##Type *darray, Type *item);\
 int DArray##Type##_finalize(DArray##Type *darray);\
@@ -36,6 +36,16 @@ int DArray##Type##_push(DArray##Type *darray, Type *item) {\
         darray->data = realloc(darray->data, sizeof(Type) * darray->capacity);\
     }\
     darray->data[darray->size++] = *item;\
+    return 0;\
+}\
+int DArray##Type##_pop(DArray##Type *darray) {\
+    if (!darray) {\
+        return ERR_NULL_PTR;\
+    }\
+    if (!darray->size) {\
+        return ERR_EMPTY_DARRAY;\
+    }\
+    --darray->size;\
     return 0;\
 }\
 int DArray##Type##_finalize(DArray##Type *darray) {\

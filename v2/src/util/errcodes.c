@@ -1,6 +1,6 @@
 #include "errcodes.h"
 
-const char *errcode_lookup[11] = {
+const char *errcode_lookup[12] = {
     "ERR_OK",
     "ERR_NULL_PTR",
     "ERR_OUT_OF_MEMORY",
@@ -11,5 +11,6 @@ const char *errcode_lookup[11] = {
     "ERR_ARR_NOT_INITIALIZED",
     "ERR_INVALID_INT_LIT",
     "ERR_INVALID_ARR_SIZE",
-    "ERR_INVALID_COMMAND"
+    "ERR_INVALID_COMMAND",
+    "ERR_EMPTY_DARRAY"
 };
