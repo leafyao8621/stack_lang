@@ -4,7 +4,6 @@ SRC = $(wildcard src/*/*.c) $(wildcard src/*/*/*.c)
 SRC_COMPILER = src/parser/parser.c $(wildcard src/compiler/*.c) $(wildcard src/compiler/*/*.c) $(wildcard src/util/*.c) $(wildcard src/util/*/*.c)
 OBJ_COMPILER = $(SRC_COMPILER:.c=.o)
 BIN_COMPILER = slc
-LIB = lib/x86_64_linux
 
 %.o: %.c
 	$(CC) $(CFLAGS) -g -c $< -o $@
@@ -20,4 +19,3 @@ clean:
 	@rm $(BIN_COMPILER)
 install: $(BIN_COMPILER)
 	@cp $(BIN_COMPILER) ~/.local/bin
-	@cp -r $(LIB) ~/.local/lib/slc
