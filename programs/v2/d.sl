@@ -4,7 +4,7 @@
 #bc _println
 
 #var_a #bc < _if
-    -1 _printlnln
+    -1 _println
 _end
 
 #var_a #bc > _if
