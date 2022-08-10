@@ -13,7 +13,7 @@ static const char *lookup[21] = {
     "-",
     "*",
     "/",
-    "%%",
+    "%",
     "=",
     ">",
     "<",
@@ -513,7 +513,7 @@ static int handle_operator(Parser *parser) {
         break;
     case '|':
         switch (cur) {
-        case '&':
+        case '|':
             token.data.operator = TOKEN_OPERATOR_LOR;
             break;
         case ' ':
@@ -658,7 +658,7 @@ static int handle_command_if(Parser *parser) {
     token->data.command.data.command_if.offset = (Offset)idx;
     int ret = DArrayIdx_push(&parser->stack, &idx);
     if (ret) {
-        return 0;
+        return ret;
     }
     return 0;
 }
@@ -681,8 +681,31 @@ static int handle_command_else(Parser *parser) {
         return ret;
     }
     back_token->data.command.data.command_if.offset =
-        (Offset)idx - (Offset)back_token->data.command.data.command_if.offset;
+        (Offset)idx - (Offset)back;
     ret = DArrayIdx_push(&parser->stack, &idx);
+    if (ret) {
+        return ret;
+    }
+    return 0;
+}
+
+static int handle_command_while(Parser *parser) {
+    Idx idx = parser->tokens.size - 1;
+    Token *token = parser->tokens.data + idx;
+    token->data.command.data.command_while = parser->idx_while++;
+    int ret = DArrayIdx_push(&parser->stack, &idx);
+    if (ret) {
+        return ret;
+    }
+    return 0;
+}
+
+static int handle_command_do(Parser *parser) {
+    Idx idx = parser->tokens.size - 1;
+    Token *token = parser->tokens.data + idx;
+    token->data.command.data.command_do.idx = parser->idx_while++;
+    token->data.command.data.command_do.offset = (Offset)idx;
+    int ret = DArrayIdx_push(&parser->stack, &idx);
     if (ret) {
         return ret;
     }
@@ -699,8 +722,7 @@ static int handle_command_end(Parser *parser) {
     case TOKEN_COMMAND_IF:
         token->data.command.data.command_end_if = parser->idx_end_if++;
         back_token->data.command.data.command_if.offset =
-            (Offset)idx -
-            (Offset)back_token->data.command.data.command_if.offset;
+            (Offset)idx - (Offset)back;
         ret = DArrayIdx_pop(&parser->stack);
         if (ret) {
             return ret;
@@ -709,8 +731,7 @@ static int handle_command_end(Parser *parser) {
     case TOKEN_COMMAND_ELSE:
         token->data.command.data.command_end_if = parser->idx_end_if++;
         back_token->data.command.data.command_else.offset =
-            (Offset)idx -
-            (Offset)back_token->data.command.data.command_if.offset;
+            (Offset)idx - (Offset)back;
         ret = DArrayIdx_pop(&parser->stack);
         if (ret) {
             return ret;
@@ -719,10 +740,15 @@ static int handle_command_end(Parser *parser) {
     case TOKEN_COMMAND_DO:
         token->data.command.type = TOKEN_COMMAND_END_LOOP;
         token->data.command.data.command_end_loop.idx = parser->idx_end_loop++;
+        back_token->data.command.data.command_do.offset = 
+            (Offset)idx - (Offset)back;
         ret = DArrayIdx_pop(&parser->stack);
         if (ret) {
             return ret;
         }
+        back = parser->stack.data[parser->stack.size - 1];
+        token->data.command.data.command_end_loop.offset = 
+            (Offset)back - (Offset)idx;
         ret = DArrayIdx_pop(&parser->stack);
         if (ret) {
             return ret;
@@ -740,8 +766,8 @@ static int (*handlers[8])(Parser*) = {
     0,
     handle_command_if,
     handle_command_else,
-    0,
-    0,
+    handle_command_while,
+    handle_command_do,
     handle_command_end
 };
 
@@ -1015,6 +1041,21 @@ int parser_log(Parser *parser, FILE *fout) {
                     "offset: %ld\nidx: %lu\n",
                     parser->tokens.data[i].data.command.data.command_end_loop.offset,
                     parser->tokens.data[i].data.command.data.command_end_loop.idx
+                );
+                break;
+            case TOKEN_COMMAND_WHILE:
+                fprintf(
+                    fout,
+                    "idx: %lu\n",
+                    parser->tokens.data[i].data.command.data.command_while
+                );
+                break;
+            case TOKEN_COMMAND_DO:
+                fprintf(
+                    fout,
+                    "offset: %ld\nidx: %lu\n",
+                    parser->tokens.data[i].data.command.data.command_do.offset,
+                    parser->tokens.data[i].data.command.data.command_do.idx
                 );
                 break;
             }
