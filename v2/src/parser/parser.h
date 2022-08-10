@@ -81,7 +81,7 @@ typedef struct Token {
                     Offset offset;
                     Idx idx;
                 } command_do;
-                Idx end_if;
+                Idx command_end_if;
                 struct {
                     Offset offset;
                     Idx idx;

@@ -13,7 +13,8 @@
 #define ERR_INVALID_COMMAND 10
 #define ERR_EMPTY_DARRAY 11
 #define ERR_UNBALANCED_ELSE 12
+#define ERR_UNBALANCED_END 13
 
-extern const char *errcode_lookup[13];
+extern const char *errcode_lookup[14];
 
 #endif

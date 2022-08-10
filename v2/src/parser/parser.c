@@ -689,6 +689,51 @@ static int handle_command_else(Parser *parser) {
     return 0;
 }
 
+static int handle_command_end(Parser *parser) {
+    Idx idx = parser->tokens.size - 1;
+    Token *token = parser->tokens.data + idx;
+    Idx back = parser->stack.data[parser->stack.size - 1];
+    Token *back_token = parser->tokens.data + back;
+    int ret = 0;
+    switch (back_token->data.command.type) {
+    case TOKEN_COMMAND_IF:
+        token->data.command.data.command_end_if = parser->idx_end_if++;
+        back_token->data.command.data.command_if.offset =
+            (Offset)idx -
+            (Offset)back_token->data.command.data.command_if.offset;
+        ret = DArrayIdx_pop(&parser->stack);
+        if (ret) {
+            return ret;
+        }
+        break;
+    case TOKEN_COMMAND_ELSE:
+        token->data.command.data.command_end_if = parser->idx_end_if++;
+        back_token->data.command.data.command_else.offset =
+            (Offset)idx -
+            (Offset)back_token->data.command.data.command_if.offset;
+        ret = DArrayIdx_pop(&parser->stack);
+        if (ret) {
+            return ret;
+        }
+        break;
+    case TOKEN_COMMAND_DO:
+        token->data.command.type = TOKEN_COMMAND_END_LOOP;
+        token->data.command.data.command_end_loop.idx = parser->idx_end_loop++;
+        ret = DArrayIdx_pop(&parser->stack);
+        if (ret) {
+            return ret;
+        }
+        ret = DArrayIdx_pop(&parser->stack);
+        if (ret) {
+            return ret;
+        }
+        break;
+    default:
+        return ERR_UNBALANCED_END;
+    }
+    return 0;
+}
+
 static int (*handlers[8])(Parser*) = {
     0,
     0,
@@ -697,7 +742,7 @@ static int (*handlers[8])(Parser*) = {
     handle_command_else,
     0,
     0,
-    0
+    handle_command_end
 };
 
 static int handle_command(Parser *parser) {
@@ -955,6 +1000,21 @@ int parser_log(Parser *parser, FILE *fout) {
                     "offset: %ld\nidx: %lu\n",
                     parser->tokens.data[i].data.command.data.command_else.offset,
                     parser->tokens.data[i].data.command.data.command_else.idx
+                );
+                break;
+            case TOKEN_COMMAND_END_IF:
+                fprintf(
+                    fout,
+                    "idx: %lu\n",
+                    parser->tokens.data[i].data.command.data.command_end_if
+                );
+                break;
+            case TOKEN_COMMAND_END_LOOP:
+                fprintf(
+                    fout,
+                    "offset: %ld\nidx: %lu\n",
+                    parser->tokens.data[i].data.command.data.command_end_loop.offset,
+                    parser->tokens.data[i].data.command.data.command_end_loop.idx
                 );
                 break;
             }
