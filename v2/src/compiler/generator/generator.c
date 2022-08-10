@@ -1,6 +1,6 @@
 #include "generator.h"
 
-DEF_DRRAY_FUNCTIONS(Type)
+DEF_DARRAY_FUNCTIONS(Type)
 
 int generator_initialize(Generator *generator, String ifn, String ofn) {
     if (!generator) {
