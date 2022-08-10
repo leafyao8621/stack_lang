@@ -12,7 +12,8 @@
 #define ERR_INVALID_ARR_SIZE 9
 #define ERR_INVALID_COMMAND 10
 #define ERR_EMPTY_DARRAY 11
+#define ERR_UNBALANCED_ELSE 12
 
-extern const char *errcode_lookup[12];
+extern const char *errcode_lookup[13];
 
 #endif

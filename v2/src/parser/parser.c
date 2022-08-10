@@ -655,10 +655,36 @@ static int handle_command_if(Parser *parser) {
     Idx idx = parser->tokens.size - 1;
     Token *token = parser->tokens.data + idx;
     token->data.command.data.command_if.idx = parser->idx_if++;
-    token->data.command.data.command_if.offset = 0;
+    token->data.command.data.command_if.offset = (Offset)idx;
     int ret = DArrayIdx_push(&parser->stack, &idx);
     if (ret) {
         return 0;
+    }
+    return 0;
+}
+
+static int handle_command_else(Parser *parser) {
+    Idx idx = parser->tokens.size - 1;
+    Token *token = parser->tokens.data + idx;
+    token->data.command.data.command_else.idx = parser->idx_else++;
+    token->data.command.data.command_else.offset = (Offset)idx;
+    Idx back = parser->stack.data[parser->stack.size - 1];
+    Token *back_token = parser->tokens.data + back;
+    if (
+        back_token->type != TOKEN_COMMAND ||
+        back_token->data.command.type != TOKEN_COMMAND_IF
+    ) {
+        return ERR_UNBALANCED_ELSE;
+    }
+    int ret = DArrayIdx_pop(&parser->stack);
+    if (ret) {
+        return ret;
+    }
+    back_token->data.command.data.command_if.offset =
+        (Offset)idx - (Offset)back_token->data.command.data.command_if.offset;
+    ret = DArrayIdx_push(&parser->stack, &idx);
+    if (ret) {
+        return ret;
     }
     return 0;
 }
@@ -668,7 +694,7 @@ static int (*handlers[8])(Parser*) = {
     0,
     0,
     handle_command_if,
-    0,
+    handle_command_else,
     0,
     0,
     0
@@ -921,6 +947,14 @@ int parser_log(Parser *parser, FILE *fout) {
                     "offset: %ld\nidx: %lu\n",
                     parser->tokens.data[i].data.command.data.command_if.offset,
                     parser->tokens.data[i].data.command.data.command_if.idx
+                );
+                break;
+            case TOKEN_COMMAND_ELSE:
+                fprintf(
+                    fout,
+                    "offset: %ld\nidx: %lu\n",
+                    parser->tokens.data[i].data.command.data.command_else.offset,
+                    parser->tokens.data[i].data.command.data.command_else.idx
                 );
                 break;
             }
