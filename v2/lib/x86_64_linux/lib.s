@@ -60,6 +60,7 @@ print_int:
     subq $8, %rax
     movq %rax, stack_ptr
     movq (%rax), %rax
+    movabsq $0, %rdx
     movq %rax, %r15
     movq $0, %r10
     cmpq %r10, %r15
