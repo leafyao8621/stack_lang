@@ -64,7 +64,7 @@ typedef struct Token {
         String str_name;
         Character str_char;
         String arr_name;
-        Operator operator;
+        Operator operater;
         struct {
             CommandType type;
             union {

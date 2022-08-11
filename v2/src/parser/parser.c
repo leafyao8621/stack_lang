@@ -396,7 +396,7 @@ static int handle_operator(Parser *parser) {
         if (cur != ' ' && cur != '\t' && cur != '\n') {
             return ERR_INVALID_OPERATOR;
         }
-        token.data.operator = TOKEN_OPERATOR_ADD;
+        token.data.operater = TOKEN_OPERATOR_ADD;
         break;
     case '-':
         if (cur >= '0' && cur <= '9') {
@@ -409,35 +409,35 @@ static int handle_operator(Parser *parser) {
         if (cur != ' ' && cur != '\t' && cur != '\n') {
             return ERR_INVALID_OPERATOR;
         }
-        token.data.operator = TOKEN_OPERATOR_SUBTRACT;
+        token.data.operater = TOKEN_OPERATOR_SUBTRACT;
         break;
     case '*':
         if (cur != ' ' && cur != '\t' && cur != '\n') {
             return ERR_INVALID_OPERATOR;
         }
-        token.data.operator = TOKEN_OPERATOR_MULTIPLY;
+        token.data.operater = TOKEN_OPERATOR_MULTIPLY;
         break;
     case '/':
         if (cur != ' ' && cur != '\t' && cur != '\n') {
             return ERR_INVALID_OPERATOR;
         }
-        token.data.operator = TOKEN_OPERATOR_DIVIDE;
+        token.data.operater = TOKEN_OPERATOR_DIVIDE;
         break;
     case '%':
         if (cur != ' ' && cur != '\t' && cur != '\n') {
             return ERR_INVALID_OPERATOR;
         }
-        token.data.operator = TOKEN_OPERATOR_MODULO;
+        token.data.operater = TOKEN_OPERATOR_MODULO;
         break;
     case '=':
         switch (cur) {
         case '=':
-            token.data.operator = TOKEN_OPERATOR_EQ;
+            token.data.operater = TOKEN_OPERATOR_EQ;
             break;
         case ' ':
         case '\t':
         case '\n':
-            token.data.operator = TOKEN_OPERATOR_ASSIGN;
+            token.data.operater = TOKEN_OPERATOR_ASSIGN;
             break;
         default:
             return ERR_INVALID_OPERATOR;
@@ -446,15 +446,15 @@ static int handle_operator(Parser *parser) {
     case '>':
         switch (cur) {
         case '=':
-            token.data.operator = TOKEN_OPERATOR_GTE;
+            token.data.operater = TOKEN_OPERATOR_GTE;
             break;
         case '>':
-            token.data.operator = TOKEN_OPERATOR_RSHIFT;
+            token.data.operater = TOKEN_OPERATOR_RSHIFT;
             break;
         case ' ':
         case '\t':
         case '\n':
-            token.data.operator = TOKEN_OPERATOR_GT;
+            token.data.operater = TOKEN_OPERATOR_GT;
             break;
         default:
             return ERR_INVALID_OPERATOR;
@@ -463,15 +463,15 @@ static int handle_operator(Parser *parser) {
     case '<':
         switch (cur) {
         case '=':
-            token.data.operator = TOKEN_OPERATOR_LTE;
+            token.data.operater = TOKEN_OPERATOR_LTE;
             break;
         case '>':
-            token.data.operator = TOKEN_OPERATOR_LSHIFT;
+            token.data.operater = TOKEN_OPERATOR_LSHIFT;
             break;
         case ' ':
         case '\t':
         case '\n':
-            token.data.operator = TOKEN_OPERATOR_LT;
+            token.data.operater = TOKEN_OPERATOR_LT;
             break;
         default:
             return ERR_INVALID_OPERATOR;
@@ -480,12 +480,12 @@ static int handle_operator(Parser *parser) {
     case '!':
         switch (cur) {
         case '=':
-            token.data.operator = TOKEN_OPERATOR_NEQ;
+            token.data.operater = TOKEN_OPERATOR_NEQ;
             break;
         case ' ':
         case '\t':
         case '\n':
-            token.data.operator = TOKEN_OPERATOR_LNOT;
+            token.data.operater = TOKEN_OPERATOR_LNOT;
             break;
         default:
             return ERR_INVALID_OPERATOR;
@@ -495,17 +495,17 @@ static int handle_operator(Parser *parser) {
         if (cur != ' ' && cur != '\t' && cur != '\n') {
             return ERR_INVALID_OPERATOR;
         }
-        token.data.operator = TOKEN_OPERATOR_BNOT;
+        token.data.operater = TOKEN_OPERATOR_BNOT;
         break;
     case '&':
         switch (cur) {
         case '&':
-            token.data.operator = TOKEN_OPERATOR_LAND;
+            token.data.operater = TOKEN_OPERATOR_LAND;
             break;
         case ' ':
         case '\t':
         case '\n':
-            token.data.operator = TOKEN_OPERATOR_BAND;
+            token.data.operater = TOKEN_OPERATOR_BAND;
             break;
         default:
             return ERR_INVALID_OPERATOR;
@@ -514,12 +514,12 @@ static int handle_operator(Parser *parser) {
     case '|':
         switch (cur) {
         case '|':
-            token.data.operator = TOKEN_OPERATOR_LOR;
+            token.data.operater = TOKEN_OPERATOR_LOR;
             break;
         case ' ':
         case '\t':
         case '\n':
-            token.data.operator = TOKEN_OPERATOR_BOR;
+            token.data.operater = TOKEN_OPERATOR_BOR;
             break;
         default:
             return ERR_INVALID_OPERATOR;
@@ -529,7 +529,7 @@ static int handle_operator(Parser *parser) {
         if (cur != ']') {
             return ERR_INVALID_OPERATOR;
         }
-        token.data.operator = TOKEN_OPERATOR_IDX;
+        token.data.operater = TOKEN_OPERATOR_IDX;
         break;
     }
     ret = DArrayToken_push(&parser->tokens, &token);
@@ -993,8 +993,8 @@ int parser_log(Parser *parser, FILE *fout) {
             fprintf(
                 fout,
                 "OPERATOR\nidx: %hhu\nsymb: %s\n",
-                parser->tokens.data[i].data.operator,
-                lookup[parser->tokens.data[i].data.operator]
+                parser->tokens.data[i].data.operater,
+                lookup[parser->tokens.data[i].data.operater]
             );
             break;
         case TOKEN_ARR_NAME:
