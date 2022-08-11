@@ -60,6 +60,12 @@ print_int:
     subq $8, %rax
     movq %rax, stack_ptr
     movq (%rax), %rax
+    movq %rax, %r15
+    movq $0, %r10
+    cmpq %r10, %r15
+    jge print_int_eif0
+    negq %rax
+print_int_eif0:
     movabsq $int_buf, %r10
     movabsq $0, %r11
     movabsq $0, %r12
@@ -73,9 +79,15 @@ print_int_loop0:
     addq $1, %r11
     cmpq %rax, %r12
     jne print_int_loop0
-    movq %r11, strlen
     movabsq $buf, %r12
     movabsq $0, %r14
+    cmpq %r14, %r15
+    jge print_int_eif1
+    movb $45, (%r12)
+    addq $1, %r12
+    addq $1, %r11
+print_int_eif1:
+    movq %r11, strlen
 print_int_loop1:
     subq $1, %r10
     movb (%r10), %r13b

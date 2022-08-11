@@ -61,7 +61,7 @@ _start:
     // call println_chr
     
     movq stack_ptr, %rax
-    movabsq $123, %rbx
+    movabsq $-123456, %rbx
     movq %rbx, (%rax)
     addq $8, %rax
     movq %rax, stack_ptr
