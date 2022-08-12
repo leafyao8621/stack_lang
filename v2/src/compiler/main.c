@@ -6,7 +6,13 @@ int main(int argc, char **argv) {
         puts("Usage: in_file out_file");
         return 1;
     }
-    int ret = generator_initialize(&generator, argv[1], argv[2]);
+    int ret =
+        generator_initialize(
+            &generator,
+            ARCHITECTURE_X86_64_LINUX,
+            argv[1],
+            argv[2]
+        );
     if (ret) {
         printf("errcode: %d\n", ret);
         generator_finalize(&generator);

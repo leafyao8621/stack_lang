@@ -3,15 +3,25 @@
 
 #include "../../parser/parser.h"
 
+typedef int64_t Architecture;
+
+#define ARCHITECTURE_X86_64_LINUX 0
+
 DEF_DARRAY(Type)
 
 typedef struct Generator {
+    Architecture architecture;
     Parser parser;
     DArrayType stack;
-    FILE *fout;
+    String ofn;
 } Generator;
 
-int generator_initialize(Generator *generator, String ifn, String ofn);
+int generator_initialize(
+    Generator *generator,
+    Architecture architecture,
+    String ifn,
+    String ofn
+);
 int generator_generate(Generator *generator);
 int generator_finalize(Generator *generator);
 

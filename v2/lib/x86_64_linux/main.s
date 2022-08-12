@@ -67,6 +67,13 @@ _start:
     movq %rbx, (%rax)
     addq $8, %rax
     movq %rax, stack_ptr
+    call println_int
+
+    movq stack_ptr, %rax
+    movabsq $-123456, %rbx
+    movq %rbx, (%rax)
+    addq $8, %rax
+    movq %rax, stack_ptr
     call print_int
 
     movq stack_ptr, %rax

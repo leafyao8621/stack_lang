@@ -102,3 +102,57 @@ print_int_loop1:
     movabsq $1, %rax
     syscall
     ret
+println_int:
+    movabsq $1, %rdi
+    movq stack_ptr, %rax
+    subq $8, %rax
+    movq %rax, stack_ptr
+    movq (%rax), %rax
+    movabsq $0, %rdx
+    movq %rax, %r15
+    movq $0, %r10
+    cmpq %r10, %r15
+    jge println_int_eif0
+    negq %rax
+println_int_eif0:
+    movabsq $int_buf, %r10
+    movabsq $0, %r11
+    movabsq $0, %r12
+    movabsq $10, %rbx
+println_int_loop0:
+    divq %rbx
+    addq $48, %rdx
+    movb %dl, (%r10)
+    movabsq $0, %rdx
+    addq $1, %r10
+    addq $1, %r11
+    cmpq %rax, %r12
+    jne println_int_loop0
+    movabsq $buf, %r12
+    movabsq $0, %r14
+    cmpq %r14, %r15
+    jge println_int_eif1
+    movb $45, (%r12)
+    addq $1, %r12
+    addq $1, %r11
+println_int_eif1:
+    movq %r11, strlen
+println_int_loop1:
+    subq $1, %r10
+    movb (%r10), %r13b
+    movb %r13b, (%r12)
+    addq $1, %r12
+    subq $1, %r11
+    cmpq %r11, %r14
+    jne println_int_loop1
+    movabsq $buf, %rsi
+    movq strlen, %rdx
+    movabsq $1, %rax
+    syscall
+    movabsq $1, %rdi
+    movabsq $buf, %rsi
+    movb $10, buf
+    movabsq $1, %rdx
+    movabsq $1, %rax
+    syscall
+    ret
