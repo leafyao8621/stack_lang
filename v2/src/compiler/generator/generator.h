@@ -7,12 +7,10 @@ typedef int64_t Architecture;
 
 #define ARCHITECTURE_X86_64_LINUX 0
 
-DEF_DARRAY(Type)
-
 typedef struct Generator {
     Architecture architecture;
     Parser parser;
-    DArrayType stack;
+    DArrayToken stack;
     String ofn;
 } Generator;
 

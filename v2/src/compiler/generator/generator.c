@@ -1,8 +1,6 @@
 #include "generator.h"
 #include "lookup/lookup.h"
 
-DEF_DARRAY_FUNCTIONS(Type)
-
 int generator_initialize(
     Generator *generator,
     Architecture architecture,
@@ -13,7 +11,7 @@ int generator_initialize(
         return ERR_NULL_PTR;
     }
     generator->architecture = architecture;
-    int ret = DArrayType_initialize(&generator->stack, 1000);
+    int ret = DArrayToken_initialize(&generator->stack, 100);
     if (ret) {
         return ret;
     }
@@ -29,7 +27,7 @@ int generator_finalize(Generator *generator) {
     if (!generator) {
         return ERR_NULL_PTR;
     }
-    int ret = DArrayType_finalize(&generator->stack);
+    int ret = DArrayToken_finalize(&generator->stack);
     if (ret) {
         return ret;
     }
@@ -116,6 +114,78 @@ static int handle_declarations_x86_64_linux(Generator *generator, FILE *fasm) {
     return 0;
 }
 
+static int handle_token_int_name_x86_64_linux(
+    Generator *generator,
+    Token *token,
+    FILE *fasm
+) {
+    if (generator->stack.size == 100) {
+        return ERR_STACK_OVERFLOW;
+    }
+    int ret = DArrayToken_push(&generator->stack, token);
+    if (ret) {
+        return ret;
+    }
+    fprintf(
+        fasm,
+        "    movabsq $stack_ptr, %%rax\n"
+        "    movq int_name_%s, %%rbx\n"
+        "    movq %%rbx, (%%rax)\n"
+        "    addq $1, %%rax\n"
+        "    movq %%rax, stack_ptr\n",
+        token->data.int_name
+    );
+    return 0;
+}
+
+static int handle_token_str_name_x86_64_linux(
+    Generator *generator,
+    Token *token,
+    FILE *fasm
+) {
+    if (generator->stack.size == 100) {
+        return ERR_STACK_OVERFLOW;
+    }
+    int ret = DArrayToken_push(&generator->stack, token);
+    if (ret) {
+        return ret;
+    }
+    fprintf(
+        fasm,
+        "    movabsq $stack_ptr, %%rax\n"
+        "    movq str_name_%s, %%rbx\n"
+        "    movq %%rbx, (%%rax)\n"
+        "    addq $1, %%rax\n"
+        "    movq %%rax, stack_ptr\n",
+        token->data.str_name
+    );
+    return 0;
+}
+
+static int handle_tokens_x86_64_linux(Generator *generator, FILE *fasm) {
+    Token *iter_token = generator->parser.tokens.data;
+    int ret = 0;
+    for (size_t i = 0; i < generator->parser.tokens.size; ++i, ++iter_token) {
+        switch (iter_token->type) {
+        case TOKEN_INT_NAME:
+            ret =
+                handle_token_int_name_x86_64_linux(generator, iter_token, fasm);
+            if (ret) {
+                return ret;
+            }
+            break;
+        case TOKEN_STR_NAME:
+            ret =
+                handle_token_str_name_x86_64_linux(generator, iter_token, fasm);
+            if (ret) {
+                return ret;
+            }
+            break;
+        }
+    }
+    return 0;
+}
+
 int generator_generate(Generator *generator) {
     if (!generator) {
         return ERR_NULL_PTR;
@@ -124,7 +194,6 @@ int generator_generate(Generator *generator) {
     if (ret) {
         return ret;
     }
-    parser_log(&generator->parser, stdout);
     FILE *fasm = fopen("temp.s", "w");
     if (!fasm) {
         return ERR_FILE_IO;
@@ -145,6 +214,14 @@ int generator_generate(Generator *generator) {
     switch (generator->architecture) {
     case ARCHITECTURE_X86_64_LINUX:
         fprintf(fasm, "%s\n", text_start_x86_64_linux);
+        break;
+    }
+    switch (generator->architecture) {
+    case ARCHITECTURE_X86_64_LINUX:
+        ret = handle_tokens_x86_64_linux(generator, fasm);
+        if (ret) {
+            return ret;
+        }
         break;
     }
     switch (generator->architecture) {

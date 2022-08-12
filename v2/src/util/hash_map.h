@@ -14,9 +14,7 @@ typedef struct HashMap##Key##Value {\
     HashMap##Key##Value##Node *data;\
     size_t (*hash)(Key*);\
     bool (*eq)(Key*, Key*);\
-} HashMap##Key##Value;
-
-#define DEF_HASHMAP_FUNCTIONS(Key, Value)\
+} HashMap##Key##Value;\
 int HashMap##Key##Value##_initialize(\
     HashMap##Key##Value *hashset,\
     size_t capacity,\
@@ -34,6 +32,8 @@ int HashMap##Key##Value##_check(\
     bool *out\
 );\
 int HashMap##Key##Value##_finalize(HashMap##Key##Value *hashmap);\
+
+#define DEF_HASHMAP_FUNCTIONS(Key, Value)\
 int HashMap##Key##Value##_initialize(\
     HashMap##Key##Value *hashmap,\
     size_t capacity,\

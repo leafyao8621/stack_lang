@@ -14,7 +14,8 @@
 #define ERR_EMPTY_DARRAY 11
 #define ERR_UNBALANCED_ELSE 12
 #define ERR_UNBALANCED_END 13
+#define ERR_STACK_OVERFLOW 14
 
-extern const char *errcode_lookup[14];
+extern const char *errcode_lookup[15];
 
 #endif

@@ -14,9 +14,7 @@ typedef struct HashSet##Type {\
     HashSet##Type##Node *data;\
     size_t (*hash)(Type*);\
     bool (*eq)(Type*, Type*);\
-} HashSet##Type;
-
-#define DEF_HASHSET_FUNCTIONS(Type)\
+} HashSet##Type;\
 int HashSet##Type##_initialize(\
     HashSet##Type *hashset,\
     size_t capacity,\
@@ -26,6 +24,8 @@ int HashSet##Type##_initialize(\
 int HashSet##Type##_insert(HashSet##Type *hashset, Type *item);\
 int HashSet##Type##_check(HashSet##Type *hashset, Type *item, bool *out);\
 int HashSet##Type##_finalize(HashSet##Type *hashset);\
+
+#define DEF_HASHSET_FUNCTIONS(Type)\
 int HashSet##Type##_initialize(\
     HashSet##Type *hashset,\
     size_t capacity,\
