@@ -174,7 +174,9 @@ const char *text_start_x86_64_linux =
     "    movabsq $1, %rax\n"
     "    syscall\n"
     "    ret\n"
-    "_start:";
+    "_start:\n"
+    "    movabsq $stack, %rax\n"
+    "    movq %rax, stack_ptr";
 
 const char *text_end_x86_64_linux =
     "    movq $60, %rax\n"
