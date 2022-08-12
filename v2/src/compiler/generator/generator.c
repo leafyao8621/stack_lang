@@ -40,10 +40,81 @@ int generator_finalize(Generator *generator) {
     return 0;
 }
 
-// static int handle_declarations_x86_64_linux(Generator *generator) {
-    
-//     return 0;
-// }
+static int handle_declarations_x86_64_linux(Generator *generator, FILE *fasm) {
+    String *iter_str_lit = generator->parser.str_lit.data;
+    for (
+        size_t i = 0;
+        i < generator->parser.str_lit.size;
+        ++i,
+        ++iter_str_lit
+    ) {
+        fprintf(
+            fasm,
+            "str_lit_%lu:\n    .asciz \"",
+            i
+        );
+        for (char *j = *iter_str_lit; *j; ++j) {
+            switch (*j) {
+            case '\t':
+                fprintf(fasm, "%s", "\\t");
+                break;
+            case '\n':
+                fprintf(fasm, "%s", "\\n");
+                break;
+            case '"':
+                fprintf(fasm, "%s", "\\\"");
+                break;
+            default:
+                fputc(*j, fasm);
+            }
+        }
+        fprintf(fasm, "%c\n", '"');
+    }
+    HashSetStringNode *iter_int_name = generator->parser.int_name.data;
+    for (
+        size_t i = 0;
+        i < generator->parser.int_name.capacity;
+        ++i,
+        ++iter_int_name
+    ) {
+        if (iter_int_name->in_use) {
+            fprintf(
+                fasm,
+                "int_name_%s:\n    .quad 0\n",
+                iter_int_name->item);
+        }
+    }
+    HashSetStringNode *iter_str_name = generator->parser.str_name.data;
+    for (
+        size_t i = 0;
+        i < generator->parser.str_name.capacity;
+        ++i,
+        ++iter_str_name
+    ) {
+        if (iter_str_name->in_use) {
+            fprintf(
+                fasm,
+                "str_name_%s:\n    .quad 0\n",
+                iter_str_name->item);
+        }
+    }
+    HashMapStringSizeNode *iter_arr_name = generator->parser.arr_name.data;
+    for (
+        size_t i = 0;
+        i < generator->parser.arr_name.capacity;
+        ++i,
+        ++iter_arr_name
+    ) {
+        if (iter_arr_name->in_use) {
+            fprintf(
+                fasm,
+                "arr_name_%s:\n    .fill %lu\n",
+                iter_arr_name->key,
+                iter_arr_name->value * 8);
+        }
+    }
+    return 0;
+}
 
 int generator_generate(Generator *generator) {
     if (!generator) {
@@ -53,6 +124,7 @@ int generator_generate(Generator *generator) {
     if (ret) {
         return ret;
     }
+    parser_log(&generator->parser, stdout);
     FILE *fasm = fopen("temp.s", "w");
     if (!fasm) {
         return ERR_FILE_IO;
@@ -60,6 +132,14 @@ int generator_generate(Generator *generator) {
     switch (generator->architecture) {
     case ARCHITECTURE_X86_64_LINUX:
         fprintf(fasm, "%s\n", data_section_x86_64_linux);
+        break;
+    }
+    switch (generator->architecture) {
+    case ARCHITECTURE_X86_64_LINUX:
+        ret = handle_declarations_x86_64_linux(generator, fasm);
+        if (ret) {
+            return ret;
+        }
         break;
     }
     switch (generator->architecture) {
