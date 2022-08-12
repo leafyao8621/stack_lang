@@ -644,10 +644,6 @@ static int handle_arr_name(Parser *parser) {
     if (ret) {
         return ret;
     }
-    ret = HashSetString_insert(&parser->str_name, &str);
-    if (ret) {
-        return ret;
-    }
     return 0;
 }
 
