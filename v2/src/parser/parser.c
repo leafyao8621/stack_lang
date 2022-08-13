@@ -465,7 +465,7 @@ static int handle_operator(Parser *parser) {
         case '=':
             token.data.operater = TOKEN_OPERATOR_LTE;
             break;
-        case '>':
+        case '<':
             token.data.operater = TOKEN_OPERATOR_LSHIFT;
             break;
         case ' ':
