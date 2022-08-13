@@ -53,7 +53,6 @@ typedef size_t Size;
 typedef size_t Idx;
 typedef uint8_t Operator;
 typedef uint64_t CommandType;
-typedef int64_t Offset;
 
 typedef struct Token {
     Type type;
@@ -69,21 +68,21 @@ typedef struct Token {
             CommandType type;
             union {
                 struct {
-                    Offset offset;
+                    Idx offset;
                     Idx idx;
                 } command_if;
                 struct {
-                    Offset offset;
+                    Idx offset;
                     Idx idx;
                 } command_else;
                 Idx command_while;
                 struct {
-                    Offset offset;
+                    Idx offset;
                     Idx idx;
                 } command_do;
                 Idx command_end_if;
                 struct {
-                    Offset offset;
+                    Idx offset;
                     Idx idx;
                 } command_end_loop;
             } data;

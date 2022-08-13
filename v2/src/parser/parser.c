@@ -651,7 +651,6 @@ static int handle_command_if(Parser *parser) {
     Idx idx = parser->tokens.size - 1;
     Token *token = parser->tokens.data + idx;
     token->data.command.data.command_if.idx = parser->idx_if++;
-    token->data.command.data.command_if.offset = (Offset)idx;
     int ret = DArrayIdx_push(&parser->stack, &idx);
     if (ret) {
         return ret;
@@ -663,7 +662,6 @@ static int handle_command_else(Parser *parser) {
     Idx idx = parser->tokens.size - 1;
     Token *token = parser->tokens.data + idx;
     token->data.command.data.command_else.idx = parser->idx_else++;
-    token->data.command.data.command_else.offset = (Offset)idx;
     Idx back = parser->stack.data[parser->stack.size - 1];
     Token *back_token = parser->tokens.data + back;
     if (
@@ -676,8 +674,7 @@ static int handle_command_else(Parser *parser) {
     if (ret) {
         return ret;
     }
-    back_token->data.command.data.command_if.offset =
-        (Offset)idx - (Offset)back;
+    back_token->data.command.data.command_if.offset = idx;
     ret = DArrayIdx_push(&parser->stack, &idx);
     if (ret) {
         return ret;
@@ -700,7 +697,6 @@ static int handle_command_do(Parser *parser) {
     Idx idx = parser->tokens.size - 1;
     Token *token = parser->tokens.data + idx;
     token->data.command.data.command_do.idx = parser->idx_while++;
-    token->data.command.data.command_do.offset = (Offset)idx;
     int ret = DArrayIdx_push(&parser->stack, &idx);
     if (ret) {
         return ret;
@@ -717,8 +713,7 @@ static int handle_command_end(Parser *parser) {
     switch (back_token->data.command.type) {
     case TOKEN_COMMAND_IF:
         token->data.command.data.command_end_if = parser->idx_end_if++;
-        back_token->data.command.data.command_if.offset =
-            (Offset)idx - (Offset)back;
+        back_token->data.command.data.command_if.offset = idx;
         ret = DArrayIdx_pop(&parser->stack);
         if (ret) {
             return ret;
@@ -726,8 +721,7 @@ static int handle_command_end(Parser *parser) {
         break;
     case TOKEN_COMMAND_ELSE:
         token->data.command.data.command_end_if = parser->idx_end_if++;
-        back_token->data.command.data.command_else.offset =
-            (Offset)idx - (Offset)back;
+        back_token->data.command.data.command_else.offset = idx;
         ret = DArrayIdx_pop(&parser->stack);
         if (ret) {
             return ret;
@@ -736,15 +730,13 @@ static int handle_command_end(Parser *parser) {
     case TOKEN_COMMAND_DO:
         token->data.command.type = TOKEN_COMMAND_END_LOOP;
         token->data.command.data.command_end_loop.idx = parser->idx_end_loop++;
-        back_token->data.command.data.command_do.offset = 
-            (Offset)idx - (Offset)back;
+        back_token->data.command.data.command_do.offset = idx;
         ret = DArrayIdx_pop(&parser->stack);
         if (ret) {
             return ret;
         }
         back = parser->stack.data[parser->stack.size - 1];
-        token->data.command.data.command_end_loop.offset = 
-            (Offset)back - (Offset)idx;
+        token->data.command.data.command_end_loop.offset = back;
         ret = DArrayIdx_pop(&parser->stack);
         if (ret) {
             return ret;
