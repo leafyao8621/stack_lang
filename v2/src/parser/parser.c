@@ -8,7 +8,7 @@ DEF_HASHSET_FUNCTIONS(String)
 DEF_HASHMAP_FUNCTIONS(String, Size)
 DEF_HASHMAP_FUNCTIONS(String, Idx)
 
-static const char *lookup[21] = {
+static const char *lookup[22] = {
     "+",
     "-",
     "*",
@@ -29,6 +29,7 @@ static const char *lookup[21] = {
     "&&",
     "|",
     "||",
+    "^",
     "[]"
 };
 
@@ -525,6 +526,12 @@ static int handle_operator(Parser *parser) {
             return ERR_INVALID_OPERATOR;
         }
         break;
+    case '^':
+        if (cur != ' ' && cur != '\t' && cur != '\n') {
+            return ERR_INVALID_OPERATOR;
+        }
+        token.data.operater = TOKEN_OPERATOR_XOR;
+        break;
     case '[':
         if (cur != ']') {
             return ERR_INVALID_OPERATOR;
@@ -885,6 +892,7 @@ int parser_parse(Parser *parser) {
         case '~':
         case '&':
         case '|':
+        case '^':
         case '[':
             cur = (char)i;
             ret = DArrayCharacter_push(&parser->str_buf, &cur);
