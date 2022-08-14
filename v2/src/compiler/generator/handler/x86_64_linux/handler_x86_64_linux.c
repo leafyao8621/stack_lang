@@ -2237,7 +2237,7 @@ static int handle_token_command(
     Token *token,
     FILE *fasm
 ) {
-    Token op;
+    Token op, tgt;
     Token *back = generator->stack.data + generator->stack.size;
     int ret = 0;
     switch (token->data.command.type) {
@@ -2271,8 +2271,25 @@ static int handle_token_command(
             );
             break;
         case TOKEN_STR_LIT:
+            fputs(
+                "    call calc_strlen\n"
+                "    call print_str\n",
+                fasm
+            );
             break;
         case TOKEN_STR_NAME:
+            fputs(
+                "    movq stack_ptr, %rax\n"
+                "    subq $8, %rax\n"
+                "    movq (%rax), %rbx\n"
+                "    movq (%rbx), %rbx\n"
+                "    movq %rbx, (%rax)\n"
+                "    addq $8, %rax\n"
+                "    movq %rax, stack_ptr\n"
+                "    call calc_strlen\n"
+                "    call print_str\n",
+                fasm
+            );
             break;
         case TOKEN_STR_CHAR:
             break;
@@ -2310,14 +2327,108 @@ static int handle_token_command(
             );
             break;
         case TOKEN_STR_LIT:
+            fputs(
+                "    call calc_strlen\n"
+                "    call println_str\n",
+                fasm
+            );
             break;
         case TOKEN_STR_NAME:
+            fputs(
+                "    movq stack_ptr, %rax\n"
+                "    subq $8, %rax\n"
+                "    movq (%rax), %rbx\n"
+                "    movq (%rbx), %rbx\n"
+                "    movq %rbx, (%rax)\n"
+                "    addq $8, %rax\n"
+                "    movq %rax, stack_ptr\n"
+                "    call calc_strlen\n"
+                "    call println_str\n",
+                fasm
+            );
             break;
         case TOKEN_STR_CHAR:
             break;
         default:
             return ERR_INVALID_OPERAND;
         }
+        break;
+    case TOKEN_COMMAND_IF:
+        if (generator->stack.size < 1) {
+            return ERR_INVALID_OPERAND;
+        }
+        op = back[-1];
+        ret = DArrayToken_pop(&generator->stack);
+        if (ret) {
+            return ret;
+        }
+        tgt =
+            generator
+                ->parser
+                .tokens
+                .data[token->data.command.data.command_if.offset];
+        switch (op.type) {
+        case TOKEN_INT_LIT:
+            fprintf(
+                fasm,
+                "    movq stack_ptr, %%rax\n"
+                "    subq $8, %%rax\n"
+                "    movq (%%rax), %%rbx\n"
+                "    movq %%rax, stack_ptr\n"
+                "    movabsq $0, %%r10\n"
+                "    cmpq %%rbx, %%r10\n"
+                "    je %s_%lu\n",
+                tgt.data.command.type == TOKEN_COMMAND_ELSE ?
+                "else" :
+                "eif",
+                tgt.data.command.type == TOKEN_COMMAND_ELSE ?
+                tgt.data.command.data.command_else.idx :
+                tgt.data.command.data.command_end_if
+            );
+            break;
+        case TOKEN_INT_NAME:
+            fprintf(
+                fasm,
+                "    movq stack_ptr, %%rax\n"
+                "    subq $8, %%rax\n"
+                "    movq (%%rax), %%rbx\n"
+                "    movq (%%rbx), %%rbx\n"
+                "    movq %%rax, stack_ptr\n"
+                "    movabsq $0, %%r10\n"
+                "    cmpq %%rbx, %%r10\n"
+                "    je %s_%lu\n",
+                tgt.data.command.type == TOKEN_COMMAND_ELSE ?
+                "else" :
+                "eif",
+                tgt.data.command.type == TOKEN_COMMAND_ELSE ?
+                tgt.data.command.data.command_else.idx :
+                tgt.data.command.data.command_end_if
+            );
+            break;
+        default:
+            return ERR_INVALID_OPERAND;
+        }
+        break;
+    case TOKEN_COMMAND_ELSE:
+        tgt =
+            generator
+                ->parser
+                .tokens
+                .data[token->data.command.data.command_else.offset];
+        fprintf(
+            fasm,
+            "    jmp eif_%lu\n"
+            "else_%lu:\n",
+            tgt.data.command.data.command_end_if,
+            token->data.command.data.command_else.idx
+        );
+        break;
+    case TOKEN_COMMAND_END_IF:
+        fprintf(
+            fasm,
+            "eif_%lu:\n",
+            token->data.command.data.command_end_if
+        );
         break;
     }
     return 0;

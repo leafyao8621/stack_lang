@@ -1,4 +1,4 @@
-#var_a 90 =
+#var_a 78 =
 #var_a _println
 #bc #var_a 1 + =
 #bc _println

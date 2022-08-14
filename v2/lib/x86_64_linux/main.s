@@ -20,10 +20,9 @@ _start:
 
     movq stack_ptr, %rax
     movq $str0, (%rax)
-    movabsq $3, %rbx
-    movq %rbx, strlen
     addq $8, %rax
     movq %rax, stack_ptr
+    call calc_strlen
     call print_str
 
     movq stack_ptr, %rax
@@ -49,10 +48,9 @@ _start:
 
     movq stack_ptr, %rax
     movq $str0, (%rax)
-    movabsq $3, %rbx
-    movq %rbx, strlen
     addq $8, %rax
     movq %rax, stack_ptr
+    call calc_strlen
     call println_str
 
     movq stack_ptr, %rax

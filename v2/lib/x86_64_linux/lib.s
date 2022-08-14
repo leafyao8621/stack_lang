@@ -1,3 +1,18 @@
+calc_strlen:
+    movq stack_ptr, %rax
+    subq $8, %rax
+    movq (%rax), %rbx
+    movabsq $0, %rcx
+calc_strlen_loop0:
+    movb (%rbx), %r10b
+    cmpb $0, %r10b
+    je calc_strlen_end_loop0
+    addq $1, %rbx
+    addq $1, %rcx
+    jmp calc_strlen_loop0
+calc_strlen_end_loop0:
+    movq %rcx, strlen
+    ret
 print_str:
     movabsq $1, %rdi
     movq stack_ptr, %rax
