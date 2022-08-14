@@ -1,6 +1,6 @@
 # Stack Lang
 
-A stack based interpreted language. Uses RPN
+A stack based language. Uses RPN
 
 ## v2
 ### Operators implemented:
