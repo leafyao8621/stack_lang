@@ -3,7 +3,7 @@
 A stack based interpreted language. Uses RPN
 
 ## v2
-Operators implemented:
+### Operators implemented:
 * \+
 * \-
 * \*
@@ -31,7 +31,7 @@ Operators implemented:
 * -=
 * [] (Not yet implemented)
 
-Commands Implemented:
+### Commands Implemented:
 * _input (Not yet implemented)
 * _print
 * _println
@@ -44,7 +44,12 @@ Commands Implemented:
 * _begin (Not yet implemented)
 
 ## v1
-Operators implemented:
+### Limitations:
+* 16-bit integers
+* limited memory
+* 2-character variable names (alphabetical + alpha-numerical)
+
+### Operators implemented:
 * \+
 * \-
 * \*
