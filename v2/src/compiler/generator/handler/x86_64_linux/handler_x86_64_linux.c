@@ -172,6 +172,30 @@ static int handle_token_str_lit(
     return 0;
 }
 
+static int handle_token_arr_name(
+    Generator *generator,
+    Token *token,
+    FILE *fasm
+) {
+    if (generator->stack.size == 100) {
+        return ERR_STACK_OVERFLOW;
+    }
+    int ret = DArrayToken_push(&generator->stack, token);
+    if (ret) {
+        return ret;
+    }
+    fprintf(
+        fasm,
+        "    movq stack_ptr, %%rax\n"
+        "    movabsq $arr_name_%s, %%rbx\n"
+        "    movq %%rbx, (%%rax)\n"
+        "    addq $8, %%rax\n"
+        "    movq %%rax, stack_ptr\n",
+        token->data.arr_name
+    );
+    return 0;
+}
+
 static int handle_token_operator(
     Generator *generator,
     Token *token,
@@ -715,6 +739,8 @@ static int handle_token_operator(
                     fasm
                 );
                 break;
+            default:
+                return ERR_INVALID_OPERAND;
             }
             break;
         case TOKEN_STR_NAME:
@@ -2426,6 +2452,143 @@ static int handle_token_operator(
             return ERR_INVALID_OPERAND;
         }
         break;
+    case TOKEN_OPERATOR_IDX:
+        if (generator->stack.size < 2) {
+            return ERR_INVALID_OPERAND;
+        }
+        op1 = back[-2];
+        op2 = back[-1];
+        ret = DArrayToken_pop(&generator->stack);
+        if (ret) {
+            return ret;
+        }
+        ret = DArrayToken_pop(&generator->stack);
+        if (ret) {
+            return ret;
+        }
+        switch (op1.type) {
+        case TOKEN_ARR_NAME:
+            switch (op2.type) {
+            case TOKEN_INT_LIT:
+                fputs(
+                    "    movq stack_ptr, %rax\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rbx\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rcx\n"
+                    "    addq %rbx, %rcx\n"
+                    "    movq %rcx, (%rax)\n"
+                    "    addq $8, %rax\n"
+                    "    movq %rax, stack_ptr\n",
+                    fasm
+                );
+                break;
+            case TOKEN_INT_NAME:
+                fputs(
+                    "    movq stack_ptr, %rax\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rbx\n"
+                    "    movq (%rbx), %rbx\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rcx\n"
+                    "    addq %rbx, %rcx\n"
+                    "    movq %rcx, (%rax)\n"
+                    "    addq $8, %rax\n"
+                    "    movq %rax, stack_ptr\n",
+                    fasm
+                );
+                break;
+            default:
+                return ERR_INVALID_OPERAND;
+            }
+            res.type = TOKEN_INT_NAME;
+            break;
+        case TOKEN_STR_NAME:
+            switch (op2.type) {
+            case TOKEN_INT_LIT:
+                fputs(
+                    "    movq stack_ptr, %rax\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rbx\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rcx\n"
+                    "    movq (%rcx), %rcx\n"
+                    "    addq %rbx, %rcx\n"
+                    "    movb (%rcx), %cl\n"
+                    "    movb %cl, (%rax)\n"
+                    "    addq $8, %rax\n"
+                    "    movq %rax, stack_ptr\n",
+                    fasm
+                );
+                break;
+            case TOKEN_INT_NAME:
+                fputs(
+                    "    movq stack_ptr, %rax\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rbx\n"
+                    "    movq (%rbx), %rbx\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rcx\n"
+                    "    movq (%rcx), %rcx\n"
+                    "    addq %rbx, %rcx\n"
+                    "    movb (%rcx), %cl\n"
+                    "    movb %cl, (%rax)\n"
+                    "    addq $8, %rax\n"
+                    "    movq %rax, stack_ptr\n",
+                    fasm
+                );
+                break;
+            default:
+                return ERR_INVALID_OPERAND;
+            }
+            res.type = TOKEN_STR_CHAR;
+            break;
+        case TOKEN_STR_LIT:
+            switch (op2.type) {
+            case TOKEN_INT_LIT:
+                fputs(
+                    "    movq stack_ptr, %rax\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rbx\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rcx\n"
+                    "    addq %rbx, %rcx\n"
+                    "    movb (%rcx), %cl\n"
+                    "    movb %cl, (%rax)\n"
+                    "    addq $8, %rax\n"
+                    "    movq %rax, stack_ptr\n",
+                    fasm
+                );
+                break;
+            case TOKEN_INT_NAME:
+                fputs(
+                    "    movq stack_ptr, %rax\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rbx\n"
+                    "    movq (%rbx), %rbx\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rcx\n"
+                    "    addq %rbx, %rcx\n"
+                    "    movb (%rcx), %cl\n"
+                    "    movb %cl, (%rax)\n"
+                    "    addq $8, %rax\n"
+                    "    movq %rax, stack_ptr\n",
+                    fasm
+                );
+                break;
+            default:
+                return ERR_INVALID_OPERAND;
+            }
+            res.type = TOKEN_STR_CHAR;
+            break;
+        default:
+            return ERR_INVALID_OPERAND;
+        }
+        ret = DArrayToken_push(&generator->stack, &res);
+        if (ret) {
+            return ret;
+        }
+        break;
     }
     return 0;
 }
@@ -2490,6 +2653,10 @@ static int handle_token_command(
             );
             break;
         case TOKEN_STR_CHAR:
+            fputs(
+                "    call print_chr\n",
+                fasm
+            );
             break;
         default:
             return ERR_INVALID_OPERAND;
@@ -2546,6 +2713,10 @@ static int handle_token_command(
             );
             break;
         case TOKEN_STR_CHAR:
+            fputs(
+                "    call println_chr\n",
+                fasm
+            );
             break;
         default:
             return ERR_INVALID_OPERAND;
@@ -2707,45 +2878,35 @@ int handle_tokens_x86_64_linux(Generator *generator, FILE *fasm) {
         case TOKEN_INT_NAME:
             ret =
                 handle_token_int_name(generator, iter_token, fasm);
-            if (ret) {
-                return ret;
-            }
             break;
         case TOKEN_STR_NAME:
             ret =
                 handle_token_str_name(generator, iter_token, fasm);
-            if (ret) {
-                return ret;
-            }
             break;
         case TOKEN_INT_LIT:
             ret =
                 handle_token_int_lit(generator, iter_token, fasm);
-            if (ret) {
-                return ret;
-            }
             break;
         case TOKEN_STR_LIT:
             ret =
                 handle_token_str_lit(generator, iter_token, fasm);
-            if (ret) {
-                return ret;
-            }
+            break;
+        case TOKEN_ARR_NAME:
+            ret =
+                handle_token_arr_name(generator, iter_token, fasm);
             break;
         case TOKEN_OPERATOR:
             ret =
                 handle_token_operator(generator, iter_token, fasm);
-            if (ret) {
-                return ret;
-            }
             break;
         case TOKEN_COMMAND:
             ret =
                 handle_token_command(generator, iter_token, fasm);
-            if (ret) {
-                return ret;
-            }
             break;
+        }
+        if (ret) {
+            printf("error at position %lu\n", i);
+            return ret;
         }
     }
     return 0;

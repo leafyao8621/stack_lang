@@ -1,4 +1,3 @@
-$a "abcd" =
-$b $a =
-$a _println
-$b _println
+$str "abcd" =
+"abcd" 3 [] _println
+$str 3 [] _println

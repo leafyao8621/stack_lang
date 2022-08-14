@@ -47,7 +47,6 @@ int generator_generate(Generator *generator) {
     if (ret) {
         return ret;
     }
-    // parser_log(&generator->parser, stdout);
     FILE *fasm = fopen("temp.s", "w");
     if (!fasm) {
         return ERR_FILE_IO;
@@ -75,6 +74,7 @@ int generator_generate(Generator *generator) {
         ret = handle_tokens_x86_64_linux(generator, fasm);
         if (ret) {
             fclose(fasm);
+            parser_log(&generator->parser, stdout);
             return ret;
         }
         break;
