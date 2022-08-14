@@ -2430,6 +2430,73 @@ static int handle_token_command(
             token->data.command.data.command_end_if
         );
         break;
+    case TOKEN_COMMAND_WHILE:
+        fprintf(
+            fasm,
+            "loop_%lu:\n",
+            token->data.command.data.command_while
+        );
+        break;
+     case TOKEN_COMMAND_DO:
+        if (generator->stack.size < 1) {
+            return ERR_INVALID_OPERAND;
+        }
+        op = back[-1];
+        ret = DArrayToken_pop(&generator->stack);
+        if (ret) {
+            return ret;
+        }
+        tgt =
+            generator
+                ->parser
+                .tokens
+                .data[token->data.command.data.command_do.offset];
+        switch (op.type) {
+        case TOKEN_INT_LIT:
+            fprintf(
+                fasm,
+                "    movq stack_ptr, %%rax\n"
+                "    subq $8, %%rax\n"
+                "    movq (%%rax), %%rbx\n"
+                "    movq %%rax, stack_ptr\n"
+                "    movabsq $0, %%r10\n"
+                "    cmpq %%rbx, %%r10\n"
+                "    je eloop_%lu\n",
+                tgt.data.command.data.command_end_loop.idx
+            );
+            break;
+        case TOKEN_INT_NAME:
+            fprintf(
+                fasm,
+                "    movq stack_ptr, %%rax\n"
+                "    subq $8, %%rax\n"
+                "    movq (%%rax), %%rbx\n"
+                "    movq (%%rbx), %%rbx\n"
+                "    movq %%rax, stack_ptr\n"
+                "    movabsq $0, %%r10\n"
+                "    cmpq %%rbx, %%r10\n"
+                "    je eloop_%lu\n",
+                tgt.data.command.data.command_end_loop.idx
+            );
+            break;
+        default:
+            return ERR_INVALID_OPERAND;
+        }
+        break;
+    case TOKEN_COMMAND_END_LOOP:
+        tgt =
+            generator
+                ->parser
+                .tokens
+                .data[token->data.command.data.command_else.offset];
+        fprintf(
+            fasm,
+            "    jmp loop_%lu\n"
+            "eloop_%lu:\n",
+            tgt.data.command.data.command_while,
+            token->data.command.data.command_end_loop.idx
+        );
+        break;
     }
     return 0;
 }
