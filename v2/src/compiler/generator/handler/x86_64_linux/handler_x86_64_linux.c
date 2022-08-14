@@ -68,9 +68,9 @@ int handle_declarations_x86_64_linux(Generator *generator, FILE *fasm) {
         if (iter_arr_name->in_use) {
             fprintf(
                 fasm,
-                "arr_name_%s:\n    .fill %lu\n",
+                "arr_name_%s:\n    .fill %lu, 8, 0\n",
                 iter_arr_name->key,
-                iter_arr_name->value * 8);
+                iter_arr_name->value);
         }
     }
     return 0;
@@ -1448,7 +1448,7 @@ static int handle_token_operator(
                     "    movb (%rax), %cl\n"
                     "    subq $8, %rax\n"
                     "    movq (%rax), %rbx\n"
-                    "    sarq %rbx\n"
+                    "    sarq %cl, %rbx\n"
                     "    movq %rbx, (%rax)\n"
                     "    addq $8, %rax\n"
                     "    movq %rax, stack_ptr\n",
@@ -1463,7 +1463,7 @@ static int handle_token_operator(
                     "    movb (%rcx), %cl\n"
                     "    subq $8, %rax\n"
                     "    movq (%rax), %rbx\n"
-                    "    sarq %rbx\n"
+                    "    sarq %cl, %rbx\n"
                     "    movq %rbx, (%rax)\n"
                     "    addq $8, %rax\n"
                     "    movq %rax, stack_ptr\n",
@@ -1484,7 +1484,7 @@ static int handle_token_operator(
                     "    subq $8, %rax\n"
                     "    movq (%rax), %rbx\n"
                     "    movq (%rbx), %rbx\n"
-                    "    sarq %rbx\n"
+                    "    sarq %cl, %rbx\n"
                     "    movq %rbx, (%rax)\n"
                     "    addq $8, %rax\n"
                     "    movq %rax, stack_ptr\n",
@@ -1500,7 +1500,7 @@ static int handle_token_operator(
                     "    subq $8, %rax\n"
                     "    movq (%rax), %rbx\n"
                     "    movq (%rbx), %rbx\n"
-                    "    sarq %rbx\n"
+                    "    sarq %cl, %rbx\n"
                     "    movq %rbx, (%rax)\n"
                     "    addq $8, %rax\n"
                     "    movq %rax, stack_ptr\n",
@@ -1544,7 +1544,7 @@ static int handle_token_operator(
                     "    movb (%rax), %cl\n"
                     "    subq $8, %rax\n"
                     "    movq (%rax), %rbx\n"
-                    "    shlq %rbx\n"
+                    "    shlq %cl, %rbx\n"
                     "    movq %rbx, (%rax)\n"
                     "    addq $8, %rax\n"
                     "    movq %rax, stack_ptr\n",
@@ -1559,7 +1559,7 @@ static int handle_token_operator(
                     "    movb (%rcx), %cl\n"
                     "    subq $8, %rax\n"
                     "    movq (%rax), %rbx\n"
-                    "    shlq %rbx\n"
+                    "    shlq %cl, %rbx\n"
                     "    movq %rbx, (%rax)\n"
                     "    addq $8, %rax\n"
                     "    movq %rax, stack_ptr\n",
@@ -1580,7 +1580,7 @@ static int handle_token_operator(
                     "    subq $8, %rax\n"
                     "    movq (%rax), %rbx\n"
                     "    movq (%rbx), %rbx\n"
-                    "    shlq %rbx\n"
+                    "    shlq %cl, %rbx\n"
                     "    movq %rbx, (%rax)\n"
                     "    addq $8, %rax\n"
                     "    movq %rax, stack_ptr\n",
@@ -1596,7 +1596,7 @@ static int handle_token_operator(
                     "    subq $8, %rax\n"
                     "    movq (%rax), %rbx\n"
                     "    movq (%rbx), %rbx\n"
-                    "    shlq %rbx\n"
+                    "    shlq %cl, %rbx\n"
                     "    movq %rbx, (%rax)\n"
                     "    addq $8, %rax\n"
                     "    movq %rax, stack_ptr\n",
@@ -2474,6 +2474,7 @@ static int handle_token_operator(
                     "    movq stack_ptr, %rax\n"
                     "    subq $8, %rax\n"
                     "    movq (%rax), %rbx\n"
+                    "    shlq $3, %rbx\n"
                     "    subq $8, %rax\n"
                     "    movq (%rax), %rcx\n"
                     "    addq %rbx, %rcx\n"
@@ -2489,6 +2490,7 @@ static int handle_token_operator(
                     "    subq $8, %rax\n"
                     "    movq (%rax), %rbx\n"
                     "    movq (%rbx), %rbx\n"
+                    "    shlq $3, %rbx\n"
                     "    subq $8, %rax\n"
                     "    movq (%rax), %rcx\n"
                     "    addq %rbx, %rcx\n"
