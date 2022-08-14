@@ -8,7 +8,7 @@ DEF_HASHSET_FUNCTIONS(String)
 DEF_HASHMAP_FUNCTIONS(String, Size)
 DEF_HASHMAP_FUNCTIONS(String, Idx)
 
-static const char *lookup[22] = {
+static const char *lookup[26] = {
     "+",
     "-",
     "*",
@@ -30,6 +30,10 @@ static const char *lookup[22] = {
     "|",
     "||",
     "^",
+    "++",
+    "+=",
+    "--",
+    "-=",
     "[]"
 };
 
@@ -394,10 +398,21 @@ static int handle_operator(Parser *parser) {
     int ret = 0;
     switch (last) {
     case '+':
-        if (cur != ' ' && cur != '\t' && cur != '\n') {
+        switch (cur) {
+        case '=':
+            token.data.operater = TOKEN_OPERATOR_INCREMENT_BY;
+            break;
+        case '+':
+            token.data.operater = TOKEN_OPERATOR_INCREMENT;
+            break;
+        case ' ':
+        case '\t':
+        case '\n':
+            token.data.operater = TOKEN_OPERATOR_ADD;
+            break;
+        default:
             return ERR_INVALID_OPERATOR;
         }
-        token.data.operater = TOKEN_OPERATOR_ADD;
         break;
     case '-':
         if (cur >= '0' && cur <= '9') {
@@ -407,10 +422,21 @@ static int handle_operator(Parser *parser) {
             }
             return handle_int_lit(parser, true);
         }
-        if (cur != ' ' && cur != '\t' && cur != '\n') {
+        switch (cur) {
+        case '=':
+            token.data.operater = TOKEN_OPERATOR_DECREMENT_BY;
+            break;
+        case '-':
+            token.data.operater = TOKEN_OPERATOR_DECREMENT;
+            break;
+        case ' ':
+        case '\t':
+        case '\n':
+            token.data.operater = TOKEN_OPERATOR_SUBTRACT;
+            break;
+        default:
             return ERR_INVALID_OPERATOR;
         }
-        token.data.operater = TOKEN_OPERATOR_SUBTRACT;
         break;
     case '*':
         if (cur != ' ' && cur != '\t' && cur != '\n') {

@@ -2228,6 +2228,166 @@ static int handle_token_operator(
             return ret;
         }
         break;
+    case TOKEN_OPERATOR_INCREMENT:
+        if (generator->stack.size < 1) {
+            return ERR_INVALID_OPERAND;
+        }
+        op1 = back[-1];
+        ret = DArrayToken_pop(&generator->stack);
+        if (ret) {
+            return ret;
+        }
+        switch (op1.type) {
+        case TOKEN_INT_NAME:
+            fputs(
+                "    movq stack_ptr, %rax\n"
+                "    subq $8, %rax\n"
+                "    movq (%rax), %rbx\n"
+                "    movq (%rbx), %rcx\n"
+                "    addq $1, %rcx\n"
+                "    movq %rcx, (%rbx)\n"
+                "    movq %rax, stack_ptr\n",
+                fasm
+            );
+            break;
+        default:
+            return ERR_INVALID_OPERAND;
+        }
+        break;
+    case TOKEN_OPERATOR_INCREMENT_BY:
+        if (generator->stack.size < 2) {
+            return ERR_INVALID_OPERAND;
+        }
+        op1 = back[-2];
+        op2 = back[-1];
+        ret = DArrayToken_pop(&generator->stack);
+        if (ret) {
+            return ret;
+        }
+        ret = DArrayToken_pop(&generator->stack);
+        if (ret) {
+            return ret;
+        }
+        switch (op1.type) {
+        case TOKEN_INT_NAME:
+            switch (op2.type) {
+            case TOKEN_INT_LIT:
+                fputs(
+                    "    movq stack_ptr, %rax\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rbx\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rcx\n"
+                    "    movq (%rcx), %rdx\n"
+                    "    addq %rbx, %rdx\n"
+                    "    movq %rdx, (%rcx)\n"
+                    "    movq %rax, stack_ptr\n",
+                    fasm
+                );
+                break;
+            case TOKEN_INT_NAME:
+                fputs(
+                    "    movq stack_ptr, %rax\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rbx\n"
+                    "    movq (%rbx), %rbx\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rcx\n"
+                    "    movq (%rcx), %rdx\n"
+                    "    addq %rbx, %rdx\n"
+                    "    movq %rdx, (%rcx)\n"
+                    "    movq %rax, stack_ptr\n",
+                    fasm
+                );
+                break;
+            default:
+                return ERR_INVALID_OPERAND;
+            }
+            break;
+        default:
+            return ERR_INVALID_OPERAND;
+        }
+        break;
+    case TOKEN_OPERATOR_DECREMENT:
+        if (generator->stack.size < 1) {
+            return ERR_INVALID_OPERAND;
+        }
+        op1 = back[-1];
+        ret = DArrayToken_pop(&generator->stack);
+        if (ret) {
+            return ret;
+        }
+        switch (op1.type) {
+        case TOKEN_INT_NAME:
+            fputs(
+                "    movq stack_ptr, %rax\n"
+                "    subq $8, %rax\n"
+                "    movq (%rax), %rbx\n"
+                "    movq (%rbx), %rcx\n"
+                "    subq $1, %rcx\n"
+                "    movq %rcx, (%rbx)\n"
+                "    movq %rax, stack_ptr\n",
+                fasm
+            );
+            break;
+        default:
+            return ERR_INVALID_OPERAND;
+        }
+        break;
+    case TOKEN_OPERATOR_DECREMENT_BY:
+        if (generator->stack.size < 2) {
+            return ERR_INVALID_OPERAND;
+        }
+        op1 = back[-2];
+        op2 = back[-1];
+        ret = DArrayToken_pop(&generator->stack);
+        if (ret) {
+            return ret;
+        }
+        ret = DArrayToken_pop(&generator->stack);
+        if (ret) {
+            return ret;
+        }
+        switch (op1.type) {
+        case TOKEN_INT_NAME:
+            switch (op2.type) {
+            case TOKEN_INT_LIT:
+                fputs(
+                    "    movq stack_ptr, %rax\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rbx\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rcx\n"
+                    "    movq (%rcx), %rdx\n"
+                    "    subq %rbx, %rdx\n"
+                    "    movq %rdx, (%rcx)\n"
+                    "    movq %rax, stack_ptr\n",
+                    fasm
+                );
+                break;
+            case TOKEN_INT_NAME:
+                fputs(
+                    "    movq stack_ptr, %rax\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rbx\n"
+                    "    movq (%rbx), %rbx\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rcx\n"
+                    "    movq (%rcx), %rdx\n"
+                    "    subq %rbx, %rdx\n"
+                    "    movq %rdx, (%rcx)\n"
+                    "    movq %rax, stack_ptr\n",
+                    fasm
+                );
+                break;
+            default:
+                return ERR_INVALID_OPERAND;
+            }
+            break;
+        default:
+            return ERR_INVALID_OPERAND;
+        }
+        break;
     }
     return 0;
 }
