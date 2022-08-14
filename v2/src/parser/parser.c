@@ -7,6 +7,7 @@ DEF_DARRAY_FUNCTIONS(Idx)
 DEF_HASHSET_FUNCTIONS(String)
 DEF_HASHMAP_FUNCTIONS(String, Size)
 DEF_HASHMAP_FUNCTIONS(String, Idx)
+DEF_HASHMAP_FUNCTIONS(String, Function)
 
 static const char *lookup[26] = {
     "+",
@@ -37,7 +38,7 @@ static const char *lookup[26] = {
     "[]"
 };
 
-static String commands[9] = {
+static String commands[10] = {
     "input",
     "print",
     "println",
@@ -46,7 +47,8 @@ static String commands[9] = {
     "while",
     "do",
     "end",
-    "end"
+    "end",
+    "def"
 };
 
 int parser_initialize(Parser *parser, String ifn) {
@@ -109,6 +111,15 @@ int parser_initialize(Parser *parser, String ifn) {
         return ret;
     }
     ret =
+        HashMapStringFunction_initialize(
+            &parser->function_name,
+            10, hash_function_string,
+            eq_function_string
+        );
+    if (ret) {
+        return ret;
+    }
+    ret =
         HashMapStringIdx_initialize(
             &parser->handler_lookup,
             10, hash_function_string,
@@ -118,13 +129,15 @@ int parser_initialize(Parser *parser, String ifn) {
         return ret;
     }
     String *iter = commands;
-    for (size_t i = 0; i < 8; ++i, ++iter) {
-        Idx *ptr = 0;
-        ret = HashMapStringIdx_fetch(&parser->handler_lookup, iter, &ptr);
-        if (ret) {
-            return ret;
+    for (size_t i = 0; i < 10; ++i, ++iter) {
+        if (i != 8) {
+            Idx *ptr = 0;
+            ret = HashMapStringIdx_fetch(&parser->handler_lookup, iter, &ptr);
+            if (ret) {
+                return ret;
+            }
+            *ptr = i;
         }
-        *ptr = i;
     }
     return 0;
 }
@@ -158,6 +171,10 @@ int parser_finalize(Parser *parser) {
         return ret;
     }
     ret = HashMapStringSize_finalize(&parser->arr_name);
+    if (ret) {
+        return ret;
+    }
+    ret = HashMapStringFunction_finalize(&parser->function_name);
     if (ret) {
         return ret;
     }

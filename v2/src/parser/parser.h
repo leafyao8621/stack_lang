@@ -50,6 +50,9 @@
 #define TOKEN_COMMAND_DO 6
 #define TOKEN_COMMAND_END_IF 7
 #define TOKEN_COMMAND_END_LOOP 8
+#define TOKEN_COMMAND_DEF 9
+#define TOKEN_COMMAND_BEGIN 10
+#define TOKEN_COMMAND_END_FUNCTION 11
 
 typedef uint64_t Type;
 typedef char Character;
@@ -103,6 +106,13 @@ DEF_HASHSET(String)
 DEF_HASHMAP(String, Size)
 DEF_HASHMAP(String, Idx)
 
+typedef struct Function {
+    DArrayToken args;
+    DArrayToken tokens;
+} Function;
+
+DEF_HASHMAP(String, Function)
+
 typedef struct Parser {
     size_t idx_if, idx_else, idx_while, idx_do, idx_end_if, idx_end_loop;
     DArrayToken tokens;
@@ -112,6 +122,7 @@ typedef struct Parser {
     HashSetString int_name;
     HashSetString str_name;
     HashMapStringSize arr_name;
+    HashMapStringFunction function_name;
     HashMapStringIdx handler_lookup;
     FILE *fin;
 } Parser;
