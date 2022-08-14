@@ -9,7 +9,7 @@ _while #i 1 > _do
     #i _print
     $b _println
     $c _print
-    #i #i 1 - =
+    #i --
     #i _print
     $d _println
 _end

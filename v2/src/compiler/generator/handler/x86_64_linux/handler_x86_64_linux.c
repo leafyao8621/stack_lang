@@ -703,10 +703,48 @@ static int handle_token_operator(
                 );
                 break;
             case TOKEN_INT_NAME:
+                fputs(
+                    "    movq stack_ptr, %rax\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rbx\n"
+                    "    movq (%rbx), %rbx\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rcx\n"
+                    "    movq %rbx, (%rcx)\n"
+                    "    movq %rax, stack_ptr\n",
+                    fasm
+                );
                 break;
             }
             break;
         case TOKEN_STR_NAME:
+            switch (op2.type) {
+            case TOKEN_STR_LIT:
+                fputs(
+                    "    movq stack_ptr, %rax\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rbx\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rcx\n"
+                    "    movq %rbx, (%rcx)\n"
+                    "    movq %rax, stack_ptr\n",
+                    fasm
+                );
+                break;
+            case TOKEN_STR_NAME:
+                fputs(
+                    "    movq stack_ptr, %rax\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rbx\n"
+                    "    movq (%rbx), %rbx\n"
+                    "    subq $8, %rax\n"
+                    "    movq (%rax), %rcx\n"
+                    "    movq %rbx, (%rcx)\n"
+                    "    movq %rax, stack_ptr\n",
+                    fasm
+                );
+                break;
+            }
             break;
         default:
             return ERR_INVALID_OPERAND;

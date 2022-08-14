@@ -2,6 +2,48 @@
 
 A stack based interpreted language. Uses RPN
 
+## v2
+Operators implemented:
+* \+
+* \-
+* \*
+* /
+* %
+* =
+* \>
+* \<
+* \>=
+* \<=
+* ==
+* !=
+* \>\>
+* \<\<
+* ~
+* !
+* &
+* &&
+* |
+* ||
+* ^
+* ++
+* +=
+* --
+* -=
+* [] (Not yet implemented)
+
+Commands Implemented:
+* _input (Not yet implemented)
+* _print
+* _println
+* _if
+* _else
+* _end
+* _while
+* _do
+* _def (Not yet implemented)
+* _begin (Not yet implemented)
+
+## v1
 Operators implemented:
 * \+
 * \-
@@ -33,4 +75,4 @@ Commands Implemented:
 * _end
 * _while
 * _do
-* _alloc (Removed in v2)
+* _alloc
