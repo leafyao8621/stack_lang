@@ -1,17 +1,15 @@
-@arr[10]
-
-_while #i 10 < _do
-    @arr #i [] _println
-    #i ++
+_def ?sum_up #n _begin
+    #i 0 =
+    #out 0 =
+    _while #i #n < _do
+        #i ++
+        #out #i +=
+    _end
+    #out
 _end
 
-#idx 2 =
-@arr #idx [] 123 = 
-
-"after" _println
-#i 0 =
-_while #i 10 < _do
-    @arr #i [] _println
-    #i ++
+_def ?sq #n _begin 
+    #n #n *
 _end
 
+#n ?sq ?sum_up _println

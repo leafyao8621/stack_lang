@@ -10,13 +10,15 @@
         ["\"", "\""],
         ["'", "'"],
         ["_if", "_end"],
-        ["_do", "_end"]
+        ["_do", "_end"],
+        ["_begin", "_end"]
     ],
     // symbols that can be used to surround a selection
     "surroundingPairs": [
         ["\"", "\""],
         ["'", "'"],
         ["_if", "_end"],
-        ["_do", "_end"]
+        ["_do", "_end"],
+        ["_begin", "_end"]
     ]
 }

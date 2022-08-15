@@ -13,14 +13,23 @@
 		},
 		{
 			"include": "constants"
+		},
+		{
+			"include": "#entities"
 		}
 	],
 	"repository": {
 		"keywords": {
-			"patterns": [{
-				"name": "keyword.control.stacklang",
-				"match": "\\b(_if|_else|_while|_do|_end|_print|_println)\\b"
-			}]
+			"patterns": [
+				{
+					"name": "keyword",
+					"match": "\\b(_do|_end|_print|_println|_def|_begin)\\b"
+				},
+				{
+					"name": "keyword.control",
+					"match": "\\b(_if|_else|_while)\\b"
+				}
+			]
 		},
 		"strings": {
 			"name": "string.quoted.double.stacklang",
@@ -48,6 +57,15 @@
 				{
 					"name": "constant.numeric",
 					"match": "[0-9]+"
+				}
+			]
+		},
+		"entities": {
+			"name": "entity.name.stacklang",
+			"patterns": [
+				{
+					"name": "entity.name.function",
+					"match": "\\?[A-Za-z][0-9A-Za-z_]*"
 				}
 			]
 		}
