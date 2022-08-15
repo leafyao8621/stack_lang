@@ -114,8 +114,9 @@ typedef struct Function {
 DEF_HASHMAP(String, Function)
 
 typedef struct Parser {
+    bool function_definition;
     size_t idx_if, idx_else, idx_while, idx_do, idx_end_if, idx_end_loop;
-    DArrayToken tokens;
+    DArrayToken tokens, *cur_token_buf;
     DArrayIdx stack;
     DArrayCharacter str_buf;
     DArrayString str_lit;
@@ -124,6 +125,7 @@ typedef struct Parser {
     HashMapStringSize arr_name;
     HashMapStringFunction function_name;
     HashMapStringIdx handler_lookup;
+    Function *cur_function;
     FILE *fin;
 } Parser;
 

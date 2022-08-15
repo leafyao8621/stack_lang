@@ -7,7 +7,7 @@
 #define DEF_HASHSET(Type)\
 typedef struct HashSet##Type##Node {\
     Type item;\
-    uint64_t in_use;\
+    bool in_use;\
 } HashSet##Type##Node;\
 typedef struct HashSet##Type {\
     size_t capacity;\

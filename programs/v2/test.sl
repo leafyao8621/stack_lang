@@ -1,15 +1,11 @@
-_def ?sum_up #n _begin
-    #i 0 =
-    #out 0 =
-    _while #i #n < _do
-        #i ++
-        #out #i +=
-    _end
-    #out
+_def ?sq $s @a #i #j _begin 
+    $s _println
+    @a #i [] #j =
+    #j
 _end
 
-_def ?sq #n _begin 
-    #n #n *
-_end
-
-#n ?sq ?sum_up _println
+@arr[10]
+@arr 1 [] 123
+@arr 1 [] _println
+"abc" @arr 1 234 _println
+@arr 1 _println

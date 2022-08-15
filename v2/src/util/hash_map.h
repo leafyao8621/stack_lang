@@ -7,7 +7,7 @@
 typedef struct HashMap##Key##Value##Node {\
     Key key;\
     Value value;\
-    uint64_t in_use;\
+    bool in_use;\
 } HashMap##Key##Value##Node;\
 typedef struct HashMap##Key##Value {\
     size_t size, capacity;\

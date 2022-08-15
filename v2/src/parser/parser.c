@@ -38,7 +38,7 @@ static const char *lookup[26] = {
     "[]"
 };
 
-static String commands[10] = {
+static String commands[11] = {
     "input",
     "print",
     "println",
@@ -48,7 +48,8 @@ static String commands[10] = {
     "do",
     "end",
     "end",
-    "def"
+    "def",
+    "begin"
 };
 
 int parser_initialize(Parser *parser, String ifn) {
@@ -56,6 +57,7 @@ int parser_initialize(Parser *parser, String ifn) {
     if (!parser || !ifn) {
         return ERR_NULL_PTR;
     }
+    parser->function_definition = false;
     parser->idx_if = 0;
     parser->idx_else = 0;
     parser->idx_while = 0;
@@ -70,6 +72,7 @@ int parser_initialize(Parser *parser, String ifn) {
     if (ret) {
         return ret;
     }
+    parser->cur_token_buf = &parser->tokens;
     ret = DArrayIdx_initialize(&parser->stack, 100);
     if (ret) {
         DArrayIdx_finalize(&parser->stack);
@@ -128,8 +131,9 @@ int parser_initialize(Parser *parser, String ifn) {
     if (ret) {
         return ret;
     }
+    parser->cur_function = NULL;
     String *iter = commands;
-    for (size_t i = 0; i < 10; ++i, ++iter) {
+    for (size_t i = 0; i < 11; ++i, ++iter) {
         if (i != 8) {
             Idx *ptr = 0;
             ret = HashMapStringIdx_fetch(&parser->handler_lookup, iter, &ptr);
@@ -236,7 +240,7 @@ static int handle_int_name(Parser *parser) {
     Token token;
     token.type = TOKEN_INT_NAME;
     token.data.int_name = str;
-    ret = DArrayToken_push(&parser->tokens, &token);
+    ret = DArrayToken_push(parser->cur_token_buf, &token);
     if (ret) {
         return ret;
     }
@@ -297,7 +301,7 @@ static int handle_str_name(Parser *parser) {
     Token token;
     token.type = TOKEN_STR_NAME;
     token.data.str_name = str;
-    ret = DArrayToken_push(&parser->tokens, &token);
+    ret = DArrayToken_push(parser->cur_token_buf, &token);
     if (ret) {
         return ret;
     }
@@ -338,7 +342,7 @@ static int handle_int_lit(Parser *parser, bool negative) {
     Token token;
     token.type = TOKEN_INT_LIT;
     token.data.int_lit = atol(str);
-    ret = DArrayToken_push(&parser->tokens, &token);
+    ret = DArrayToken_push(parser->cur_token_buf, &token);
     if (ret) {
         return ret;
     }
@@ -399,7 +403,7 @@ static int handle_str_lit(Parser *parser) {
     if (ret) {
         return ret;
     }
-    ret = DArrayToken_push(&parser->tokens, &token);
+    ret = DArrayToken_push(parser->cur_token_buf, &token);
     if (ret) {
         return ret;
     }
@@ -582,7 +586,7 @@ static int handle_operator(Parser *parser) {
         token.data.operater = TOKEN_OPERATOR_IDX;
         break;
     }
-    ret = DArrayToken_push(&parser->tokens, &token);
+    ret = DArrayToken_push(parser->cur_token_buf, &token);
     if (ret) {
         return ret;
     }
@@ -690,7 +694,7 @@ static int handle_arr_name(Parser *parser) {
         }
         *tgt = size;
     }
-    ret = DArrayToken_push(&parser->tokens, &token);
+    ret = DArrayToken_push(parser->cur_token_buf, &token);
     if (ret) {
         return ret;
     }
@@ -798,7 +802,7 @@ static int handle_command_end(Parser *parser) {
     return 0;
 }
 
-static int (*handlers[8])(Parser*) = {
+static int (*handlers[11])(Parser*) = {
     0,
     0,
     0,
@@ -806,7 +810,10 @@ static int (*handlers[8])(Parser*) = {
     handle_command_else,
     handle_command_while,
     handle_command_do,
-    handle_command_end
+    handle_command_end,
+    0,
+    0,
+    0
 };
 
 static int handle_command(Parser *parser) {
@@ -872,7 +879,7 @@ static int handle_command(Parser *parser) {
     Token token;
     token.type = TOKEN_COMMAND;
     token.data.command.type = *idx;
-    ret = DArrayToken_push(&parser->tokens, &token);
+    ret = DArrayToken_push(parser->cur_token_buf, &token);
     if (ret) {
         return ret;
     }
