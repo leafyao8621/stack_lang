@@ -844,14 +844,20 @@ static int handle_command_do(Parser *parser) {
 }
 
 static int handle_command_end(Parser *parser) {
-    if (parser->function_definition) {
-        return ERR_INVALID_PARAMETER;
+    int ret = 0;
+    if (parser->cur_function) {
+        ret = DArrayToken_pop(parser->cur_token_buf);
+        if (ret) {
+            return ret;
+        }
+        parser->cur_token_buf = &parser->tokens;
+        parser->cur_function = NULL;
+        return 0;
     }
     Idx idx = parser->cur_token_buf->size - 1;
     Token *token = parser->cur_token_buf->data + idx;
     Idx back = parser->stack.data[parser->stack.size - 1];
     Token *back_token = parser->cur_token_buf->data + back;
-    int ret = 0;
     switch (back_token->data.command.type) {
     case TOKEN_COMMAND_IF:
         token->data.command.data.command_end_if = parser->idx_end_if++;
@@ -995,11 +1001,6 @@ static int handle_command_def(Parser *parser) {
 }
 
 static int handle_command_begin(Parser *parser) {
-    Idx idx = parser->cur_token_buf->size - 1;
-    int ret = DArrayIdx_push(&parser->stack, &idx);
-    if (ret) {
-        return ret;
-    }
     parser->function_definition = false;
     return 0;
 }
@@ -1079,6 +1080,9 @@ static int handle_command(Parser *parser) {
     if (ret) {
         return ret;
     }
+    if (parser->function_definition && *idx != TOKEN_COMMAND_BEGIN) {
+        return ERR_INVALID_PARAMETER;
+    }
     Token token;
     token.type = TOKEN_COMMAND;
     token.data.command.type = *idx;
@@ -1090,12 +1094,6 @@ static int handle_command(Parser *parser) {
     }
     if (handlers[*idx]) {
         ret = handlers[*idx](parser);
-        if (ret) {
-            return ret;
-        }
-    }
-    if (token.data.command.type == TOKEN_COMMAND_END_FUNCTION) {
-        ret = DArrayToken_pop(parser->cur_token_buf);
         if (ret) {
             return ret;
         }
