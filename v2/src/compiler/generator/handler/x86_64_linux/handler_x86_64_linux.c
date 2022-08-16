@@ -3006,7 +3006,7 @@ static int handle_token_function_call(
                     "    subq $8, %%rax\n"
                     "    movq (%%rax), %%rbx\n"
                     "    movq (%%rbx), %%rbx\n"
-                    "    movq %%rax, function_%s_int_name_%s\n"
+                    "    movq %%rbx, function_%s_int_name_%s\n"
                     "    movq %%rax, stack_ptr\n",
                     token->data.function_call,
                     iter_args->data.int_name
@@ -3037,7 +3037,7 @@ static int handle_token_function_call(
                     "    subq $8, %%rax\n"
                     "    movq (%%rax), %%rbx\n"
                     "    movq (%%rbx), %%rbx\n"
-                    "    movq %%rax, function_%s_str_name_%s\n"
+                    "    movq %%rbx, function_%s_str_name_%s\n"
                     "    movq %%rax, stack_ptr\n",
                     token->data.function_call,
                     iter_args->data.str_name
