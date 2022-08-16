@@ -4,6 +4,7 @@
 #include "../../generator.h"
 
 int handle_declarations_x86_64_linux(Generator *generator, FILE *fasm);
+int handle_function_definitions_x86_64_linux(Generator *generator, FILE *fasm);
 int handle_tokens_x86_64_linux(Generator *generator, FILE *fasm);
 
 #endif

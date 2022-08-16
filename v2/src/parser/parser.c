@@ -196,11 +196,6 @@ int parser_finalize(Parser *parser) {
             if (ret) {
                 return ret;
             }
-            ret =
-                HashMapStringSize_finalize(&iter_function_name->value.arr_name);
-            if (ret) {
-                return ret;
-            }
             ret = DArrayToken_finalize(&iter_function_name->value.tokens);
             if (ret) {
                 return ret;
@@ -271,6 +266,10 @@ static int handle_int_name(Parser *parser) {
     token.data.int_name = str;
     if (parser->function_definition) {
         ret = DArrayToken_push(&parser->cur_function->args, &token);
+        if (ret) {
+            return ret;
+        }
+        ret = HashSetString_insert(&parser->cur_function->int_name, &str);
         if (ret) {
             return ret;
         }
@@ -346,6 +345,10 @@ static int handle_str_name(Parser *parser) {
     token.data.str_name = str;
     if (parser->function_definition) {
         ret = DArrayToken_push(&parser->cur_function->args, &token);
+        if (ret) {
+            return ret;
+        }
+        ret = HashSetString_insert(&parser->cur_function->str_name, &str);
         if (ret) {
             return ret;
         }
@@ -754,21 +757,9 @@ static int handle_arr_name(Parser *parser) {
         String str_size = parser->str_buf.data + parser->str_buf.size - i - 1;
         Size size = (Size)atol(str_size);
         Size *tgt = 0;
-        if (parser->cur_function) {
-            ret =
-                HashMapStringSize_fetch(
-                    &parser->cur_function->arr_name,
-                    &str,
-                    &tgt
-                );
-            if (ret) {
-                return ret;
-            }
-        } else {
-            ret = HashMapStringSize_fetch(&parser->arr_name, &str, &tgt);
-            if (ret) {
-                return ret;
-            }
+        ret = HashMapStringSize_fetch(&parser->arr_name, &str, &tgt);
+        if (ret) {
+            return ret;
         }
         *tgt = size;
     }
@@ -977,15 +968,6 @@ static int handle_command_def(Parser *parser) {
     ret =
         HashSetString_initialize(
             &parser->cur_function->str_name,
-            10, hash_function_string,
-            eq_function_string
-        );
-    if (ret) {
-        return ret;
-    }
-    ret =
-        HashMapStringSize_initialize(
-            &parser->cur_function->arr_name,
             10, hash_function_string,
             eq_function_string
         );
@@ -1276,17 +1258,6 @@ int parser_log(Parser *parser, FILE *fout) {
             for (size_t j = 0; j < parser->function_name.data[i].value.str_name.capacity; ++j) {
                 if (parser->function_name.data[i].value.str_name.data[j].in_use) {
                     fprintf(fout, "%s\n", parser->function_name.data[i].value.str_name.data[j].item);
-                }
-            }
-            fputs("arr_name:\n", fout);
-            for (size_t j = 0; j < parser->function_name.data[i].value.arr_name.capacity; ++j) {
-                if (parser->function_name.data[i].value.arr_name.data[j].in_use) {
-                    fprintf(
-                        fout,
-                        "name: %s\nsize: %lu\n",
-                        parser->function_name.data[i].value.arr_name.data[j].key,
-                        parser->function_name.data[i].value.arr_name.data[j].value
-                    );
                 }
             }
             fputs("tokens:\n", fout);

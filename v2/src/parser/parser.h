@@ -112,7 +112,6 @@ typedef struct Function {
     DArrayToken tokens;
     HashSetString int_name;
     HashSetString str_name;
-    HashMapStringSize arr_name;
 } Function;
 
 DEF_HASHMAP(String, Function)

@@ -72,6 +72,21 @@ int generator_generate(Generator *generator) {
     }
     switch (generator->architecture) {
     case ARCHITECTURE_X86_64_LINUX:
+        ret = handle_function_definitions_x86_64_linux(generator, fasm);
+        if (ret) {
+            fclose(fasm);
+            parser_log(&generator->parser, stdout);
+            return ret;
+        }
+        break;
+    }
+    switch (generator->architecture) {
+    case ARCHITECTURE_X86_64_LINUX:
+        fprintf(fasm, "%s\n", program_start_x86_64_linux);
+        break;
+    }
+    switch (generator->architecture) {
+    case ARCHITECTURE_X86_64_LINUX:
         ret = handle_tokens_x86_64_linux(generator, fasm);
         if (ret) {
             fclose(fasm);

@@ -70,7 +70,67 @@ int handle_declarations_x86_64_linux(Generator *generator, FILE *fasm) {
                 fasm,
                 "arr_name_%s:\n    .fill %lu, 8, 0\n",
                 iter_arr_name->key,
-                iter_arr_name->value);
+                iter_arr_name->value
+            );
+        }
+    }
+    HashMapStringFunctionNode *iter_function_name =
+        generator->parser.function_name.data;
+    for (
+        size_t i = 0;
+        i < generator->parser.function_name.capacity;
+        ++i,
+        ++iter_function_name
+    ) {
+        if (iter_function_name->in_use) {
+            Token *iter_args = iter_function_name->value.args.data;
+            for (
+                size_t i = 0;
+                i < iter_function_name->value.args.size;
+                ++i, ++iter_args
+            ) {
+                if (iter_args->type == TOKEN_ARR_NAME) {
+                    puts("Abc");
+                    fprintf(
+                        fasm,
+                        "function_%s_arr_name_%s:\n    .quad 0\n",
+                        iter_function_name->key,
+                        iter_args->data.arr_name
+                    );
+                }
+            }
+            HashSetStringNode *iter_function_name_int_name =
+                iter_function_name->value.int_name.data;
+            for (
+                size_t i = 0;
+                i < iter_function_name->value.int_name.capacity;
+                ++i,
+                ++iter_function_name_int_name
+            ) {
+                if (iter_function_name_int_name->in_use) {
+                    fprintf(
+                        fasm,
+                        "function_%s_int_name_%s:\n    .quad 0\n",
+                        iter_function_name->key,
+                        iter_function_name_int_name->item);
+                }
+            }
+            HashSetStringNode *iter_function_name_str_name =
+                iter_function_name->value.str_name.data;
+            for (
+                size_t i = 0;
+                i < iter_function_name->value.str_name.capacity;
+                ++i,
+                ++iter_function_name_str_name
+            ) {
+                if (iter_function_name_str_name->in_use) {
+                    fprintf(
+                        fasm,
+                        "function_%s_str_name_%s:\n    .quad 0\n",
+                        iter_function_name->key,
+                        iter_function_name_str_name->item);
+                }
+            }
         }
     }
     return 0;
@@ -79,6 +139,7 @@ int handle_declarations_x86_64_linux(Generator *generator, FILE *fasm) {
 static int handle_token_int_name(
     Generator *generator,
     Token *token,
+    String function,
     FILE *fasm
 ) {
     if (generator->stack.size == 100) {
@@ -91,10 +152,13 @@ static int handle_token_int_name(
     fprintf(
         fasm,
         "    movq stack_ptr, %%rax\n"
-        "    movabsq $int_name_%s, %%rbx\n"
+        "    movabsq $%s%s%sint_name_%s, %%rbx\n"
         "    movq %%rbx, (%%rax)\n"
         "    addq $8, %%rax\n"
         "    movq %%rax, stack_ptr\n",
+        function ? "function_" : "",
+        function ? function : "",
+        function ? "_" : "",
         token->data.int_name
     );
     return 0;
@@ -103,6 +167,7 @@ static int handle_token_int_name(
 static int handle_token_str_name(
     Generator *generator,
     Token *token,
+    String function,
     FILE *fasm
 ) {
     if (generator->stack.size == 100) {
@@ -115,10 +180,13 @@ static int handle_token_str_name(
     fprintf(
         fasm,
         "    movq stack_ptr, %%rax\n"
-        "    movabsq $str_name_%s, %%rbx\n"
+        "    movabsq $%s%s%sstr_name_%s, %%rbx\n"
         "    movq %%rbx, (%%rax)\n"
         "    addq $8, %%rax\n"
         "    movq %%rax, stack_ptr\n",
+        function ? "function_" : "",
+        function ? function : "",
+        function ? "_" : "",
         token->data.str_name
     );
     return 0;
@@ -175,6 +243,7 @@ static int handle_token_str_lit(
 static int handle_token_arr_name(
     Generator *generator,
     Token *token,
+    String function,
     FILE *fasm
 ) {
     if (generator->stack.size == 100) {
@@ -187,10 +256,13 @@ static int handle_token_arr_name(
     fprintf(
         fasm,
         "    movq stack_ptr, %%rax\n"
-        "    movabsq $arr_name_%s, %%rbx\n"
+        "    movabsq $%s%s%sarr_name_%s, %%rbx\n"
         "    movq %%rbx, (%%rax)\n"
         "    addq $8, %%rax\n"
         "    movq %%rax, stack_ptr\n",
+        function ? "function_" : "",
+        function ? function : "",
+        function ? "_" : "",
         token->data.arr_name
     );
     return 0;
@@ -2872,6 +2944,80 @@ static int handle_token_command(
     return 0;
 }
 
+int handle_function_definitions_x86_64_linux(Generator *generator, FILE *fasm) {
+    HashMapStringFunctionNode *iter_function_name =
+        generator->parser.function_name.data;
+    for (
+        size_t i = 0;
+        i < generator->parser.function_name.capacity;
+        ++i, ++iter_function_name
+    ) {
+        if (iter_function_name->in_use) {
+            fprintf(
+                fasm,
+                "function_%s:\n",
+                iter_function_name->key
+            );
+            Token *iter_token = iter_function_name->value.tokens.data;
+            int ret = 0;
+            for (
+                size_t i = 0;
+                i < iter_function_name->value.tokens.size;
+                ++i, ++iter_token
+            ) {
+                switch (iter_token->type) {
+                case TOKEN_INT_NAME:
+                    ret =
+                        handle_token_int_name(
+                            generator,
+                            iter_token,
+                            iter_function_name->key,
+                            fasm
+                        );
+                    break;
+                case TOKEN_STR_NAME:
+                    ret =
+                        handle_token_str_name(
+                            generator,
+                            iter_token,
+                            iter_function_name->key,
+                            fasm
+                        );
+                    break;
+                case TOKEN_INT_LIT:
+                    ret =
+                        handle_token_int_lit(generator, iter_token, fasm);
+                    break;
+                case TOKEN_STR_LIT:
+                    ret =
+                        handle_token_str_lit(generator, iter_token, fasm);
+                    break;
+                case TOKEN_ARR_NAME:
+                    ret =
+                        handle_token_arr_name(
+                            generator,
+                            iter_token,
+                            iter_function_name->key,
+                            fasm);
+                    break;
+                case TOKEN_OPERATOR:
+                    ret =
+                        handle_token_operator(generator, iter_token, fasm);
+                    break;
+                case TOKEN_COMMAND:
+                    ret =
+                        handle_token_command(generator, iter_token, fasm);
+                    break;
+                }
+                if (ret) {
+                    printf("error at position %lu\n", i);
+                    return ret;
+                }
+            }
+        }
+    }
+    return 0;
+}
 int handle_tokens_x86_64_linux(Generator *generator, FILE *fasm) {
     Token *iter_token = generator->parser.tokens.data;
     int ret = 0;
@@ -2879,11 +3025,11 @@ int handle_tokens_x86_64_linux(Generator *generator, FILE *fasm) {
         switch (iter_token->type) {
         case TOKEN_INT_NAME:
             ret =
-                handle_token_int_name(generator, iter_token, fasm);
+                handle_token_int_name(generator, iter_token, NULL, fasm);
             break;
         case TOKEN_STR_NAME:
             ret =
-                handle_token_str_name(generator, iter_token, fasm);
+                handle_token_str_name(generator, iter_token, NULL, fasm);
             break;
         case TOKEN_INT_LIT:
             ret =
@@ -2895,7 +3041,7 @@ int handle_tokens_x86_64_linux(Generator *generator, FILE *fasm) {
             break;
         case TOKEN_ARR_NAME:
             ret =
-                handle_token_arr_name(generator, iter_token, fasm);
+                handle_token_arr_name(generator, iter_token, NULL, fasm);
             break;
         case TOKEN_OPERATOR:
             ret =

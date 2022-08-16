@@ -188,7 +188,9 @@ const char *text_start_x86_64_linux =
     "    movabsq $1, %rdx\n"
     "    movabsq $1, %rax\n"
     "    syscall\n"
-    "    ret\n"
+    "    ret\n";
+
+const char *program_start_x86_64_linux =
     "_start:\n"
     "    movabsq $stack, %rax\n"
     "    movq %rax, stack_ptr";
