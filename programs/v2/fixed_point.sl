@@ -5,7 +5,6 @@ _def ?print_fp #x #decimal_places _begin
         #divisor #divisor 10 * =
         #i ++
     _end
-
     #x #divisor / _print
     "." _print
     #remainder #x #divisor % =
