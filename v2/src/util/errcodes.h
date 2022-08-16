@@ -16,7 +16,8 @@
 #define ERR_UNBALANCED_END 13
 #define ERR_STACK_OVERFLOW 14
 #define ERR_INVALID_OPERAND 15
+#define ERR_INVALID_PARAMETER 16
 
-extern const char *errcode_lookup[16];
+extern const char *errcode_lookup[17];
 
 #endif

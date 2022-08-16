@@ -53,7 +53,6 @@ static String commands[11] = {
 };
 
 int parser_initialize(Parser *parser, String ifn) {
-    
     if (!parser || !ifn) {
         return ERR_NULL_PTR;
     }
@@ -68,7 +67,7 @@ int parser_initialize(Parser *parser, String ifn) {
     if (!parser->fin) {
         return ERR_FILE_IO;
     }
-    int ret = DArrayToken_initialize(&parser->tokens, 1000);
+    int ret = DArrayToken_initialize(&parser->tokens, 100);
     if (ret) {
         return ret;
     }
@@ -89,7 +88,7 @@ int parser_initialize(Parser *parser, String ifn) {
     ret =
         HashSetString_initialize(
             &parser->int_name,
-            100, hash_function_string,
+            10, hash_function_string,
             eq_function_string
         );
     if (ret) {
@@ -98,7 +97,7 @@ int parser_initialize(Parser *parser, String ifn) {
     ret =
         HashSetString_initialize(
             &parser->str_name,
-            100, hash_function_string,
+            10, hash_function_string,
             eq_function_string
         );
     if (ret) {
@@ -107,7 +106,7 @@ int parser_initialize(Parser *parser, String ifn) {
     ret =
         HashMapStringSize_initialize(
             &parser->arr_name,
-            100, hash_function_string,
+            10, hash_function_string,
             eq_function_string
         );
     if (ret) {
@@ -178,6 +177,36 @@ int parser_finalize(Parser *parser) {
     if (ret) {
         return ret;
     }
+    HashMapStringFunctionNode *iter_function_name = parser->function_name.data;
+    for (
+        size_t i = 0;
+        i < parser->function_name.capacity;
+        ++i, ++iter_function_name
+    ) {
+        if (iter_function_name->in_use) {
+            ret = DArrayToken_finalize(&iter_function_name->value.args);
+            if (ret) {
+                return ret;
+            }
+            ret = HashSetString_finalize(&iter_function_name->value.int_name);
+            if (ret) {
+                return ret;
+            }
+            ret = HashSetString_finalize(&iter_function_name->value.str_name);
+            if (ret) {
+                return ret;
+            }
+            ret =
+                HashMapStringSize_finalize(&iter_function_name->value.arr_name);
+            if (ret) {
+                return ret;
+            }
+            ret = DArrayToken_finalize(&iter_function_name->value.tokens);
+            if (ret) {
+                return ret;
+            }
+        }
+    }
     ret = HashMapStringFunction_finalize(&parser->function_name);
     if (ret) {
         return ret;
@@ -240,13 +269,27 @@ static int handle_int_name(Parser *parser) {
     Token token;
     token.type = TOKEN_INT_NAME;
     token.data.int_name = str;
-    ret = DArrayToken_push(parser->cur_token_buf, &token);
-    if (ret) {
-        return ret;
-    }
-    ret = HashSetString_insert(&parser->int_name, &str);
-    if (ret) {
-        return ret;
+    if (parser->function_definition) {
+        ret = DArrayToken_push(&parser->cur_function->args, &token);
+        if (ret) {
+            return ret;
+        }
+    } else {
+        ret = DArrayToken_push(parser->cur_token_buf, &token);
+        if (ret) {
+            return ret;
+        }
+        if (parser->cur_function) {
+            ret = HashSetString_insert(&parser->cur_function->int_name, &str);
+            if (ret) {
+                return ret;
+            }
+        } else {
+            ret = HashSetString_insert(&parser->int_name, &str);
+            if (ret) {
+                return ret;
+            }
+        }
     }
     return 0;
 }
@@ -301,18 +344,35 @@ static int handle_str_name(Parser *parser) {
     Token token;
     token.type = TOKEN_STR_NAME;
     token.data.str_name = str;
-    ret = DArrayToken_push(parser->cur_token_buf, &token);
-    if (ret) {
-        return ret;
-    }
-    ret = HashSetString_insert(&parser->str_name, &str);
-    if (ret) {
-        return ret;
+    if (parser->function_definition) {
+        ret = DArrayToken_push(&parser->cur_function->args, &token);
+        if (ret) {
+            return ret;
+        }
+    } else {
+        ret = DArrayToken_push(parser->cur_token_buf, &token);
+        if (ret) {
+            return ret;
+        }
+        if (parser->cur_function) {
+            ret = HashSetString_insert(&parser->cur_function->str_name, &str);
+            if (ret) {
+                return ret;
+            }
+        } else {
+            ret = HashSetString_insert(&parser->str_name, &str);
+            if (ret) {
+                return ret;
+            }
+        }
     }
     return 0;
 }
 
 static int handle_int_lit(Parser *parser, bool negative) {
+    if (parser->function_definition) {
+        return ERR_INVALID_PARAMETER;
+    }
     size_t i = negative ? 2 : 1;
     int ret = 0;
     for (
@@ -350,6 +410,9 @@ static int handle_int_lit(Parser *parser, bool negative) {
 }
 
 static int handle_str_lit(Parser *parser) {
+    if (parser->function_definition) {
+        return ERR_INVALID_PARAMETER;
+    }
     size_t i = 0;
     int ii = 0;
     int ret = 0;
@@ -411,6 +474,9 @@ static int handle_str_lit(Parser *parser) {
 }
 
 static int handle_operator(Parser *parser) {
+    if (parser->function_definition) {
+        return ERR_INVALID_PARAMETER;
+    }
     char last = parser->str_buf.data[parser->str_buf.size - 1];
     Token token;
     token.type = TOKEN_OPERATOR;
@@ -651,7 +717,7 @@ static int handle_arr_name(Parser *parser) {
     if (ret) {
         return ret;
     }
-    if (!found) {
+    if (!found && !parser->cur_function) {
         cur = (char)ii;
         if (cur != '[') {
             return ERR_ARR_NOT_INITIALIZED;
@@ -688,22 +754,41 @@ static int handle_arr_name(Parser *parser) {
         String str_size = parser->str_buf.data + parser->str_buf.size - i - 1;
         Size size = (Size)atol(str_size);
         Size *tgt = 0;
-        ret = HashMapStringSize_fetch(&parser->arr_name, &str, &tgt);
-        if (ret) {
-            return ret;
+        if (parser->cur_function) {
+            ret =
+                HashMapStringSize_fetch(
+                    &parser->cur_function->arr_name,
+                    &str,
+                    &tgt
+                );
+            if (ret) {
+                return ret;
+            }
+        } else {
+            ret = HashMapStringSize_fetch(&parser->arr_name, &str, &tgt);
+            if (ret) {
+                return ret;
+            }
         }
         *tgt = size;
     }
-    ret = DArrayToken_push(parser->cur_token_buf, &token);
-    if (ret) {
-        return ret;
+    if (parser->function_definition) {
+        ret = DArrayToken_push(&parser->cur_function->args, &token);
+        if (ret) {
+            return ret;
+        }
+    } else {
+        ret = DArrayToken_push(parser->cur_token_buf, &token);
+        if (ret) {
+            return ret;
+        }
     }
     return 0;
 }
 
 static int handle_command_if(Parser *parser) {
-    Idx idx = parser->tokens.size - 1;
-    Token *token = parser->tokens.data + idx;
+    Idx idx = parser->cur_token_buf->size - 1;
+    Token *token = parser->cur_token_buf->data + idx;
     token->data.command.data.command_if.idx = parser->idx_if++;
     int ret = DArrayIdx_push(&parser->stack, &idx);
     if (ret) {
@@ -713,11 +798,11 @@ static int handle_command_if(Parser *parser) {
 }
 
 static int handle_command_else(Parser *parser) {
-    Idx idx = parser->tokens.size - 1;
-    Token *token = parser->tokens.data + idx;
+    Idx idx = parser->cur_token_buf->size - 1;
+    Token *token = parser->cur_token_buf->data + idx;
     token->data.command.data.command_else.idx = parser->idx_else++;
     Idx back = parser->stack.data[parser->stack.size - 1];
-    Token *back_token = parser->tokens.data + back;
+    Token *back_token = parser->cur_token_buf->data + back;
     if (
         back_token->type != TOKEN_COMMAND ||
         back_token->data.command.type != TOKEN_COMMAND_IF
@@ -737,8 +822,8 @@ static int handle_command_else(Parser *parser) {
 }
 
 static int handle_command_while(Parser *parser) {
-    Idx idx = parser->tokens.size - 1;
-    Token *token = parser->tokens.data + idx;
+    Idx idx = parser->cur_token_buf->size - 1;
+    Token *token = parser->cur_token_buf->data + idx;
     token->data.command.data.command_while = parser->idx_while++;
     int ret = DArrayIdx_push(&parser->stack, &idx);
     if (ret) {
@@ -748,8 +833,8 @@ static int handle_command_while(Parser *parser) {
 }
 
 static int handle_command_do(Parser *parser) {
-    Idx idx = parser->tokens.size - 1;
-    Token *token = parser->tokens.data + idx;
+    Idx idx = parser->cur_token_buf->size - 1;
+    Token *token = parser->cur_token_buf->data + idx;
     token->data.command.data.command_do.idx = parser->idx_while++;
     int ret = DArrayIdx_push(&parser->stack, &idx);
     if (ret) {
@@ -759,10 +844,13 @@ static int handle_command_do(Parser *parser) {
 }
 
 static int handle_command_end(Parser *parser) {
-    Idx idx = parser->tokens.size - 1;
-    Token *token = parser->tokens.data + idx;
+    if (parser->function_definition) {
+        return ERR_INVALID_PARAMETER;
+    }
+    Idx idx = parser->cur_token_buf->size - 1;
+    Token *token = parser->cur_token_buf->data + idx;
     Idx back = parser->stack.data[parser->stack.size - 1];
-    Token *back_token = parser->tokens.data + back;
+    Token *back_token = parser->cur_token_buf->data + back;
     int ret = 0;
     switch (back_token->data.command.type) {
     case TOKEN_COMMAND_IF:
@@ -802,7 +890,121 @@ static int handle_command_end(Parser *parser) {
     return 0;
 }
 
-static int (*handlers[11])(Parser*) = {
+static int handle_command_def(Parser *parser) {
+    size_t i = 0;
+    int ii = 0;
+    for (
+        ii = fgetc(parser->fin);
+        !feof(parser->fin) &&
+        ii != '?';
+        ++i,
+        ii = fgetc(parser->fin)
+    );
+    int ret = 0;
+    for (
+        int ii = fgetc(parser->fin);
+        !feof(parser->fin) &&
+        ii != ' ' &&
+        ii != '\t' &&
+        ii != '\n';
+        ++i,
+        ii = fgetc(parser->fin)
+    ) {
+        if (!i) {
+            if (
+                (ii >= 'A' && ii <= 'Z') ||
+                (ii >= 'a' && ii <= 'z')
+            ) {
+                char cur = (char)ii;
+                ret = DArrayCharacter_push(&parser->str_buf, &cur);
+                if (ret) {
+                    return ret;
+                }
+            } else {
+                return ERR_INVALID_VAR_NAME;
+            }
+        } else {
+            if (
+                (ii >= 'A' && ii <= 'Z') ||
+                (ii >= 'a' && ii <= 'z') ||
+                (ii >= '0' && ii <= '9') ||
+                ii == '_'
+            ) {
+                char cur = (char)ii;
+                ret = DArrayCharacter_push(&parser->str_buf, &cur);
+                if (ret) {
+                    return ret;
+                }
+            } else {
+                return ERR_INVALID_VAR_NAME;
+            }
+        }
+    }
+    ret = DArrayCharacter_push(&parser->str_buf, "");
+    if (ret) {
+        return ret;
+    }
+    String str = parser->str_buf.data + parser->str_buf.size - i - 1;
+    ret =
+        HashMapStringFunction_fetch(
+            &parser->function_name,
+            &str,
+            &parser->cur_function
+        );
+    if (ret) {
+        return ret;
+    }
+    parser->function_definition = true;
+    ret = DArrayToken_initialize(&parser->cur_function->args, 10);
+    if (ret) {
+        return ret;
+    }
+    ret =
+        HashSetString_initialize(
+            &parser->cur_function->int_name,
+            10, hash_function_string,
+            eq_function_string
+        );
+    if (ret) {
+        return ret;
+    }
+    ret =
+        HashSetString_initialize(
+            &parser->cur_function->str_name,
+            10, hash_function_string,
+            eq_function_string
+        );
+    if (ret) {
+        return ret;
+    }
+    ret =
+        HashMapStringSize_initialize(
+            &parser->cur_function->arr_name,
+            10, hash_function_string,
+            eq_function_string
+        );
+    if (ret) {
+        return ret;
+    }
+    parser->cur_token_buf = &parser->cur_function->tokens;
+    ret = DArrayToken_initialize(parser->cur_token_buf, 100);
+    if (ret) {
+        return ret;
+    }
+    return 0;
+}
+
+static int handle_command_begin(Parser *parser) {
+    Idx idx = parser->cur_token_buf->size - 1;
+    int ret = DArrayIdx_push(&parser->stack, &idx);
+    if (ret) {
+        return ret;
+    }
+    parser->function_definition = false;
+    return 0;
+}
+
+static int (*handlers[12])(Parser*) = {
     0,
     0,
     0,
@@ -812,7 +1014,8 @@ static int (*handlers[11])(Parser*) = {
     handle_command_do,
     handle_command_end,
     0,
-    0,
+    handle_command_def,
+    handle_command_begin,
     0
 };
 
@@ -879,12 +1082,20 @@ static int handle_command(Parser *parser) {
     Token token;
     token.type = TOKEN_COMMAND;
     token.data.command.type = *idx;
-    ret = DArrayToken_push(parser->cur_token_buf, &token);
-    if (ret) {
-        return ret;
+    if (*idx != TOKEN_COMMAND_DEF && *idx != TOKEN_COMMAND_BEGIN) {
+        ret = DArrayToken_push(parser->cur_token_buf, &token);
+        if (ret) {
+            return ret;
+        }
     }
     if (handlers[*idx]) {
         ret = handlers[*idx](parser);
+        if (ret) {
+            return ret;
+        }
+    }
+    if (token.data.command.type == TOKEN_COMMAND_END_FUNCTION) {
+        ret = DArrayToken_pop(parser->cur_token_buf);
         if (ret) {
             return ret;
         }
@@ -1000,6 +1211,195 @@ int parser_log(Parser *parser, FILE *fout) {
                 parser->arr_name.data[i].key,
                 parser->arr_name.data[i].value
             );
+        }
+    }
+    fputs("function_name:\n", fout);
+    for (size_t i = 0; i < parser->function_name.capacity; ++i) {
+        if (parser->function_name.data[i].in_use) {
+            fprintf(fout, "name: %s\n", parser->function_name.data[i].key);
+            fputs("args:\n", fout);
+            for (
+                size_t j = 0;
+                j < parser->function_name.data[i].value.args.size;
+                ++j) {
+                fprintf(fout, "position: %lu\n", j);
+                switch (parser->function_name.data[i].value.args.data[j].type) {
+                case TOKEN_INT_NAME:
+                    fprintf(
+                        fout,
+                        "INT_NAME\n%s\n",
+                        parser
+                            ->function_name
+                            .data[i]
+                            .value
+                            .args
+                            .data[j]
+                            .data
+                            .int_name
+                    );
+                    break;
+                case TOKEN_STR_NAME:
+                    fprintf(
+                        fout,
+                        "STR_NAME\n%s\n",
+                        parser
+                            ->function_name
+                            .data[i]
+                            .value
+                            .args
+                            .data[j]
+                            .data
+                            .str_name
+                    );
+                    break;
+                case TOKEN_ARR_NAME:
+                    fprintf(
+                        fout,
+                        "ARR_NAME\n%s\n",
+                        parser
+                            ->function_name
+                            .data[i]
+                            .value
+                            .args
+                            .data[j]
+                            .data
+                            .arr_name
+                    );
+                    break;
+                }
+            }
+            fputs("int_name:\n", fout);
+            for (size_t j = 0; j < parser->function_name.data[i].value.int_name.capacity; ++j) {
+                if (parser->function_name.data[i].value.int_name.data[j].in_use) {
+                    fprintf(fout, "%s\n", parser->function_name.data[i].value.int_name.data[j].item);
+                }
+            }
+            fputs("str_name:\n", fout);
+            for (size_t j = 0; j < parser->function_name.data[i].value.str_name.capacity; ++j) {
+                if (parser->function_name.data[i].value.str_name.data[j].in_use) {
+                    fprintf(fout, "%s\n", parser->function_name.data[i].value.str_name.data[j].item);
+                }
+            }
+            fputs("arr_name:\n", fout);
+            for (size_t j = 0; j < parser->function_name.data[i].value.arr_name.capacity; ++j) {
+                if (parser->function_name.data[i].value.arr_name.data[j].in_use) {
+                    fprintf(
+                        fout,
+                        "name: %s\nsize: %lu\n",
+                        parser->function_name.data[i].value.arr_name.data[j].key,
+                        parser->function_name.data[i].value.arr_name.data[j].value
+                    );
+                }
+            }
+            fputs("tokens:\n", fout);
+            for (
+                size_t j = 0;
+                j < parser->function_name.data[i].value.tokens.size;
+                ++j) {
+                fprintf(fout, "position: %lu\n", j);
+                switch (parser->function_name.data[i].value.tokens.data[j].type) {
+                case TOKEN_INT_NAME:
+                    fprintf(
+                        fout,
+                        "INT_NAME\n%s\n",
+                        parser->function_name.data[i].value.tokens.data[j].data.int_name
+                    );
+                    break;
+                case TOKEN_STR_NAME:
+                    fprintf(
+                        fout,
+                        "STR_NAME\n%s\n",
+                        parser->function_name.data[i].value.tokens.data[j].data.str_name
+                    );
+                    break;
+                case TOKEN_INT_LIT:
+                    fprintf(
+                        fout,
+                        "INT_LIT\n%ld\n",
+                        parser->function_name.data[i].value.tokens.data[j].data.int_lit
+                    );
+                    break;
+                case TOKEN_STR_LIT:
+                    fprintf(
+                        fout,
+                        "STR_LIT\nidx: %lu\nstr: %s\n",
+                        parser->function_name.data[i].value.tokens.data[j].data.str_lit,
+                        parser->str_lit.data[parser->function_name.data[i].value.tokens.data[j].data.str_lit]
+                    );
+                    break;
+                case TOKEN_OPERATOR:
+                    fprintf(
+                        fout,
+                        "OPERATOR\nidx: %hhu\nsymb: %s\n",
+                        parser->function_name.data[i].value.tokens.data[j].data.operater,
+                        lookup[parser->function_name.data[i].value.tokens.data[j].data.operater]
+                    );
+                    break;
+                case TOKEN_ARR_NAME:
+                    fprintf(
+                        fout,
+                        "ARR_NAME\n%s\n",
+                        parser->function_name.data[i].value.tokens.data[j].data.arr_name
+                    );
+                    break;
+                case TOKEN_COMMAND:
+                    fprintf(
+                        fout,
+                        "COMMAND\nidx: %lu\nname: %s\n",
+                        parser->function_name.data[i].value.tokens.data[j].data.command.type,
+                        commands[parser->function_name.data[i].value.tokens.data[j].data.command.type]
+                    );
+                    switch (parser->function_name.data[i].value.tokens.data[j].data.command.type) {
+                    case TOKEN_COMMAND_IF:
+                        fprintf(
+                            fout,
+                            "offset: %ld\nidx: %lu\n",
+                            parser->function_name.data[i].value.tokens.data[j].data.command.data.command_if.offset,
+                            parser->function_name.data[i].value.tokens.data[j].data.command.data.command_if.idx
+                        );
+                        break;
+                    case TOKEN_COMMAND_ELSE:
+                        fprintf(
+                            fout,
+                            "offset: %ld\nidx: %lu\n",
+                            parser->function_name.data[i].value.tokens.data[j].data.command.data.command_else.offset,
+                            parser->function_name.data[i].value.tokens.data[j].data.command.data.command_else.idx
+                        );
+                        break;
+                    case TOKEN_COMMAND_END_IF:
+                        fprintf(
+                            fout,
+                            "idx: %lu\n",
+                            parser->function_name.data[i].value.tokens.data[j].data.command.data.command_end_if
+                        );
+                        break;
+                    case TOKEN_COMMAND_END_LOOP:
+                        fprintf(
+                            fout,
+                            "offset: %ld\nidx: %lu\n",
+                            parser->function_name.data[i].value.tokens.data[j].data.command.data.command_end_loop.offset,
+                            parser->function_name.data[i].value.tokens.data[j].data.command.data.command_end_loop.idx
+                        );
+                        break;
+                    case TOKEN_COMMAND_WHILE:
+                        fprintf(
+                            fout,
+                            "idx: %lu\n",
+                            parser->function_name.data[i].value.tokens.data[j].data.command.data.command_while
+                        );
+                        break;
+                    case TOKEN_COMMAND_DO:
+                        fprintf(
+                            fout,
+                            "offset: %ld\nidx: %lu\n",
+                            parser->function_name.data[i].value.tokens.data[j].data.command.data.command_do.offset,
+                            parser->function_name.data[i].value.tokens.data[j].data.command.data.command_do.idx
+                        );
+                        break;
+                    }
+                    break;
+                }
+            }
         }
     }
     fputs("tokens:\n", fout);

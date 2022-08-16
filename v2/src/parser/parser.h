@@ -13,6 +13,7 @@
 #define TOKEN_ARR_NAME 5
 #define TOKEN_OPERATOR 6
 #define TOKEN_COMMAND 7
+#define TOKEN_FUNCTION_CALL 8
 
 #define TOKEN_OPERATOR_ADD 0
 #define TOKEN_OPERATOR_SUBTRACT 1
@@ -109,6 +110,9 @@ DEF_HASHMAP(String, Idx)
 typedef struct Function {
     DArrayToken args;
     DArrayToken tokens;
+    HashSetString int_name;
+    HashSetString str_name;
+    HashMapStringSize arr_name;
 } Function;
 
 DEF_HASHMAP(String, Function)
