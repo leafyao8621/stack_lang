@@ -2809,8 +2809,8 @@ static int handle_token_command(
         tgt =
             generator
                 ->parser
-                .tokens
-                .data[token->data.command.data.command_if.offset];
+                .cur_token_buf
+                ->data[token->data.command.data.command_if.offset];
         switch (op.type) {
         case TOKEN_INT_LIT:
             fprintf(
@@ -2857,8 +2857,8 @@ static int handle_token_command(
         tgt =
             generator
                 ->parser
-                .tokens
-                .data[token->data.command.data.command_else.offset];
+                .cur_token_buf
+                ->data[token->data.command.data.command_else.offset];
         fprintf(
             fasm,
             "    jmp eif_%lu\n"
@@ -2893,8 +2893,8 @@ static int handle_token_command(
         tgt =
             generator
                 ->parser
-                .tokens
-                .data[token->data.command.data.command_do.offset];
+                .cur_token_buf
+                ->data[token->data.command.data.command_do.offset];
         switch (op.type) {
         case TOKEN_INT_LIT:
             fprintf(
@@ -2931,8 +2931,8 @@ static int handle_token_command(
         tgt =
             generator
                 ->parser
-                .tokens
-                .data[token->data.command.data.command_else.offset];
+                .cur_token_buf
+                ->data[token->data.command.data.command_else.offset];
         fprintf(
             fasm,
             "    jmp loop_%lu\n"
@@ -3109,6 +3109,8 @@ int handle_function_definitions_x86_64_linux(Generator *generator, FILE *fasm) {
                 "function_%s:\n",
                 iter_function_name->key
             );
+            generator->parser.cur_token_buf =
+                &iter_function_name->value.tokens;
             Token *iter_token = iter_function_name->value.tokens.data;
             int ret = 0;
             for (
@@ -3209,6 +3211,8 @@ int handle_function_definitions_x86_64_linux(Generator *generator, FILE *fasm) {
 }
 
 int handle_tokens_x86_64_linux(Generator *generator, FILE *fasm) {
+    generator->parser.cur_token_buf =
+        &generator->parser.tokens;
     Token *iter_token = generator->parser.tokens.data;
     int ret = 0;
     for (size_t i = 0; i < generator->parser.tokens.size; ++i, ++iter_token) {

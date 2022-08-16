@@ -826,7 +826,7 @@ static int handle_command_while(Parser *parser) {
 static int handle_command_do(Parser *parser) {
     Idx idx = parser->cur_token_buf->size - 1;
     Token *token = parser->cur_token_buf->data + idx;
-    token->data.command.data.command_do.idx = parser->idx_while++;
+    token->data.command.data.command_do.idx = parser->idx_do++;
     int ret = DArrayIdx_push(&parser->stack, &idx);
     if (ret) {
         return ret;
@@ -836,7 +836,7 @@ static int handle_command_do(Parser *parser) {
 
 static int handle_command_end(Parser *parser) {
     int ret = 0;
-    if (parser->cur_function) {
+    if (parser->cur_function && !parser->stack.size) {
         ret = DArrayToken_pop(parser->cur_token_buf);
         if (ret) {
             return ret;

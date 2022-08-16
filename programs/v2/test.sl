@@ -1,9 +1,24 @@
-_def ?change_val @arr #idx #val _begin
-    @arr #idx [] #val =
+_def ?f #n _begin
+    #i 0 =
+    _while #i #n < _do 
+        #i _println
+        #i ++
+    _end
+    #i 0 =
+    _while #i #n < _do 
+        #i _println
+        #i ++
+    _end
+    #n 10 < _if 
+        "abc" _println
+    _else
+        "def" _println
+    _end
+    #n 2 < _if 
+        "xxx" _println
+    _else
+        "zzz" _println
+    _end
 _end
 
-@arr[100]
-@arr 12 [] 123 =
-@arr 12 [] _println
-@arr 12 234 ?change_val
-@arr 12 [] _println
+3 ?f
