@@ -1,14 +1,9 @@
-_def ?f $s @a #i #j _begin 
-    $s _println
-    #x 1 =
-    @a #i [] #j =
-    #j
-_end
-
-_def ?sq #x _begin
-    #x #x *
+_def ?change_val @arr #idx #val _begin
+    @arr #idx [] #val =
 _end
 
 @arr[100]
-#i 1 =
-#i _println
+@arr 12 [] 123 =
+@arr 12 [] _println
+@arr 12 234 ?change_val
+@arr 12 [] _println

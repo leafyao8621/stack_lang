@@ -90,7 +90,6 @@ int handle_declarations_x86_64_linux(Generator *generator, FILE *fasm) {
                 ++i, ++iter_args
             ) {
                 if (iter_args->type == TOKEN_ARR_NAME) {
-                    puts("Abc");
                     fprintf(
                         fasm,
                         "function_%s_arr_name_%s:\n    .quad 0\n",
@@ -257,13 +256,15 @@ static int handle_token_arr_name(
         fasm,
         "    movq stack_ptr, %%rax\n"
         "    movabsq $%s%s%sarr_name_%s, %%rbx\n"
+        "%s"
         "    movq %%rbx, (%%rax)\n"
         "    addq $8, %%rax\n"
         "    movq %%rax, stack_ptr\n",
         function ? "function_" : "",
         function ? function : "",
         function ? "_" : "",
-        token->data.arr_name
+        token->data.arr_name,
+        function ? "    movq (%rbx), %rbx\n" : ""
     );
     return 0;
 }
@@ -2944,6 +2945,156 @@ static int handle_token_command(
     return 0;
 }
 
+static int handle_token_function_call(
+    Generator *generator,
+    Token *token,
+    FILE *fasm
+) {
+    bool found;
+    int ret =
+        HashMapStringFunction_check(
+            &generator->parser.function_name,
+            &token->data.function_call,
+            &found
+        );
+    if (ret) {
+        return ret;
+    }
+    if (!found) {
+        return ERR_FUNCTION_NOT_DEFINED;
+    }
+    Function *function;
+    ret =
+        HashMapStringFunction_fetch(
+            &generator->parser.function_name,
+            &token->data.function_call,
+            &function
+        );
+    if (ret) {
+        return ret;
+    }
+    size_t size = function->args.size;
+    if (generator->stack.size < size) {
+        return ERR_INVALID_OPERAND;
+    }
+    Token *iter_args = function->args.data + size - 1;
+    Token *iter_stack = generator->stack.data + generator->stack.size - 1;
+    for (size_t i = 0; i < size; ++i, --iter_args, --iter_stack) {
+        ret = DArrayToken_pop(&generator->stack);
+        if (ret) {
+            return ret;
+        }
+        switch (iter_args->type) {
+        case TOKEN_INT_NAME:
+            switch (iter_stack->type) {
+            case TOKEN_INT_LIT:
+                fprintf(
+                    fasm,
+                    "    movq stack_ptr, %%rax\n"
+                    "    subq $8, %%rax\n"
+                    "    movq (%%rax), %%rbx\n"
+                    "    movq %%rbx, function_%s_int_name_%s\n"
+                    "    movq %%rax, stack_ptr\n",
+                    token->data.function_call,
+                    iter_args->data.int_name
+                );
+                break;
+            case TOKEN_INT_NAME:
+                fprintf(
+                    fasm,
+                    "    movq stack_ptr, %%rax\n"
+                    "    subq $8, %%rax\n"
+                    "    movq (%%rax), %%rbx\n"
+                    "    movq (%%rbx), %%rbx\n"
+                    "    movq %%rax, function_%s_int_name_%s\n"
+                    "    movq %%rax, stack_ptr\n",
+                    token->data.function_call,
+                    iter_args->data.int_name
+                );
+                break;
+            default:
+                return ERR_INVALID_OPERAND;
+            }
+            break;
+        case TOKEN_STR_NAME:
+            switch (iter_stack->type) {
+            case TOKEN_STR_LIT:
+                fprintf(
+                    fasm,
+                    "    movq stack_ptr, %%rax\n"
+                    "    subq $8, %%rax\n"
+                    "    movq (%%rax), %%rbx\n"
+                    "    movq %%rbx, function_%s_str_name_%s\n"
+                    "    movq %%rax, stack_ptr\n",
+                    token->data.function_call,
+                    iter_args->data.str_name
+                );
+                break;
+            case TOKEN_STR_NAME:
+                fprintf(
+                    fasm,
+                    "    movq stack_ptr, %%rax\n"
+                    "    subq $8, %%rax\n"
+                    "    movq (%%rax), %%rbx\n"
+                    "    movq (%%rbx), %%rbx\n"
+                    "    movq %%rax, function_%s_str_name_%s\n"
+                    "    movq %%rax, stack_ptr\n",
+                    token->data.function_call,
+                    iter_args->data.str_name
+                );
+                break;
+            default:
+                return ERR_INVALID_OPERAND;
+            }
+            break;
+        case TOKEN_ARR_NAME:
+            switch (iter_stack->type) {
+            case TOKEN_ARR_NAME:
+                fprintf(
+                    fasm,
+                    "    movq stack_ptr, %%rax\n"
+                    "    subq $8, %%rax\n"
+                    "    movq (%%rax), %%rbx\n"
+                    "    movq %%rbx, function_%s_arr_name_%s\n"
+                    "    movq %%rax, stack_ptr\n",
+                    token->data.function_call,
+                    iter_args->data.arr_name
+                );
+                break;
+            default:
+                return ERR_INVALID_OPERAND;
+            }
+            break;
+        }
+    }
+    fprintf(
+        fasm,
+        "    call function_%s\n",
+        token->data.function_call
+    );
+    DArrayToken *ret_vals;
+    ret =
+        HashMapStringDArrayToken_fetch(
+            &generator->ret_vals,
+            &token->data.function_call,
+            &ret_vals
+        );
+    if (ret) {
+        return ret;
+    }
+    Token *iter_ret_vals = ret_vals->data;
+    for (size_t i = 0; i < ret_vals->size; ++i, ++iter_ret_vals) {
+        ret = DArrayToken_push(&generator->stack, iter_ret_vals);
+        if (ret) {
+            return ret;
+        }
+        if (generator->stack.size > 100) {
+            return ERR_STACK_OVERFLOW;
+        }
+    }
+    return 0;
+}
+
 int handle_function_definitions_x86_64_linux(Generator *generator, FILE *fasm) {
     HashMapStringFunctionNode *iter_function_name =
         generator->parser.function_name.data;
@@ -3008,16 +3159,55 @@ int handle_function_definitions_x86_64_linux(Generator *generator, FILE *fasm) {
                     ret =
                         handle_token_command(generator, iter_token, fasm);
                     break;
+                case TOKEN_FUNCTION_CALL:
+                    ret = 
+                        handle_token_function_call(generator, iter_token, fasm);
+                    break;
                 }
                 if (ret) {
                     printf("error at position %lu\n", i);
                     return ret;
                 }
             }
+            fputs("    ret\n", fasm);
+            Token *iter_stack = generator->stack.data;
+            DArrayToken *ret_vals;
+            ret =
+                HashMapStringDArrayToken_fetch(
+                    &generator->ret_vals,
+                    &iter_function_name->key,
+                    &ret_vals
+                );
+            if (ret) {
+                return ret;
+            }
+            ret = DArrayToken_initialize(ret_vals, 10);
+            if (ret) {
+                return ret;
+            }
+            for (size_t i = 0; i < generator->stack.size; ++i, ++iter_stack) {
+                ret = DArrayToken_pop(&generator->stack);
+                if (ret) {
+                    return ret;
+                }
+                switch (iter_stack->type) {
+                case TOKEN_INT_NAME:
+                case TOKEN_STR_NAME:
+                case TOKEN_ARR_NAME:
+                    ret = DArrayToken_push(ret_vals, iter_stack);
+                    if (ret) {
+                        return ret;
+                    }
+                    break;
+                default:
+                    return ERR_INVALID_RETURN;
+                }
+            }
         }
     }
     return 0;
 }
+
 int handle_tokens_x86_64_linux(Generator *generator, FILE *fasm) {
     Token *iter_token = generator->parser.tokens.data;
     int ret = 0;
@@ -3050,6 +3240,10 @@ int handle_tokens_x86_64_linux(Generator *generator, FILE *fasm) {
         case TOKEN_COMMAND:
             ret =
                 handle_token_command(generator, iter_token, fasm);
+            break;
+        case TOKEN_FUNCTION_CALL:
+            ret = 
+                handle_token_function_call(generator, iter_token, fasm);
             break;
         }
         if (ret) {

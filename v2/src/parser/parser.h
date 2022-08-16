@@ -96,6 +96,7 @@ typedef struct Token {
                 } command_end_loop;
             } data;
         } command;
+        String function_call;
     } data;
 } Token;
 

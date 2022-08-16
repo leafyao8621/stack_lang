@@ -7,10 +7,13 @@ typedef int64_t Architecture;
 
 #define ARCHITECTURE_X86_64_LINUX 0
 
+DEF_HASHMAP(String, DArrayToken)
+
 typedef struct Generator {
     Architecture architecture;
     Parser parser;
     DArrayToken stack;
+    HashMapStringDArrayToken ret_vals;
     String ofn;
 } Generator;
 

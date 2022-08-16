@@ -1083,6 +1083,63 @@ static int handle_command(Parser *parser) {
     return 0;
 }
 
+static int handle_function_call(Parser *parser) {
+    size_t i = 0;
+    int ret = 0;
+    for (
+        int ii = fgetc(parser->fin);
+        !feof(parser->fin) &&
+        ii != ' ' &&
+        ii != '\t' &&
+        ii != '\n';
+        ++i,
+        ii = fgetc(parser->fin)
+    ) {
+        if (!i) {
+            if (
+                (ii >= 'A' && ii <= 'Z') ||
+                (ii >= 'a' && ii <= 'z')
+            ) {
+                char cur = (char)ii;
+                ret = DArrayCharacter_push(&parser->str_buf, &cur);
+                if (ret) {
+                    return ret;
+                }
+            } else {
+                return ERR_INVALID_VAR_NAME;
+            }
+        } else {
+            if (
+                (ii >= 'A' && ii <= 'Z') ||
+                (ii >= 'a' && ii <= 'z') ||
+                (ii >= '0' && ii <= '9') ||
+                ii == '_'
+            ) {
+                char cur = (char)ii;
+                ret = DArrayCharacter_push(&parser->str_buf, &cur);
+                if (ret) {
+                    return ret;
+                }
+            } else {
+                return ERR_INVALID_VAR_NAME;
+            }
+        }
+    }
+    ret = DArrayCharacter_push(&parser->str_buf, "");
+    if (ret) {
+        return ret;
+    }
+    String str = parser->str_buf.data + parser->str_buf.size - i - 1;
+    Token token;
+    token.type = TOKEN_FUNCTION_CALL;
+    token.data.function_call = str;
+    ret = DArrayToken_push(parser->cur_token_buf, &token);
+    if (ret) {
+        return ret;
+    }
+    return 0;
+}
+
 int parser_parse(Parser *parser) {
     if (!parser) {
         return ERR_NULL_PTR;
@@ -1150,6 +1207,12 @@ int parser_parse(Parser *parser) {
             break;
         case '_':
             ret = handle_command(parser);
+            if (ret) {
+                return ret;
+            }
+            break;
+        case '?':
+            ret = handle_function_call(parser);
             if (ret) {
                 return ret;
             }
@@ -1249,15 +1312,47 @@ int parser_log(Parser *parser, FILE *fout) {
                 }
             }
             fputs("int_name:\n", fout);
-            for (size_t j = 0; j < parser->function_name.data[i].value.int_name.capacity; ++j) {
+            for (
+                size_t j = 0;
+                j < parser->function_name.data[i].value.int_name.capacity;
+                ++j) {
                 if (parser->function_name.data[i].value.int_name.data[j].in_use) {
-                    fprintf(fout, "%s\n", parser->function_name.data[i].value.int_name.data[j].item);
+                    fprintf(
+                        fout,
+                        "%s\n",
+                        parser
+                            ->function_name
+                            .data[i]
+                            .value
+                            .int_name
+                            .data[j]
+                            .item
+                        );
                 }
             }
             fputs("str_name:\n", fout);
-            for (size_t j = 0; j < parser->function_name.data[i].value.str_name.capacity; ++j) {
-                if (parser->function_name.data[i].value.str_name.data[j].in_use) {
-                    fprintf(fout, "%s\n", parser->function_name.data[i].value.str_name.data[j].item);
+            for (
+                size_t j = 0;
+                j < parser->function_name.data[i].value.str_name.capacity;
+                ++j) {
+                if (parser
+                    ->function_name
+                    .data[i]
+                    .value
+                    .str_name
+                    .data[j]
+                    .in_use) {
+                    fprintf(
+                        fout,
+                        "%s\n",
+                        parser
+                            ->function_name
+                            .data[i]
+                            .value
+                            .str_name
+                            .data[j]
+                            .item
+                    );
                 }
             }
             fputs("tokens:\n", fout);
@@ -1367,6 +1462,13 @@ int parser_log(Parser *parser, FILE *fout) {
                         break;
                     }
                     break;
+                case TOKEN_FUNCTION_CALL:
+                    fprintf(
+                        fout,
+                        "FUNCTION_CALL\n%s\n",
+                        parser->function_name.data[i].value.tokens.data[j].data.function_call
+                    );
+                    break;
                 }
             }
         }
@@ -1474,6 +1576,13 @@ int parser_log(Parser *parser, FILE *fout) {
                 );
                 break;
             }
+            break;
+        case TOKEN_FUNCTION_CALL:
+            fprintf(
+                fout,
+                "FUNCTION_CALL\n%s\n",
+                parser->tokens.data[i].data.function_call
+            );
             break;
         }
     }
