@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
             argv[2]
         );
     if (ret) {
-        printf("errcode: %d\n", ret);
+        printf("errcode: %d\ndescription: %s\n", ret, errcode_lookup[ret]);
         generator_finalize(&generator);
         return 1;
     }
