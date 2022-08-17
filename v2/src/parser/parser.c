@@ -149,6 +149,9 @@ int parser_finalize(Parser *parser) {
     if (!parser) {
         return ERR_NULL_PTR;
     }
+    if (!parser->fin) {
+        return 0;
+    }
     int ret = DArrayToken_finalize(&parser->tokens);
     if (ret) {
         return ret;
