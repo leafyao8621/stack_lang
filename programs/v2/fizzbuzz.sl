@@ -1,5 +1,7 @@
 #i 1 =
-_while #i 1000 < _do
+"Value of n: " _print
+#n _input
+_while #i #n < _do
     #var_x #i 3 % ! =
     #y #i 5 % ! =
     #var_x #y || _if
