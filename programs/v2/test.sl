@@ -1,7 +1,3 @@
-_def ?f $s #i _begin
-    $s #i [] _println
-_end
-
-$a "Abc" =
-#n 2 =
-$a #n ?f
+"Value of a: " _print
+#a _input
+#a _println

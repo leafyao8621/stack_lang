@@ -2677,6 +2677,26 @@ static int handle_token_command(
     Token *back = generator->stack.data + generator->stack.size;
     int ret = 0;
     switch (token->data.command.type) {
+    case TOKEN_COMMAND_INPUT:
+        if (generator->stack.size < 1) {
+            return ERR_INVALID_OPERAND;
+        }
+        op = back[-1];
+        ret = DArrayToken_pop(&generator->stack);
+        if (ret) {
+            return ret;
+        }
+        switch (op.type) {
+        case TOKEN_INT_NAME:
+            fputs(
+                "    call input\n",
+                fasm
+            );
+            break;
+        default:
+            return ERR_INVALID_OPERAND;
+        }
+        break;
     case TOKEN_COMMAND_PRINT:
         if (generator->stack.size < 1) {
             return ERR_INVALID_OPERAND;
