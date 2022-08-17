@@ -36,5 +36,9 @@ _def ?multiply_fp #x #y #decimal_places _begin
     #res
 _end
 
+
+; #x 100 =
+{aklsdfj
+askl;dfj'}
 #x 200 =
 #a #x 200 2 ?multiply_fp 2 ?print_fp

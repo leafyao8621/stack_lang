@@ -1083,6 +1083,26 @@ static int handle_command(Parser *parser) {
     return 0;
 }
 
+static int handle_inline_comment(Parser *parser) {
+    for (
+        int ii = fgetc(parser->fin);
+        !feof(parser->fin) &&
+        ii != '\n';
+        ii = fgetc(parser->fin)
+    );
+    return 0;
+}
+
+static int handle_block_comment(Parser *parser) {
+    for (
+        int ii = fgetc(parser->fin);
+        !feof(parser->fin) &&
+        ii != '}';
+        ii = fgetc(parser->fin)
+    );
+    return 0;
+}
+
 static int handle_function_call(Parser *parser) {
     size_t i = 0;
     int ret = 0;
@@ -1213,6 +1233,18 @@ int parser_parse(Parser *parser) {
             break;
         case '?':
             ret = handle_function_call(parser);
+            if (ret) {
+                return ret;
+            }
+            break;
+        case ';':
+            ret = handle_inline_comment(parser);
+            if (ret) {
+                return ret;
+            }
+            break;
+        case '{':
+            ret = handle_block_comment(parser);
             if (ret) {
                 return ret;
             }

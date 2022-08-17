@@ -16,6 +16,9 @@
 		},
 		{
 			"include": "#entities"
+		},
+		{
+			"include": "#comment"
 		}
 	],
 	"repository": {
@@ -66,6 +69,20 @@
 				{
 					"name": "entity.name.function",
 					"match": "\\?[A-Za-z][0-9A-Za-z_]*"
+				}
+			]
+		},
+		"comment": {
+			"name": "comment.stacklang",
+			"patterns": [
+				{
+					"name": "comment.line",
+					"match": ";.*\\n"
+				},
+				{
+					"name": "comment.block",
+					"begin": "{",
+					"end": "}"
 				}
 			]
 		}
