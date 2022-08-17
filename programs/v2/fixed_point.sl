@@ -37,4 +37,5 @@ _def ?multiply_fp #x #y #decimal_places _begin
 _end
 
 #x 200 =
-#a #x 200 2 ?multiply_fp 2 ?print_fp
+#a #x 200 2 ?multiply_fp =
+#a 2 ?print_fp
