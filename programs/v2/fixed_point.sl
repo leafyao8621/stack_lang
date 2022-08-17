@@ -41,4 +41,5 @@ _end
 {aklsdfj
 askl;dfj'}
 #x 200 =
-#a #x 200 2 ?multiply_fp 2 ?print_fp
+#a #x 200 2 ?multiply_fp =
+#a 2 ?print_fp
