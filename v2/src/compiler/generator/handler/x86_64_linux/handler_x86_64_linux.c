@@ -3182,12 +3182,16 @@ int handle_function_definitions_x86_64_linux(Generator *generator, FILE *fasm) {
                         handle_token_command(generator, iter_token, fasm);
                     break;
                 case TOKEN_FUNCTION_CALL:
-                    ret = 
+                    ret =
                         handle_token_function_call(generator, iter_token, fasm);
                     break;
                 }
                 if (ret) {
-                    printf("error at position %lu\n", i);
+                    printf(
+                        "error in function %s at position %lu\n",
+                        iter_function_name->key,
+                        i
+                    );
                     return ret;
                 }
             }
@@ -3266,7 +3270,7 @@ int handle_tokens_x86_64_linux(Generator *generator, FILE *fasm) {
                 handle_token_command(generator, iter_token, fasm);
             break;
         case TOKEN_FUNCTION_CALL:
-            ret = 
+            ret =
                 handle_token_function_call(generator, iter_token, fasm);
             break;
         }
