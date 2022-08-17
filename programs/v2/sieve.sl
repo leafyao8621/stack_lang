@@ -28,6 +28,8 @@ _end
 @arr[1000000]
 "Value of n: " _print
 #n _input
+"Value of verbose: " _print
+#verbose _input
 #valid 1 =
 #n 1000000 > _if
     "Invalid input" _println
@@ -35,6 +37,6 @@ _end
 _end
 
 #valid _if
-    @arr #n 1 ?sieve _println
+    @arr #n #verbose ?sieve _println
 _end
 
