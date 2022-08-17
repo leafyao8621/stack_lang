@@ -40,6 +40,6 @@ _end
 ; #x 100 =
 {aklsdfj
 askl;dfj'}
-#x 200 =
+#x -200 =
 #a #x 200 2 ?multiply_fp =
 #a 2 ?print_fp

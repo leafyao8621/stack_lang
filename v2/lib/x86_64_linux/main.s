@@ -9,8 +9,8 @@ stack_ptr:
     .quad 0
 strlen:
     .quad 0
-str0:
-    .asciz "abc"
+int0:
+    .quad 0
     .section .text
     .globl _start
     .include "lib.s"
@@ -19,67 +19,18 @@ _start:
     movq %rax, stack_ptr
 
     movq stack_ptr, %rax
-    movq $str0, (%rax)
-    addq $8, %rax
-    movq %rax, stack_ptr
-    call calc_strlen
-    call print_str
-
-    movq stack_ptr, %rax
-    movabsq $10, %rbx
+    movabsq $int0, %rbx
     movq %rbx, (%rax)
     addq $8, %rax
     movq %rax, stack_ptr
-    call print_chr
+    call input
 
     movq stack_ptr, %rax
-    movabsq $65, %rbx
-    movq %rbx, (%rax)
-    addq $8, %rax
-    movq %rax, stack_ptr
-    call print_chr
-
-    movq stack_ptr, %rax
-    movabsq $10, %rbx
-    movq %rbx, (%rax)
-    addq $8, %rax
-    movq %rax, stack_ptr
-    call print_chr
-
-    movq stack_ptr, %rax
-    movq $str0, (%rax)
-    addq $8, %rax
-    movq %rax, stack_ptr
-    call calc_strlen
-    call println_str
-
-    movq stack_ptr, %rax
-    movabsq $97, %rbx
-    movq %rbx, (%rax)
-    addq $8, %rax
-    movq %rax, stack_ptr
-    call println_chr
-    
-    movq stack_ptr, %rax
-    movabsq $-123456, %rbx
+    movq int0, %rbx
     movq %rbx, (%rax)
     addq $8, %rax
     movq %rax, stack_ptr
     call println_int
-
-    movq stack_ptr, %rax
-    movabsq $-123456, %rbx
-    movq %rbx, (%rax)
-    addq $8, %rax
-    movq %rax, stack_ptr
-    call print_int
-
-    movq stack_ptr, %rax
-    movabsq $10, %rbx
-    movq %rbx, (%rax)
-    addq $8, %rax
-    movq %rax, stack_ptr
-    call print_chr
 
     movq $60, %rax
     movq $0, %rdi

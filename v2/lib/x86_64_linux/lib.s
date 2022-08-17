@@ -171,3 +171,57 @@ println_int_loop1:
     movabsq $1, %rax
     syscall
     ret
+input:
+    movq stack_ptr, %r10
+    subq $8, %r10
+    movabsq $0, %rax
+    movabsq $0, %rdi
+    movabsq $buf, %rsi
+    movabsq $1, %rdx
+    syscall
+    movabsq $0, %r15
+    movabsq $0, %r11
+    movb (%rsi), %r11b
+    movabsq $48, %r13
+    movabsq $0, %r12
+    cmpb $45, %r11b
+    jne input_else0
+    movabsq $1, %r15
+    jmp input_eif0
+input_else0:
+    cmpb $48, %r11b
+    cmovlq %r13, %r11
+    cmpb $57, %r11b
+    cmovgq %r13, %r11
+    subq $48, %r11
+    addq %r11, %r12
+input_eif0:
+    movq $10, %r14
+input_loop0:
+    movq $0, %rax
+    movq $1, %rdx
+    syscall
+    movabsq $0, %r11
+    movb (%rsi), %r11b
+    cmpb $10, %r11b
+    je input_end_loop0
+    movq %r12, %rax
+    cqo
+    imulq %r14
+    movq %rax, %r12
+    cmpb $48, %r11b
+    cmovlq %r13, %r11
+    cmpb $57, %r11b
+    cmovgq %r13, %r11
+    subq $48, %r11
+    addq %r11, %r12
+    jmp input_loop0
+input_end_loop0:
+    cmpb $0, %r15b
+    je input_eif1
+    negq %r12
+input_eif1:
+    movq (%r10), %r15
+    movq %r12, (%r15)
+    movq %r10, stack_ptr
+    ret
