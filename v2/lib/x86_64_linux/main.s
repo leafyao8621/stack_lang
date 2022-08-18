@@ -9,8 +9,10 @@ stack_ptr:
     .quad 0
 strlen:
     .quad 0
-int0:
+index:
     .quad 0
+mt:
+    .fill 624, 8, 0
     .section .text
     .globl _start
     .include "lib.s"
@@ -19,14 +21,14 @@ _start:
     movq %rax, stack_ptr
 
     movq stack_ptr, %rax
-    movabsq $int0, %rbx
+    movq $1000, %rbx
     movq %rbx, (%rax)
     addq $8, %rax
     movq %rax, stack_ptr
-    call input
+    call srand
 
     movq stack_ptr, %rax
-    movq int0, %rbx
+    movq mt, %rbx
     movq %rbx, (%rax)
     addq $8, %rax
     movq %rax, stack_ptr

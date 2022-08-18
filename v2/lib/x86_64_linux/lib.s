@@ -225,3 +225,13 @@ input_eif1:
     movq %r12, (%r15)
     movq %r10, stack_ptr
     ret
+srand:
+    movq stack_ptr, %rax
+    subq $8, %rax
+    movq %rax, stack_ptr
+    movabsq $624, %rbx
+    movq %rbx, index
+    movabsq $mt, %rbx
+    movq (%rax), %rcx
+    movq %rcx, (%rbx)
+    ret
