@@ -9,10 +9,8 @@ stack_ptr:
     .quad 0
 strlen:
     .quad 0
-index:
+seed:
     .quad 0
-mt:
-    .fill 624, 8, 0
     .section .text
     .globl _start
     .include "lib.s"

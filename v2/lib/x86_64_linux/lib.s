@@ -229,119 +229,21 @@ srand:
     movq stack_ptr, %rax
     subq $8, %rax
     movq %rax, stack_ptr
-    movabsq $624, %rbx
-    movq %rbx, index
-    movabsq $mt, %r10
-    movq (%rax), %r11
-    movq %r11, (%r10)
-    addq $8, %r10
-    movabsq $1, %r11
-    movb $30, %cl
-    movabsq $1812433253, %rbx
-srand_loop0:
-    cmpq $624, %r11
-    je srand_end_loop0
-    movq -8(%r10), %r12
-    movq %r12, %r13
-    shrq %cl, %r13
-    xorq %r13, %r12
-    movq %r12, %rax
-    cqo
-    imulq %rbx
-    addq %r11, %rax
-    movq %rax, (%r10)
-    addq $8, %r10
-    addq $1, %r11
-    jmp srand_loop0
-srand_end_loop0:
-    ret
-twist:
-    movabsq $mt, %r10
-    movabsq $0, %r11
-twist_loop0:
-    cmpq $624, %r11
-    je twist_end_loop0
-    movq (%r10), %r12
-    movabsq $0x80000000, %r14
-    andq %r14, %r12
-
-    cmpq $623, %r11
-    jl twist_eif0
-    movq 8(%r10), %r13
-    jmp twist_eif0
-twist_else0:
-    movabsq $mt, %r14
-    movq (%r14), %r13
-twist_eif0:
-    andq $0x7fffffff, %r13
-    orq %r13, %r12
-
-    movq %r12, %r13
-    shrq $1, %r13
-
-    movq %r12, %r14
-    andq $1, %r14
-    cmpq $0, %r14
-    jne twist_eif1
-    xorq %r12, %r13
-twist_eif1:
-    movabsq $mt, %r14
-    movq %r11, %r15
-    addq $397, %r15
-    movq %r15, %rax
-    cqo
-    movabsq $624, %rbx
-    idivq %rbx
-    addq %rdx, %r14
-    movq (%r14), %r14
-    xorq %r14, %r13
-    movq %r13, (%r10)
-
-    addq $8, %r10
-    addq $1, %r11
-    jmp twist_loop0
-twist_end_loop0:
-    movabsq $0, %r10
-    movabsq $index, %r11
-    movq %r10, (%r11)
+    movq (%rax), %rax
+    movq %rax, seed
     ret
 rand:
-    movq index, %r10
-    movabsq $624, %r11
-    cmpq %r11, %r10
-    jne rand_eif0
-    call twist
-    movabsq $mt, %r10
-    movq index, %r11
-    addq %r11, %r10
-    movq (%r10), %r10
-    // y ^= y >> u
-    movq %r10, %r11
-    shrq $11, %r11
-    xorq %r11, %r10
-    // y ^= (y << s) & b
-    movq %r10, %r11
-    shlq $7, %r11
-    movabsq $0x9d2c5680, %r12
-    andq %r12, %r11
-    xorq %r11, %r10
-    // y ^= (y << t) & c
-    movq %r10, %r11
-    shlq $15, %r11
-    movabsq $0xefc60000, %r12
-    andq %r12, %r11
-    xorq %r11, %r10
-    movq %r10, %r11
-    // y ^= y >> 1
-    movq %r10, %r11
-    shrq $1, %r11
-    xorq %r11, %r10
-    movq stack_ptr, %rax
-    movq %r10, (%rax)
-    addq $8, %rax
-    movq %rax, stack_ptr
-    movq $index, %r10
-    addq $1, %r10
-    movq %r10, index
-rand_eif0:
+    movq seed, %rax
+    movabsq $2862933555777941757, %rbx
+    movq $0, %rdx
+    mulq %rbx
+    movabsq $3037000493, %rbx
+    addq %rbx, %rax
+    movabsq $0x7fffffffffffffff, %rbx
+    andq %rbx, %rax
+    movq stack_ptr, %r10
+    movq %rax, (%r10)
+    addq $8, %r10
+    movq %r10, stack_ptr
+    movq %rax, seed
     ret
