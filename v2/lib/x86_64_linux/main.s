@@ -27,12 +27,13 @@ _start:
     movq %rax, stack_ptr
     call srand
 
-    movq stack_ptr, %rax
-    movq mt, %rbx
-    movq %rbx, (%rax)
-    addq $8, %rax
-    movq %rax, stack_ptr
+    movabsq $0, %r9
+loop0:
+    call rand
     call println_int
+    addq $1, %r9
+    cmpq $10, %r9
+    jl loop0
 
     movq $60, %rax
     movq $0, %rdi
