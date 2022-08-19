@@ -76,7 +76,7 @@ int generator_generate(Generator *generator) {
         return ret;
     }
     // parser_log(&generator->parser, stdout);
-    FILE *fasm = fopen("temp.s", "w");
+    FILE *fasm = fopen("/tmp/temp.s", "w");
     if (!fasm) {
         return ERR_FILE_IO;
     }
@@ -130,14 +130,14 @@ int generator_generate(Generator *generator) {
         break;
     }
     fclose(fasm);
-    system("as temp.s -o temp.o");
+    system("as /tmp/temp.s -o /tmp/temp.o");
     size_t ofn_len = strlen(generator->ofn);
     size_t buf_len = ofn_len + 20;
     String buf = malloc(buf_len);
     if (!buf) {
         return ERR_OUT_OF_MEMORY;
     }
-    sprintf(buf, "ld temp.o -o %s", generator->ofn);
+    sprintf(buf, "ld /tmp/temp.o -o %s", generator->ofn);
     system(buf);
     free(buf);
     return 0;
