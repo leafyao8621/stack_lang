@@ -1,3 +1,5 @@
+#include <time.h>
+
 #include "generator.h"
 #include "lookup/lookup.h"
 #include "handler/handler.h"
@@ -76,7 +78,15 @@ int generator_generate(Generator *generator) {
         return ret;
     }
     // parser_log(&generator->parser, stdout);
-    FILE *fasm = fopen("/tmp/temp.s", "w");
+    size_t ofn_len = strlen(generator->ofn);
+    size_t buf_len = ofn_len + 100;
+    String buf = malloc(buf_len);
+    if (!buf) {
+        return ERR_OUT_OF_MEMORY;
+    }
+    time_t timestamp = time(NULL);
+    sprintf(buf, "/tmp/temp_%lu.s", timestamp);
+    FILE *fasm = fopen(buf, "w");
     if (!fasm) {
         return ERR_FILE_IO;
     }
@@ -130,15 +140,14 @@ int generator_generate(Generator *generator) {
         break;
     }
     fclose(fasm);
-    system("as /tmp/temp.s -o /tmp/temp.o");
-    size_t ofn_len = strlen(generator->ofn);
-    size_t buf_len = ofn_len + 20;
-    String buf = malloc(buf_len);
-    if (!buf) {
-        return ERR_OUT_OF_MEMORY;
-    }
-    sprintf(buf, "ld /tmp/temp.o -o %s", generator->ofn);
+    sprintf(buf, "as /tmp/temp_%lu.s -o /tmp/temp_%lu.o", timestamp, timestamp);
     system(buf);
+    sprintf(buf, "ld /tmp/temp_%lu.o -o %s", timestamp,generator->ofn);
+    system(buf);
+    sprintf(buf, "/tmp/temp_%lu.s", timestamp);
+    remove(buf);
+    sprintf(buf, "/tmp/temp_%lu.o", timestamp);
+    remove(buf);
     free(buf);
     return 0;
 }
