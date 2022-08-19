@@ -2989,6 +2989,7 @@ static int handle_token_command(
                 "    call srand\n",
                 fasm
             );
+            break;
         default:
             return ERR_INVALID_OPERAND;
         }
