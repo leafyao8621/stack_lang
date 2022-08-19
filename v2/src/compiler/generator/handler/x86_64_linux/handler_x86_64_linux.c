@@ -2901,7 +2901,7 @@ static int handle_token_command(
             token->data.command.data.command_while
         );
         break;
-     case TOKEN_COMMAND_DO:
+    case TOKEN_COMMAND_DO:
         if (generator->stack.size < 1) {
             return ERR_INVALID_OPERAND;
         }
@@ -2960,6 +2960,49 @@ static int handle_token_command(
             tgt.data.command.data.command_while,
             token->data.command.data.command_end_loop.idx
         );
+        break;
+    case TOKEN_COMMAND_SRAND:
+        if (generator->stack.size < 1) {
+            return ERR_INVALID_OPERAND;
+        }
+        op = back[-1];
+        ret = DArrayToken_pop(&generator->stack);
+        if (ret) {
+            return ret;
+        }
+        switch (op.type) {
+        case TOKEN_INT_LIT:
+            fputs(
+                "    call srand\n",
+                fasm
+            );
+            break;
+        case TOKEN_INT_NAME:
+            fputs(
+                "    movq stack_ptr, %rax\n"
+                "    subq $8, %rax\n"
+                "    movq (%rax), %rbx\n"
+                "    movq (%rbx), %rbx\n"
+                "    movq %rbx, (%rax)\n"
+                "    addq $8, %rax\n"
+                "    movq %rax, stack_ptr\n"
+                "    call srand\n",
+                fasm
+            );
+        default:
+            return ERR_INVALID_OPERAND;
+        }
+        break;
+    case TOKEN_COMMAND_RAND:
+        fputs(
+            "    call rand\n",
+            fasm
+        );
+        tgt.type = TOKEN_INT_LIT;
+        ret = DArrayToken_push(&generator->stack, &tgt);
+        if (ret) {
+            return ret;
+        }
         break;
     }
     return 0;

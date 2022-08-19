@@ -26,7 +26,7 @@
 			"patterns": [
 				{
 					"name": "keyword",
-					"match": "\\b(_do|_end|_print|_println|_def|_begin|_input)\\b"
+					"match": "\\b(_do|_end|_print|_println|_def|_begin|_input|_rand|_srand)\\b"
 				},
 				{
 					"name": "keyword.control",

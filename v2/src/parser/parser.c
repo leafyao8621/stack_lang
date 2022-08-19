@@ -38,7 +38,7 @@ static const char *lookup[26] = {
     "[]"
 };
 
-static String commands[11] = {
+static String commands[14] = {
     "input",
     "print",
     "println",
@@ -49,7 +49,10 @@ static String commands[11] = {
     "end",
     "end",
     "def",
-    "begin"
+    "begin",
+    "end",
+    "srand",
+    "rand"
 };
 
 int parser_initialize(Parser *parser, String ifn) {
@@ -132,8 +135,8 @@ int parser_initialize(Parser *parser, String ifn) {
     }
     parser->cur_function = NULL;
     String *iter = commands;
-    for (size_t i = 0; i < 11; ++i, ++iter) {
-        if (i != 8) {
+    for (size_t i = 0; i < 14; ++i, ++iter) {
+        if (i != 8 && i != 11) {
             Idx *ptr = 0;
             ret = HashMapStringIdx_fetch(&parser->handler_lookup, iter, &ptr);
             if (ret) {
@@ -990,7 +993,7 @@ static int handle_command_begin(Parser *parser) {
     return 0;
 }
 
-static int (*handlers[12])(Parser*) = {
+static int (*handlers[14])(Parser*) = {
     0,
     0,
     0,
@@ -1002,6 +1005,8 @@ static int (*handlers[12])(Parser*) = {
     0,
     handle_command_def,
     handle_command_begin,
+    0,
+    0,
     0
 };
 

@@ -54,6 +54,8 @@
 #define TOKEN_COMMAND_DEF 9
 #define TOKEN_COMMAND_BEGIN 10
 #define TOKEN_COMMAND_END_FUNCTION 11
+#define TOKEN_COMMAND_SRAND 12
+#define TOKEN_COMMAND_RAND 13
 
 typedef uint64_t Type;
 typedef char Character;

@@ -11,9 +11,11 @@ const char *data_section_x86_64_linux =
     "stack_ptr:\n"
     "    .quad 0\n"
     "strlen:\n"
+    "    .quad 0\n"
+    "seed:\n"
     "    .quad 0";
 
-const char *text_start_x86_64_linux_0 = 
+const char *text_start_x86_64_linux_0 =
     "    .section .text\n"
     "    .globl _start\n"
     "calc_strlen:\n"
@@ -244,6 +246,28 @@ const char *text_start_x86_64_linux_1 =
     "    movq (%r10), %r15\n"
     "    movq %r12, (%r15)\n"
     "    movq %r10, stack_ptr\n"
+    "    ret\n"
+    "srand:\n"
+    "    movq stack_ptr, %rax\n"
+    "    subq $8, %rax\n"
+    "    movq %rax, stack_ptr\n"
+    "    movq (%rax), %rax\n"
+    "    movq %rax, seed\n"
+    "    ret\n"
+    "rand:\n"
+    "    movq seed, %rax\n"
+    "    movabsq $2862933555777941757, %rbx\n"
+    "    movq $0, %rdx\n"
+    "    mulq %rbx\n"
+    "    movabsq $3037000493, %rbx\n"
+    "    addq %rbx, %rax\n"
+    "    movabsq $0x7fffffffffffffff, %rbx\n"
+    "    andq %rbx, %rax\n"
+    "    movq stack_ptr, %r10\n"
+    "    movq %rax, (%r10)\n"
+    "    addq $8, %r10\n"
+    "    movq %r10, stack_ptr\n"
+    "    movq %rax, seed\n"
     "    ret";
 
 const char *program_start_x86_64_linux =
