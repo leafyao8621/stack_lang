@@ -66,7 +66,7 @@ _def ?simulate
             #price #threshold >= _if
                 " success" _println
             _else
-                " fail" _println
+                " failure" _println
             _end
         _end
         #price #threshold >= _if
