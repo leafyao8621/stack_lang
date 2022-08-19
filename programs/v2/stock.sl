@@ -36,16 +36,16 @@ _def ?multiply_fp #x #y #decimal_places _begin
     #res
 _end
 
-_def ?check_price #start_price #up_prob #percentage #threshold #time _begin
+_def ?check_price #start_price #up_prob #rate #threshold #time _begin
     #i 0 =
     #cond 1 =
     #price #start_price =
     _while #i #time < #cond && _do
         #r _rand 100 % =
         #r #up_prob 1 - > _if
-            #price #price 100 #percentage + 2 ?multiply_fp =
+            #price #price 1000 #rate + 3 ?multiply_fp =
         _else
-            #price #price 100 #percentage - 2 ?multiply_fp =
+            #price #price 1000 #rate - 3 ?multiply_fp =
         _end
         #price #threshold < _if
             #cond 0 =
@@ -55,13 +55,14 @@ _def ?check_price #start_price #up_prob #percentage #threshold #time _begin
     #price
 _end
 
-_def ?simulate #start_price #up_prob #percentage #threshold #time #iter #verbose _begin
+_def ?simulate
+    #start_price #up_prob #rate #threshold #time #iter #verbose _begin
     #i 0 =
     #cnt 0 =
     _while #i #iter < _do
-        #price #start_price #up_prob #percentage #threshold #time ?check_price =
+        #price #start_price #up_prob #rate #threshold #time ?check_price =
         #verbose _if
-            #price 2 ?print_fp
+            #price 3 ?print_fp
             #price #threshold >= _if
                 " success" _println
             _else
@@ -76,6 +77,28 @@ _def ?simulate #start_price #up_prob #percentage #threshold #time #iter #verbose
     #cnt
 _end
 
+"Seed: " _print
+#seed _input
+"Start price in 1/10 cents: " _print
+#start_price _input
+"Up probability in %: " _print
+#up_prob _input
+"Change in 1/1000: " _print
+#percentage _input
+"Threshold price in 1/10 cents: " _print
+#threshold _input
+"Time span: " _print
+#time _input
+"Number of iterations: " _print
+#iter _input
+"Verbose: " _print
+#verbose _input
 
-; 10000 2 ?print_fp
-10000 80 2 9000 10 1000 1 ?simulate _println
+#seed _srand
+#success
+    #start_price #up_prob #percentage #threshold #time #iter #verbose
+    ?simulate =
+#success _print
+"/" _print
+#iter _print
+" success" _println
