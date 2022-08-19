@@ -80,7 +80,7 @@ int parser_initialize(Parser *parser, String ifn) {
         DArrayIdx_finalize(&parser->stack);
         return ret;
     }
-    ret = DArrayCharacter_initialize(&parser->str_buf, 1000);
+    ret = DArrayCharacter_initialize(&parser->str_buf, 1000000);
     if (ret) {
         return ret;
     }
@@ -242,6 +242,9 @@ static int handle_int_name(Parser *parser) {
                 if (ret) {
                     return ret;
                 }
+                if (parser->str_buf.size > 1000000) {
+                    return ERR_STR_BUF_OVERFLOW;
+                }
             } else {
                 return ERR_INVALID_VAR_NAME;
             }
@@ -257,6 +260,9 @@ static int handle_int_name(Parser *parser) {
                 if (ret) {
                     return ret;
                 }
+                if (parser->str_buf.size > 1000000) {
+                    return ERR_STR_BUF_OVERFLOW;
+                }
             } else {
                 return ERR_INVALID_VAR_NAME;
             }
@@ -265,6 +271,9 @@ static int handle_int_name(Parser *parser) {
     ret = DArrayCharacter_push(&parser->str_buf, "");
     if (ret) {
         return ret;
+    }
+    if (parser->str_buf.size > 1000000) {
+        return ERR_STR_BUF_OVERFLOW;
     }
     String str = parser->str_buf.data + parser->str_buf.size - i - 1;
     Token token;
@@ -321,6 +330,9 @@ static int handle_str_name(Parser *parser) {
                 if (ret) {
                     return ret;
                 }
+                if (parser->str_buf.size > 1000000) {
+                    return ERR_STR_BUF_OVERFLOW;
+                }
             } else {
                 return ERR_INVALID_VAR_NAME;
             }
@@ -336,6 +348,9 @@ static int handle_str_name(Parser *parser) {
                 if (ret) {
                     return ret;
                 }
+                if (parser->str_buf.size > 1000000) {
+                    return ERR_STR_BUF_OVERFLOW;
+                }
             } else {
                 return ERR_INVALID_VAR_NAME;
             }
@@ -344,6 +359,9 @@ static int handle_str_name(Parser *parser) {
     ret = DArrayCharacter_push(&parser->str_buf, "");
     if (ret) {
         return ret;
+    }
+    if (parser->str_buf.size > 1000000) {
+        return ERR_STR_BUF_OVERFLOW;
     }
     String str = parser->str_buf.data + parser->str_buf.size - i - 1;
     Token token;
@@ -399,6 +417,9 @@ static int handle_int_lit(Parser *parser, bool negative) {
             if (ret) {
                 return ret;
             }
+            if (parser->str_buf.size > 1000000) {
+                return ERR_STR_BUF_OVERFLOW;
+            }
         } else {
             return ERR_INVALID_INT_LIT;
         }
@@ -406,6 +427,9 @@ static int handle_int_lit(Parser *parser, bool negative) {
     ret = DArrayCharacter_push(&parser->str_buf, "");
     if (ret) {
         return ret;
+    }
+    if (parser->str_buf.size > 1000000) {
+        return ERR_STR_BUF_OVERFLOW;
     }
     String str = parser->str_buf.data + parser->str_buf.size - i - 1;
     Token token;
@@ -459,6 +483,9 @@ static int handle_str_lit(Parser *parser) {
         if (ret) {
             return ret;
         }
+        if (parser->str_buf.size > 1000000) {
+            return ERR_STR_BUF_OVERFLOW;
+        }
     }
     if (ii != '"') {
         return ERR_INVALID_STR_LIT;
@@ -466,6 +493,9 @@ static int handle_str_lit(Parser *parser) {
     ret = DArrayCharacter_push(&parser->str_buf, "");
     if (ret) {
         return ret;
+    }
+    if (parser->str_buf.size > 1000000) {
+        return ERR_STR_BUF_OVERFLOW;
     }
     String str = parser->str_buf.data + parser->str_buf.size - i - 1;
     Token token;
@@ -515,6 +545,9 @@ static int handle_operator(Parser *parser) {
             ret = DArrayCharacter_push(&parser->str_buf, &cur);
             if (ret) {
                 return ret;
+            }
+            if (parser->str_buf.size > 1000000) {
+                return ERR_STR_BUF_OVERFLOW;
             }
             return handle_int_lit(parser, true);
         }
@@ -693,6 +726,9 @@ static int handle_arr_name(Parser *parser) {
                 if (ret) {
                     return ret;
                 }
+                if (parser->str_buf.size > 1000000) {
+                    return ERR_STR_BUF_OVERFLOW;
+                }
             } else {
                 return ERR_INVALID_VAR_NAME;
             }
@@ -708,6 +744,9 @@ static int handle_arr_name(Parser *parser) {
                 if (ret) {
                     return ret;
                 }
+                if (parser->str_buf.size > 1000000) {
+                    return ERR_STR_BUF_OVERFLOW;
+                }
             } else {
                 return ERR_INVALID_VAR_NAME;
             }
@@ -716,6 +755,9 @@ static int handle_arr_name(Parser *parser) {
     ret = DArrayCharacter_push(&parser->str_buf, "");
     if (ret) {
         return ret;
+    }
+    if (parser->str_buf.size > 1000000) {
+        return ERR_STR_BUF_OVERFLOW;
     }
     String str = parser->str_buf.data + parser->str_buf.size - i - 1;
     Token token;
@@ -748,6 +790,9 @@ static int handle_arr_name(Parser *parser) {
                 if (ret) {
                     return ret;
                 }
+                if (parser->str_buf.size > 1000000) {
+                    return ERR_STR_BUF_OVERFLOW;
+                }
             } else {
                 return ERR_INVALID_ARR_SIZE;
             }
@@ -759,6 +804,9 @@ static int handle_arr_name(Parser *parser) {
         ret = DArrayCharacter_push(&parser->str_buf, "");
         if (ret) {
             return ret;
+        }
+        if (parser->str_buf.size > 1000000) {
+            return ERR_STR_BUF_OVERFLOW;
         }
         String str_size = parser->str_buf.data + parser->str_buf.size - i - 1;
         Size size = (Size)atol(str_size);
@@ -923,6 +971,9 @@ static int handle_command_def(Parser *parser) {
                 if (ret) {
                     return ret;
                 }
+                if (parser->str_buf.size > 1000000) {
+                    return ERR_STR_BUF_OVERFLOW;
+                }
             } else {
                 return ERR_INVALID_VAR_NAME;
             }
@@ -938,6 +989,9 @@ static int handle_command_def(Parser *parser) {
                 if (ret) {
                     return ret;
                 }
+                if (parser->str_buf.size > 1000000) {
+                    return ERR_STR_BUF_OVERFLOW;
+                }
             } else {
                 return ERR_INVALID_VAR_NAME;
             }
@@ -946,6 +1000,9 @@ static int handle_command_def(Parser *parser) {
     ret = DArrayCharacter_push(&parser->str_buf, "");
     if (ret) {
         return ret;
+    }
+    if (parser->str_buf.size > 1000000) {
+        return ERR_STR_BUF_OVERFLOW;
     }
     String str = parser->str_buf.data + parser->str_buf.size - i - 1;
     ret =
@@ -1032,6 +1089,9 @@ static int handle_command(Parser *parser) {
                 if (ret) {
                     return ret;
                 }
+                if (parser->str_buf.size > 1000000) {
+                    return ERR_STR_BUF_OVERFLOW;
+                }
             } else {
                 return ERR_INVALID_VAR_NAME;
             }
@@ -1047,6 +1107,9 @@ static int handle_command(Parser *parser) {
                 if (ret) {
                     return ret;
                 }
+                if (parser->str_buf.size > 1000000) {
+                    return ERR_STR_BUF_OVERFLOW;
+                }
             } else {
                 return ERR_INVALID_VAR_NAME;
             }
@@ -1055,6 +1118,9 @@ static int handle_command(Parser *parser) {
     ret = DArrayCharacter_push(&parser->str_buf, "");
     if (ret) {
         return ret;
+    }
+    if (parser->str_buf.size > 1000000) {
+        return ERR_STR_BUF_OVERFLOW;
     }
     String str = parser->str_buf.data + parser->str_buf.size - i - 1;
     bool found = false;
@@ -1133,6 +1199,9 @@ static int handle_function_call(Parser *parser) {
                 if (ret) {
                     return ret;
                 }
+                if (parser->str_buf.size > 1000000) {
+                    return ERR_STR_BUF_OVERFLOW;
+                }
             } else {
                 return ERR_INVALID_VAR_NAME;
             }
@@ -1148,6 +1217,9 @@ static int handle_function_call(Parser *parser) {
                 if (ret) {
                     return ret;
                 }
+                if (parser->str_buf.size > 1000000) {
+                    return ERR_STR_BUF_OVERFLOW;
+                }
             } else {
                 return ERR_INVALID_VAR_NAME;
             }
@@ -1156,6 +1228,9 @@ static int handle_function_call(Parser *parser) {
     ret = DArrayCharacter_push(&parser->str_buf, "");
     if (ret) {
         return ret;
+    }
+    if (parser->str_buf.size > 1000000) {
+        return ERR_STR_BUF_OVERFLOW;
     }
     String str = parser->str_buf.data + parser->str_buf.size - i - 1;
     Token token;
@@ -1201,6 +1276,9 @@ int parser_parse(Parser *parser) {
             if (ret) {
                 return ret;
             }
+            if (parser->str_buf.size > 1000000) {
+                return ERR_STR_BUF_OVERFLOW;
+            }
             ret = handle_int_lit(parser, false);
             break;
         case '"':
@@ -1224,6 +1302,9 @@ int parser_parse(Parser *parser) {
             ret = DArrayCharacter_push(&parser->str_buf, &cur);
             if (ret) {
                 return ret;
+            }
+            if (parser->str_buf.size > 1000000) {
+                return ERR_STR_BUF_OVERFLOW;
             }
             ret = handle_operator(parser);
             break;

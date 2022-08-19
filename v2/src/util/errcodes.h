@@ -19,7 +19,8 @@
 #define ERR_INVALID_PARAMETER 16
 #define ERR_FUNCTION_NOT_DEFINED 17
 #define ERR_INVALID_RETURN 18
+#define ERR_STR_BUF_OVERFLOW 19
 
-extern const char *errcode_lookup[19];
+extern const char *errcode_lookup[20];
 
 #endif

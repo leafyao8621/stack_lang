@@ -89,7 +89,7 @@ int HashSet##Type##_insert(HashSet##Type *hashset, Type *item) {\
                 iter_new->item = iter_old->item;\
                 iter_new->in_use = true;\
             }\
-            idx = hashset->hash(item) % hashset->capacity;\
+            idx = hashset->hash(item) % new_capacity;\
             iter = buf + idx;\
             for (\
                 ;\

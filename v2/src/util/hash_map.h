@@ -106,7 +106,7 @@ int HashMap##Key##Value##_fetch(\
                 iter_new->value = iter_old->value;\
                 iter_new->in_use = true;\
             }\
-            idx = hashmap->hash(key) % hashmap->capacity;\
+            idx = hashmap->hash(key) % new_capacity;\
             iter = buf + idx;\
             for (\
                 ;\
