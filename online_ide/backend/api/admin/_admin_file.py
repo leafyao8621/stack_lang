@@ -4,8 +4,7 @@ from ..models import File
 class FileAdmin(admin.ModelAdmin):
     list_display = (
         "created_by",
-        "file_name",
-        "compiled"
+        "file_name"
     )
 
 admin.site.register(File, FileAdmin)

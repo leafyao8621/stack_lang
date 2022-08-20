@@ -9,6 +9,5 @@ class FileSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "created_by",
-            "file_name",
-            "compiled"
+            "file_name"
         )

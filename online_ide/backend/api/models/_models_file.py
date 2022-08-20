@@ -12,6 +12,3 @@ class File(models.Model):
         max_length=50,
         unique=True
     )
-    compiled = models.BooleanField(
-        default=False
-    )
