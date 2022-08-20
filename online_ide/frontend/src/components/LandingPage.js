@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 
@@ -39,22 +39,67 @@ const LandingPage = (props) => {
             return "";
         }
         return (
-            files.map((item) => {
-                return (
-                    <li
-                        className="list-group-item"
-                        key={item}
-                    >
-                        <Link
-                            to={{
-                                pathname: "/"
-                            }}
-                        >
-                            {item}
-                        </Link>
-                    </li>
-                )
-            })
+            <li
+                className="list-group-item"
+            >
+                Files
+                <ul
+                    className="list-group"
+                >
+                    {
+                        files.map((item) => {
+                            return (
+                                <li
+                                    className="list-group-item"
+                                    key={item}
+                                >
+                                    <Link
+                                        to={{
+                                            pathname: "/"
+                                        }}
+                                    >
+                                        {item}
+                                    </Link>
+                                </li>
+                            )
+                        })
+                    }
+                </ul>
+            </li>
+        );
+    }
+    const renderExamples = () => {
+        if (!examples) {
+            return "";
+        }
+        return (
+            <li
+                className="list-group-item"
+            >
+                Examples
+                <ul
+                    className="list-group"
+                >
+                    {
+                        examples.map((item) => {
+                            return (
+                                <li
+                                    className="list-group-item"
+                                    key={item}
+                                >
+                                    <Link
+                                        to={{
+                                            pathname: "/"
+                                        }}
+                                    >
+                                        {item}
+                                    </Link>
+                                </li>
+                            )
+                        })
+                    }
+                </ul>
+            </li>
         );
     }
     return (
@@ -75,6 +120,7 @@ const LandingPage = (props) => {
                     </Link>
                 </li>
                 { renderFiles() }
+                { renderExamples() }
             </ul>
         </main>
     );
