@@ -2,7 +2,6 @@ import json
 import asyncio
 import traceback
 from channels.generic.websocket import AsyncWebsocketConsumer
-from api.models import File
 
 class WorkerConsumer(AsyncWebsocketConsumer):
     async def connect(self):
