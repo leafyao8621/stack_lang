@@ -42,7 +42,8 @@ class FileView(viewsets.ModelViewSet):
                 file_name=file_name
             )
             with open(
-                f"/home/leaf/stack_lang_online_ide/users/{user_name}/src/{file_name}.sl",
+                f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                f"src/{file_name}.sl",
                 "w") as fout:
                 fout.write(data)
             return Response(data={"success": True})
