@@ -1,7 +1,7 @@
 import json
+import asyncio
+import traceback
 from channels.generic.websocket import AsyncWebsocketConsumer
-from django.dispatch.dispatcher import receiver
-from asgiref.sync import sync_to_async
 from api.models import File
 
 class WorkerConsumer(AsyncWebsocketConsumer):
@@ -31,14 +31,63 @@ class WorkerConsumer(AsyncWebsocketConsumer):
         action = text_data_json["action"]
         file_name = text_data_json["file_name"]
         message = ""
+        output = ""
         success = True
         try:
             if (action == "compile"):
-                message = "compilation successful"
+                with open(
+                    f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                    f"out/{file_name}",
+                    "w") as fout:
+                    p =\
+                        await asyncio.create_subprocess_exec(
+                            "slc",
+                            f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                            f"src/{file_name}.sl",
+                            f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                            f"bin/{file_name}"
+                        )
+                    ret = await p.wait()
+                if (ret):
+                    success = False
+                    with open(
+                        f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                        f"out/{file_name}",
+                        "r") as fin:
+                        message = fin.read()
+                else:
+                    message = "compilation successful"
+            elif (action == "run"):
+                with open(
+                    f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                    f"out/{file_name}",
+                    "w") as fout:
+                    p =\
+                        await asyncio.create_subprocess_exec(
+                            f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                            f"bin/{file_name}",
+                            stdout=fout
+                        )
+                    ret = await asyncio.wait_for(p.communicate(), 10)
+                if (ret[0]):
+                    success = False
+                    message = f"run failed with code {ret}"
+                else:
+                    message = "run successfull"
+                with open(
+                    f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                    f"out/{file_name}",
+                    "r") as fin:
+                    output = fin.read()
+            elif (action == "run example"):
+                message = "Run example"
             else:
-                message = "Run"
+                message = "Unknown action"
+                success = False
         except:
             success = False
+            message = "operation failed"
+            traceback.print_exc()
         # Send message to room group
         await self.channel_layer.group_send(
             self.room_group_name,
@@ -46,7 +95,8 @@ class WorkerConsumer(AsyncWebsocketConsumer):
                 "type": "chat_message",
                 "user_name": user_name,
                 "success": success,
-                "message": message
+                "message": message,
+                "output": output
             }
         )
 
@@ -55,11 +105,13 @@ class WorkerConsumer(AsyncWebsocketConsumer):
         user_name = event["user_name"]
         success = event["success"]
         message = event["message"]
+        output = event["output"]
         # Send message to WebSocket
         await self.send(
             text_data=json.dumps({
                 "user_name": user_name,
                 "success": success,
-                "message": message
+                "message": message,
+                "output": output
             })
         )
