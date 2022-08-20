@@ -4,8 +4,6 @@ from rest_framework.response import Response
 from ..serializers import FileSerializer
 from ..models import File, User
 
-import os
-
 class FileView(viewsets.ModelViewSet):
     """View related to File
     """
