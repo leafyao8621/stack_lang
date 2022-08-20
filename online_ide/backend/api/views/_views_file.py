@@ -13,7 +13,6 @@ class FileView(viewsets.ModelViewSet):
     def list_files(self, request):
         try:
             user_name = request.GET.get("user_name")
-            print(user_name)
             files = list(
                 self.queryset
                     .filter(created_by__user_name=user_name)
@@ -45,5 +44,18 @@ class FileView(viewsets.ModelViewSet):
                 "w") as fout:
                 fout.write(data)
             return Response(data={"success": True})
+        except:
+            return Response(data={"success": False})
+    @action(detail=False, methods=["GET"])
+    def retrieve_file(self, request):
+        try:
+            user_name = request.GET.get("user_name")
+            file_name = request.GET.get("file_name")
+            with open(
+                f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                f"src/{file_name}.sl",
+                "r") as fin:
+                data = fin.read()
+            return Response(data={"success": True, "data": data})
         except:
             return Response(data={"success": False})
