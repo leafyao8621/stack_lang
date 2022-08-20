@@ -45,7 +45,9 @@ class WorkerConsumer(AsyncWebsocketConsumer):
                             f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
                             f"src/{file_name}.sl",
                             f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
-                            f"bin/{file_name}"
+                            f"bin/{file_name}",
+                            stdout=fout,
+                            stderr=fout
                         )
                     ret = await p.wait()
                 if (ret):
@@ -58,15 +60,24 @@ class WorkerConsumer(AsyncWebsocketConsumer):
                 else:
                     message = "compilation successful"
             elif (action == "run"):
-                with open(
-                    f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
-                    f"out/{file_name}",
-                    "w") as fout:
+                with\
+                    open(
+                        f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                        f"out/{file_name}",
+                        "w"
+                    ) as fout,\
+                    open(
+                        f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                        f"in/{file_name}",
+                        "r"
+                    ) as fin:
                     p =\
                         await asyncio.create_subprocess_exec(
                             f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
                             f"bin/{file_name}",
-                            stdout=fout
+                            stdout=fout,
+                            stdin=fin,
+                            stderr=fout
                         )
                     ret = await asyncio.wait_for(p.communicate(), 10)
                 if (ret[0]):
@@ -80,13 +91,49 @@ class WorkerConsumer(AsyncWebsocketConsumer):
                     "r") as fin:
                     output = fin.read()
             elif (action == "run example"):
-                message = "Run example"
+                with\
+                    open(
+                        f"/home/leaf/stack_lang_online_ide/examples/"
+                        f"out/{user_name}_{file_name}",
+                        "w"
+                    ) as fout,\
+                    open(
+                        f"/home/leaf/stack_lang_online_ide/examples/"
+                        f"in/{file_name}",
+                        "r"
+                    ) as fin:
+                    p =\
+                        await asyncio.create_subprocess_exec(
+                            f"/home/leaf/stack_lang_online_ide/examples/"
+                            f"bin/{file_name}",
+                            stdout=fout,
+                            stdin=fin,
+                            stderr=fout
+                        )
+                    ret = await asyncio.wait_for(p.communicate(), 10)
+                if (ret[0]):
+                    success = False
+                    message = f"run failed with code {ret}"
+                else:
+                    message = "run successfull"
+                with open(
+                    f"/home/leaf/stack_lang_online_ide/examples/"
+                    f"out/{user_name}_{file_name}",
+                    "r") as fin:
+                    output = fin.read()
             else:
-                message = "Unknown action"
+                message = "unknown action"
                 success = False
+        except asyncio.exceptions.TimeoutError:
+            success = False
+            message = "timeout reached"
+        except FileNotFoundError:
+            success = False
+            message =\
+                "file not found, please compile"
         except:
             success = False
-            message = "operation failed"
+            message = "unknown error"
             traceback.print_exc()
         # Send message to room group
         await self.channel_layer.group_send(
