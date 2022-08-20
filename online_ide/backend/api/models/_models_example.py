@@ -1,9 +1,9 @@
 from django.db import models
 
-class User(models.Model):
-    """User
+class Example(models.Model):
+    """Example
     """
-    user_name = models.CharField(
+    file_name = models.CharField(
         max_length=50,
         unique=True
     )

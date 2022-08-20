@@ -20,6 +20,7 @@ from api import views
 router = routers.DefaultRouter()
 router.register(r"users", views.UserView, "user")
 router.register(r"files", views.FileView, "file")
+router.register(r"examples", views.ExampleView, "example")
 
 
 urlpatterns = [
