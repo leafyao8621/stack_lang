@@ -27,6 +27,7 @@ class FileView(viewsets.ModelViewSet):
             user_name = request.data["user_name"]
             file_name = request.data["file_name"]
             data = request.data["data"]
+            inp = request.data["input"]
             id =\
                 list(
                     User.objects
@@ -43,6 +44,11 @@ class FileView(viewsets.ModelViewSet):
                 f"src/{file_name}.sl",
                 "w") as fout:
                 fout.write(data)
+            with open(
+                f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                f"in/{file_name}",
+                "w") as fout:
+                fout.write(inp)
             return Response(data={"success": True})
         except:
             return Response(data={"success": False})
@@ -56,6 +62,11 @@ class FileView(viewsets.ModelViewSet):
                 f"src/{file_name}.sl",
                 "r") as fin:
                 data = fin.read()
-            return Response(data={"success": True, "data": data})
+            with open(
+                f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                f"in/{file_name}",
+                "r") as fin:
+                inp = fin.read()
+            return Response(data={"success": True, "data": data, "input": inp})
         except:
             return Response(data={"success": False})

@@ -35,6 +35,12 @@ class UserView(viewsets.ModelViewSet):
                 os.mkdir(
                     f"/home/leaf/stack_lang_online_ide/users/{user_name}/bin"
                 )
+                os.mkdir(
+                    f"/home/leaf/stack_lang_online_ide/users/{user_name}/in"
+                )
+                os.mkdir(
+                    f"/home/leaf/stack_lang_online_ide/users/{user_name}/out"
+                )
             return Response(data={"success": True})
         except:
             return Response(data={"success": False})
