@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
+import { Input } from "reactstrap"
 
 const LandingPage = (props) => {
     const location  = useLocation();
     const [files, setFiles] = useState();
     const [examples, setExamples] = useState();
+    const [fileName, setFileName] = useState();
     const loaded = useRef();
     useEffect(() => {
         if (!loaded.current) {
@@ -129,13 +131,44 @@ const LandingPage = (props) => {
                 <li
                     className="list-group-item"
                 >
-                    <Link
-                        to={{
-                            pathname: "/"
-                        }}
+                    <ul
+                        className="list-group"
                     >
-                        Logout
-                    </Link>
+                        <li
+                            className="list-group-item"
+                        >
+                            <Link
+                                to={{
+                                    pathname: "/"
+                                }}
+                            >
+                                Logout
+                            </Link>
+                        </li>
+                        <li
+                            className="list-group-item"
+                        >
+                            <Input
+                                type="text"
+                                id="un"
+                                placeholder="Enter a file name"
+                                onChange={({ target }) => {
+                                    setFileName(target.value);
+                                }}
+                            />
+                            <Link
+                                to="/editor"
+                                state={{
+                                    userName: location.state.userName,
+                                    fileName: fileName,
+                                    example: false,
+                                    newFile: true
+                                }}
+                            >
+                                Create
+                            </Link>
+                        </li>
+                    </ul>
                 </li>
                 { renderFiles() }
                 { renderExamples() }

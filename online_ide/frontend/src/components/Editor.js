@@ -13,7 +13,7 @@ const Editor = (props) => {
     const ws = useRef();
     const loaded = useRef();
     useEffect(() => {
-        if (!loaded.current) {
+        if (!loaded.current && !location.state.newFile) {
             if (!location.state.example) {
                 axios.get(
                     "/api/files/retrieve_file/",
@@ -56,7 +56,11 @@ const Editor = (props) => {
             }
             loaded.current = true;
         }
-
+        if (location.state.newFile && !loaded.current) {
+            setInput("");
+            setContent("");
+            loaded.current = true;
+        }
         ws.current =
             w3cwebsocket(
                 `ws://localhost:8000/ws/worker/${location.state.userName}/`
@@ -71,7 +75,8 @@ const Editor = (props) => {
             setOutput(`${data.message}\n${data.output}`)
         }
         return () => ws.current.close();
-    });
+    },
+    [location.state]);
     const onChangeContent = React.useCallback((value, viewUpdate) => {
         setContent(value);
     }, []);

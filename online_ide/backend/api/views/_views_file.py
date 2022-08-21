@@ -1,3 +1,4 @@
+import traceback
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -24,6 +25,7 @@ class FileView(viewsets.ModelViewSet):
     @action(detail=False, methods=["POST"])
     def update_file(self, request):
         try:
+            print(request.data)
             user_name = request.data["user_name"]
             file_name = request.data["file_name"]
             data = request.data["data"]
@@ -51,6 +53,7 @@ class FileView(viewsets.ModelViewSet):
                 fout.write(inp)
             return Response(data={"success": True})
         except:
+            traceback.print_exc()
             return Response(data={"success": False})
     @action(detail=False, methods=["GET"])
     def retrieve_file(self, request):
