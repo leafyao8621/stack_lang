@@ -25,7 +25,6 @@ class FileView(viewsets.ModelViewSet):
     @action(detail=False, methods=["POST"])
     def update_file(self, request):
         try:
-            print(request.data)
             user_name = request.data["user_name"]
             file_name = request.data["file_name"]
             data = request.data["data"]
