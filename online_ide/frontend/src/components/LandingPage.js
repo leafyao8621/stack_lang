@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 
@@ -6,41 +6,45 @@ const LandingPage = (props) => {
     const location  = useLocation();
     const [files, setFiles] = useState();
     const [examples, setExamples] = useState();
+    const loaded = useRef();
     useEffect(() => {
-        axios.get(
-            "/api/files/list_files/",
-            {
-                params: {
-                    user_name: location.state.userName
+        if (!loaded.current) {
+            axios.get(
+                "/api/files/list_files/",
+                {
+                    params: {
+                        user_name: location.state.userName
+                    }
                 }
-            }
-        ).then((res) => {
-            if (res.data.success) {
-                setFiles(res.data.data.map((item) => item.file_name));
-            } else {
+            ).then((res) => {
+                if (res.data.success) {
+                    setFiles(res.data.data.map((item) => item.file_name));
+                } else {
+                    alert("Error loading files");
+                }
+            }).catch((err) => {
                 alert("Error loading files");
-            }
-        }).catch((err) => {
-            alert("Error loading files");
-            console.log(err);
-        });
-        axios.get(
-            "/api/examples/list_examples/",
-            {
-                params: {
-                    user_name: location.state.userName
+                console.log(err);
+            });
+            axios.get(
+                "/api/examples/list_examples/",
+                {
+                    params: {
+                        user_name: location.state.userName
+                    }
                 }
-            }
-        ).then((res) => {
-            if (res.data.success) {
-                setExamples(res.data.data.map((item) => item.file_name));
-            } else {
+            ).then((res) => {
+                if (res.data.success) {
+                    setExamples(res.data.data.map((item) => item.file_name));
+                } else {
+                    alert("Error loading examples");
+                }
+            }).catch((err) => {
                 alert("Error loading examples");
-            }
-        }).catch((err) => {
-            alert("Error loading examples");
-            console.log(err);
-        });
+                console.log(err);
+            });
+            loaded.current = true;
+        }
     });
     const renderFiles = () => {
         if (!files) {
