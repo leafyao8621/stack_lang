@@ -1,6 +1,7 @@
 import json
 import asyncio
 import traceback
+import os
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 class WorkerConsumer(AsyncWebsocketConsumer):
@@ -134,6 +135,15 @@ class WorkerConsumer(AsyncWebsocketConsumer):
             success = False
             message = "unknown error"
             traceback.print_exc()
+        finally:
+            if os.path.exists(
+                f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                f"out/{file_name}"
+            ):
+                os.remove(
+                    f"/home/leaf/stack_lang_online_ide/users/{user_name}/"
+                    f"out/{file_name}"
+                )
         # Send message to room group
         await self.channel_layer.group_send(
             self.room_group_name,
