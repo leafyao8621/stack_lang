@@ -9,6 +9,5 @@ class File(models.Model):
         related_name="+"
     )
     file_name = models.CharField(
-        max_length=50,
-        unique=True
+        max_length=50
     )
