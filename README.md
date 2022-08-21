@@ -29,10 +29,10 @@ A stack based language. Uses RPN
 * ```+=```
 * ```--```
 * ```-=```
-* ```[]``` (Not yet implemented)
+* ```[]```
 
 ### Commands Implemented:
-* ```_input``` (Not yet implemented)
+* ```_input```
 * ```_print```
 * ```_println```
 * ```_if```
@@ -40,8 +40,8 @@ A stack based language. Uses RPN
 * ```_end```
 * ```_while```
 * ```_do```
-* ```_def``` (Not yet implemented)
-* ```_begin``` (Not yet implemented)
+* ```_def```
+* ```_begin```
 
 ## v1
 ### Limitations:
