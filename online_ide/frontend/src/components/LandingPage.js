@@ -15,7 +15,11 @@ const LandingPage = (props) => {
                 }
             }
         ).then((res) => {
-            setFiles(res.data.data.map((item) => item.file_name));
+            if (res.data.success) {
+                setFiles(res.data.data.map((item) => item.file_name));
+            } else {
+                alert("Error loading files");
+            }
         }).catch((err) => {
             alert("Error loading files");
             console.log(err);
@@ -28,7 +32,11 @@ const LandingPage = (props) => {
                 }
             }
         ).then((res) => {
-            setExamples(res.data.data.map((item) => item.file_name));
+            if (res.data.success) {
+                setExamples(res.data.data.map((item) => item.file_name));
+            } else {
+                alert("Error loading examples");
+            }
         }).catch((err) => {
             alert("Error loading examples");
             console.log(err);
@@ -54,8 +62,11 @@ const LandingPage = (props) => {
                                     key={item}
                                 >
                                     <Link
-                                        to={{
-                                            pathname: "/"
+                                        to="/editor"
+                                        state={{
+                                            userName: location.state.userName,
+                                            fileName: item,
+                                            example: false
                                         }}
                                     >
                                         {item}
@@ -88,8 +99,11 @@ const LandingPage = (props) => {
                                     key={item}
                                 >
                                     <Link
-                                        to={{
-                                            pathname: "/"
+                                        to="/editor"
+                                        state={{
+                                            userName: location.state.userName,
+                                            fileName: item,
+                                            example: true
                                         }}
                                     >
                                         {item}
@@ -124,6 +138,6 @@ const LandingPage = (props) => {
             </ul>
         </main>
     );
-}
+};
 
 export default LandingPage;
