@@ -15,21 +15,20 @@ _start:
 
     ldr x9, =stack_ptr
     ldr x10, [x9]
-    ldr x11, =str0
+    mov x11, #65
     str x11, [x10]
     add x10, x10, #8
     str x10, [x9]
-    bl calc_strlen
-    bl print_str
+    bl print_chr
+
 
     ldr x9, =stack_ptr
     ldr x10, [x9]
-    ldr x11, =str0
+    mov x11, #65
     str x11, [x10]
     add x10, x10, #8
     str x10, [x9]
-    bl calc_strlen
-    bl println_str
+    bl println_chr
 
     mov x8, #93
     mov x0, #0

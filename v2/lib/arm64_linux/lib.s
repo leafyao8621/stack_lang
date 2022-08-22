@@ -51,3 +51,39 @@ println_str:
     mov x2, #1
     svc #0
     ret
+print_chr:
+    ldr x9, =stack_ptr
+    ldr x10, [x9]
+    sub x10, x10, #8
+    str x10, [x9]
+    ldr x11, [x10]
+    ldr x12, =str_buf
+    strb w11, [x12]
+    mov x8, #64
+    mov x0, #1
+    mov x1, x12
+    mov x2, #1
+    svc #0
+    ret
+println_chr:
+    ldr x9, =stack_ptr
+    ldr x10, [x9]
+    sub x10, x10, #8
+    str x10, [x9]
+    ldr x11, [x10]
+    ldr x12, =str_buf
+    strb w11, [x12]
+    mov x8, #64
+    mov x0, #1
+    mov x1, x12
+    mov x2, #1
+    svc #0
+    ldr x9, =str_buf
+    mov x10, #10
+    strb w10, [x9]
+    mov x8, #64
+    mov x0, #1
+    mov x1, x9
+    mov x2, #1
+    svc #0
+    ret
