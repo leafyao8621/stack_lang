@@ -19,7 +19,7 @@ _start:
     str x11, [x10]
     add x10, x10, #8
     str x10, [x9]
-    bl print_chr
+    bl print_int
 
 
     ldr x9, =stack_ptr
@@ -28,7 +28,7 @@ _start:
     str x11, [x10]
     add x10, x10, #8
     str x10, [x9]
-    bl println_chr
+    bl println_int
 
     mov x8, #93
     mov x0, #0

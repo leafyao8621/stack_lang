@@ -87,3 +87,115 @@ println_chr:
     mov x2, #1
     svc #0
     ret
+print_int:
+    ldr x9, =stack_ptr
+    ldr x10, [x9]
+    sub x10, x10, #8
+    str x10, [x9]
+    ldr x11, [x10]
+    mov x20, #0
+    cmp x11, #0
+    bge print_int_eif0
+    mov x20, #1
+    neg x11, x11
+print_int_eif0:
+    mov x12, #0
+    ldr x13, =int_buf
+print_int_loop0:
+    mov x14, #10
+    udiv x15, x11, x14
+    msub x16, x15, x14, x11
+    add x16, x16, #48
+    strb w16, [x13]
+    mov x11, x15
+    add x12, x12, #1
+    add x13, x13, #1
+    cmp x11, #0
+    bgt print_int_loop0
+    mov x21, x12
+    sub x13, x13, 1
+    ldr x14, =str_buf
+    cmp x20, #0
+    beq print_int_eif1
+    mov x15, #45
+    strb w15, [x14]
+    add x14, x14, 1
+print_int_eif1:
+print_int_loop1:
+    ldrb w15, [x13]
+    strb w15, [x14]
+    sub x12, x12, #1
+    sub x13, x13, #1
+    add x14, x14, #1
+    cmp x12, #0
+    bgt print_int_loop1
+    mov x8, #64
+    mov x0, #1
+    ldr x1, =str_buf
+    mov x2, x21
+    cmp x20, #0
+    beq print_int_eif2
+    add x2, x2, 1
+print_int_eif2:
+    svc #10
+    ret
+println_int:
+    ldr x9, =stack_ptr
+    ldr x10, [x9]
+    sub x10, x10, #8
+    str x10, [x9]
+    ldr x11, [x10]
+    mov x20, #0
+    cmp x11, #0
+    bge println_int_eif0
+    mov x20, #1
+    neg x11, x11
+println_int_eif0:
+    mov x12, #0
+    ldr x13, =int_buf
+println_int_loop0:
+    mov x14, #10
+    udiv x15, x11, x14
+    msub x16, x15, x14, x11
+    add x16, x16, #48
+    strb w16, [x13]
+    mov x11, x15
+    add x12, x12, #1
+    add x13, x13, #1
+    cmp x11, #0
+    bgt println_int_loop0
+    mov x21, x12
+    sub x13, x13, 1
+    ldr x14, =str_buf
+    cmp x20, #0
+    beq println_int_eif1
+    mov x15, #45
+    strb w15, [x14]
+    add x14, x14, 1
+println_int_eif1:
+println_int_loop1:
+    ldrb w15, [x13]
+    strb w15, [x14]
+    sub x12, x12, #1
+    sub x13, x13, #1
+    add x14, x14, #1
+    cmp x12, #0
+    bgt println_int_loop1
+    mov x8, #64
+    mov x0, #1
+    ldr x1, =str_buf
+    mov x2, x21
+    cmp x20, #0
+    beq println_int_eif2
+    add x2, x2, 1
+println_int_eif2:
+    svc #10
+    ldr x9, =str_buf
+    mov x10, #10
+    strb w10, [x9]
+    mov x8, #64
+    mov x0, #1
+    mov x1, x9
+    mov x2, #1
+    svc #0
+    ret
