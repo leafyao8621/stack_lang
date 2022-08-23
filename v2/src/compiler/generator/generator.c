@@ -94,10 +94,19 @@ int generator_generate(Generator *generator) {
     case ARCHITECTURE_X86_64_LINUX:
         fprintf(fasm, "%s\n", data_section_x86_64_linux);
         break;
+    case ARCHITECTURE_ARM64_LINUX:
+        fprintf(fasm, "%s\n", data_section_arm64_linux);
+        break;
     }
     switch (generator->architecture) {
     case ARCHITECTURE_X86_64_LINUX:
         ret = handle_declarations_x86_64_linux(generator, fasm);
+        if (ret) {
+            return ret;
+        }
+        break;
+    case ARCHITECTURE_ARM64_LINUX:
+        ret = handle_declarations_arm64_linux(generator, fasm);
         if (ret) {
             return ret;
         }
@@ -107,6 +116,10 @@ int generator_generate(Generator *generator) {
     case ARCHITECTURE_X86_64_LINUX:
         fprintf(fasm, "%s\n", text_start_x86_64_linux_0);
         fprintf(fasm, "%s\n", text_start_x86_64_linux_1);
+        break;
+    case ARCHITECTURE_ARM64_LINUX:
+        fprintf(fasm, "%s\n", text_start_arm64_linux_0);
+        fprintf(fasm, "%s\n", text_start_arm64_linux_1);
         break;
     }
     switch (generator->architecture) {
@@ -123,6 +136,9 @@ int generator_generate(Generator *generator) {
     case ARCHITECTURE_X86_64_LINUX:
         fprintf(fasm, "%s\n", program_start_x86_64_linux);
         break;
+    case ARCHITECTURE_ARM64_LINUX:
+        fprintf(fasm, "%s\n", program_start_arm64_linux);
+        break;
     }
     switch (generator->architecture) {
     case ARCHITECTURE_X86_64_LINUX:
@@ -137,6 +153,9 @@ int generator_generate(Generator *generator) {
     switch (generator->architecture) {
     case ARCHITECTURE_X86_64_LINUX:
         fprintf(fasm, "%s\n", text_end_x86_64_linux);
+        break;
+    case ARCHITECTURE_ARM64_LINUX:
+        fprintf(fasm, "%s\n", text_end_arm64_linux);
         break;
     }
     fclose(fasm);
