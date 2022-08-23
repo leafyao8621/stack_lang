@@ -150,11 +150,13 @@ static int handle_token_int_name(
     }
     fprintf(
         fasm,
-        "    movq stack_ptr, %%rax\n"
-        "    movabsq $%s%s%sint_name_%s, %%rbx\n"
-        "    movq %%rbx, (%%rax)\n"
-        "    addq $8, %%rax\n"
-        "    movq %%rax, stack_ptr\n",
+        "    ldr x9, =stack_ptr\n"
+        "    ldr x10, [x9]\n"
+        "    ldr x11, =%s%s%sint_name_%s\n"
+        "    ldr x12, [x11]\n"
+        "    str x12, [x10]\n"
+        "    add x10, x10, #8\n"
+        "    str x10, [x9]\n",
         function ? "function_" : "",
         function ? function : "",
         function ? "_" : "",
@@ -178,11 +180,13 @@ static int handle_token_str_name(
     }
     fprintf(
         fasm,
-        "    movq stack_ptr, %%rax\n"
-        "    movabsq $%s%s%sstr_name_%s, %%rbx\n"
-        "    movq %%rbx, (%%rax)\n"
-        "    addq $8, %%rax\n"
-        "    movq %%rax, stack_ptr\n",
+        "    ldr x9, =stack_ptr\n"
+        "    ldr x10, [x9]\n"
+        "    ldr x11, =%s%s%sstr_name_%s\n"
+        "    ldr x12, [x11]\n"
+        "    str x12, [x10]\n"
+        "    add x10, x10, #8\n"
+        "    str x10, [x9]\n",
         function ? "function_" : "",
         function ? function : "",
         function ? "_" : "",
@@ -205,11 +209,12 @@ static int handle_token_int_lit(
     }
     fprintf(
         fasm,
-        "    movq stack_ptr, %%rax\n"
-        "    movabsq $%ld, %%rbx\n"
-        "    movq %%rbx, (%%rax)\n"
-        "    addq $8, %%rax\n"
-        "    movq %%rax, stack_ptr\n",
+        "    ldr x9, =stack_ptr\n"
+        "    ldr x10, [x9]\n"
+        "    mov x11, #%ld\n"
+        "    str x11, [x10]\n"
+        "    add x10, x10, #8\n"
+        "    str x10, [x9]\n",
         token->data.int_lit
     );
     return 0;
