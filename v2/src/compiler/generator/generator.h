@@ -6,6 +6,7 @@
 typedef int64_t Architecture;
 
 #define ARCHITECTURE_X86_64_LINUX 0
+#define ARCHITECTURE_ARM64_LINUX 1
 
 DEF_HASHMAP(String, DArrayToken)
 

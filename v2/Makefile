@@ -6,7 +6,7 @@ OBJ_COMPILER = $(SRC_COMPILER:.c=.o)
 BIN_COMPILER = slc
 
 %.o: %.c
-	$(CC) $(CFLAGS) -g -c $< -o $@
+	$(CC) -D$(ARCH) $(CFLAGS) -g -c $< -o $@
 
 $(BIN_COMPILER): $(OBJ_COMPILER)
 	$(CC) $(OBJ_COMPILER) -o $(BIN_COMPILER)

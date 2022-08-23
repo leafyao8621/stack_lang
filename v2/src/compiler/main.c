@@ -6,6 +6,7 @@ int main(int argc, char **argv) {
         puts("Usage: in_file out_file");
         return 1;
     }
+    #ifdef AMD64
     int ret =
         generator_initialize(
             &generator,
@@ -13,6 +14,15 @@ int main(int argc, char **argv) {
             argv[1],
             argv[2]
         );
+    #else
+    int ret =
+        generator_initialize(
+            &generator,
+            ARCHITECTURE_ARM64_LINUX,
+            argv[1],
+            argv[2]
+        );
+    #endif
     if (ret) {
         printf("errcode: %d\ndescription: %s\n", ret, errcode_lookup[ret]);
         generator_finalize(&generator);
