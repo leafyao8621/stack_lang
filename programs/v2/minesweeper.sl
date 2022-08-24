@@ -118,14 +118,16 @@ _def ?show X @board #reveal _begin
 _end
 
 _def ?mark # @board #row #col #state _begin
-    #idx #row 3 << #col + =
-    #cur @board #idx [] 64 & =
-    #cur _if
-        #state #state ?dec_marked =
-    _else
-        #state #state ?inc_marked =
+    #cur @board #idx [] 32 & _if
+        #idx #row 3 << #col + =
+        #cur @board #idx [] 64 & =
+        #cur _if
+            #state #state ?dec_marked =
+        _else
+            #state #state ?inc_marked =
+        _end
+        @board #idx [] @board #idx [] 64 ^ =
     _end
-    @board #idx [] @board #idx [] 64 ^ =
     #state
 _end
 
