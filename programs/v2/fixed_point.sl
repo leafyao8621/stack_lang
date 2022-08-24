@@ -1,4 +1,4 @@
-_def ?print_fp #x #decimal_places _begin
+_def ?print_fp X #x #decimal_places _begin
     #divisor 1 =
     #i 0 =
     _while #i #decimal_places < _do
@@ -9,7 +9,7 @@ _def ?print_fp #x #decimal_places _begin
     "." _print
     #remainder #x #divisor % =
     #temp #remainder =
-    #temp _if 
+    #temp _if
         #cnt 0 =
         _while #temp 0 > _do
             #temp #temp 10 / =
@@ -18,14 +18,14 @@ _def ?print_fp #x #decimal_places _begin
     _else
         #cnt 1 =
     _end
-    _while #cnt #decimal_places < _do 
+    _while #cnt #decimal_places < _do
         0 _print
         #cnt ++
     _end
     #remainder _println
 _end
 
-_def ?multiply_fp #x #y #decimal_places _begin 
+_def ?multiply_fp # #x #y #decimal_places _begin
     #divisor 1 =
     #i 0 =
     _while #i #decimal_places < _do

@@ -194,6 +194,10 @@ int parser_finalize(Parser *parser) {
             if (ret) {
                 return ret;
             }
+            ret = DArrayToken_finalize(&iter_function_name->value.ret_vals);
+            if (ret) {
+                return ret;
+            }
             ret = HashSetString_finalize(&iter_function_name->value.int_name);
             if (ret) {
                 return ret;
@@ -944,6 +948,7 @@ static int handle_command_end(Parser *parser) {
 static int handle_command_def(Parser *parser) {
     size_t i = 0;
     int ii = 0;
+    int ret = 0;
     for (
         ii = fgetc(parser->fin);
         !feof(parser->fin) &&
@@ -951,7 +956,6 @@ static int handle_command_def(Parser *parser) {
         ++i,
         ii = fgetc(parser->fin)
     );
-    int ret = 0;
     for (
         int ii = fgetc(parser->fin);
         !feof(parser->fin) &&
@@ -1019,6 +1023,10 @@ static int handle_command_def(Parser *parser) {
     if (ret) {
         return ret;
     }
+    ret = DArrayToken_initialize(&parser->cur_function->ret_vals, 10);
+    if (ret) {
+        return ret;
+    }
     ret =
         HashSetString_initialize(
             &parser->cur_function->int_name,
@@ -1041,6 +1049,38 @@ static int handle_command_def(Parser *parser) {
     ret = DArrayToken_initialize(parser->cur_token_buf, 100);
     if (ret) {
         return ret;
+    }
+    bool cond = true;
+    for (
+        ii = fgetc(parser->fin);
+        !feof(parser->fin) &&
+        ii != ' ' &&
+        ii != '\t' &&
+        ii != '\n' &&
+        cond;
+        ++i,
+        ii = fgetc(parser->fin)
+    ) {
+        Token cur;
+        switch (ii) {
+        case '#':
+            cur.type = TOKEN_INT_NAME;
+            ret = DArrayToken_push(&parser->cur_function->ret_vals, &cur);
+            if (ret) {
+                return ret;
+            }
+            break;
+        case '$':
+            cur.type = TOKEN_STR_NAME;
+            ret = DArrayToken_push(&parser->cur_function->ret_vals, &cur);
+            if (ret) {
+                return ret;
+            }
+            break;
+        case 'X':
+            cond = false;
+            break;
+        }
     }
     return 0;
 }

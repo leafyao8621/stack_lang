@@ -20,15 +20,6 @@ int generator_initialize(
     if (ret) {
         return ret;
     }
-    ret =
-        HashMapStringDArrayToken_initialize(
-            &generator->ret_vals,
-            10, hash_function_string,
-            eq_function_string
-        );
-    if (ret) {
-        return ret;
-    }
     ret = parser_initialize(&generator->parser, ifn);
     if (ret) {
         return ret;
@@ -42,23 +33,6 @@ int generator_finalize(Generator *generator) {
         return ERR_NULL_PTR;
     }
     int ret = DArrayToken_finalize(&generator->stack);
-    if (ret) {
-        return ret;
-    }
-    HashMapStringDArrayTokenNode *iter_ret_vals =
-        generator->ret_vals.data;
-    for (
-        size_t i = 0;
-        i < generator->ret_vals.capacity;
-        ++i, ++iter_ret_vals) {
-        if (iter_ret_vals->in_use) {
-            ret = DArrayToken_finalize(&iter_ret_vals->value);
-            if (ret) {
-                return ret;
-            }
-        }
-    }
-    ret = HashMapStringDArrayToken_finalize(&generator->ret_vals);
     if (ret) {
         return ret;
     }

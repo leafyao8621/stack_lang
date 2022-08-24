@@ -1,4 +1,4 @@
-_def ?sieve @arr #n #verbose _begin
+_def ?sieve # @arr #n #verbose _begin
     #cnt 0 =
     #i 2 =
     _while #i #n < _do
