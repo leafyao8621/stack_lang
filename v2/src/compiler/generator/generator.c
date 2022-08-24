@@ -131,6 +131,14 @@ int generator_generate(Generator *generator) {
             return ret;
         }
         break;
+    case ARCHITECTURE_ARM64_LINUX:
+        ret = handle_function_definitions_arm64_linux(generator, fasm);
+        if (ret) {
+            fclose(fasm);
+            parser_log(&generator->parser, stdout);
+            return ret;
+        }
+        break;
     }
     switch (generator->architecture) {
     case ARCHITECTURE_X86_64_LINUX:
@@ -149,6 +157,14 @@ int generator_generate(Generator *generator) {
             return ret;
         }
         break;
+    case ARCHITECTURE_ARM64_LINUX:
+        ret = handle_tokens_arm64_linux(generator, fasm);
+        if (ret) {
+            fclose(fasm);
+            parser_log(&generator->parser, stdout);
+            return ret;
+        }
+        break;
     }
     switch (generator->architecture) {
     case ARCHITECTURE_X86_64_LINUX:
@@ -161,7 +177,7 @@ int generator_generate(Generator *generator) {
     fclose(fasm);
     sprintf(buf, "as /tmp/temp_%lu.s -o /tmp/temp_%lu.o", timestamp, timestamp);
     system(buf);
-    sprintf(buf, "ld /tmp/temp_%lu.o -o %s", timestamp,generator->ofn);
+    sprintf(buf, "ld /tmp/temp_%lu.o -o %s", timestamp, generator->ofn);
     system(buf);
     sprintf(buf, "/tmp/temp_%lu.s", timestamp);
     remove(buf);

@@ -183,8 +183,7 @@ static int handle_token_str_name(
         "    ldr x9, =stack_ptr\n"
         "    ldr x10, [x9]\n"
         "    ldr x11, =%s%s%sstr_name_%s\n"
-        "    ldr x12, [x11]\n"
-        "    str x12, [x10]\n"
+        "    str x11, [x10]\n"
         "    add x10, x10, #8\n"
         "    str x10, [x9]\n",
         function ? "function_" : "",
@@ -234,11 +233,12 @@ static int handle_token_str_lit(
     }
     fprintf(
         fasm,
-        "    movq stack_ptr, %%rax\n"
-        "    movabsq $str_lit_%lu, %%rbx\n"
-        "    movq %%rbx, (%%rax)\n"
-        "    addq $8, %%rax\n"
-        "    movq %%rax, stack_ptr\n",
+        "    ldr x9, =stack_ptr\n"
+        "    ldr x10, [x9]\n"
+        "    ldr x11, =str_lit_%lu\n"
+        "    str x11, [x10]\n"
+        "    add x10, x10, #8\n"
+        "    str x10, [x9]\n",
         token->data.str_lit
     );
     return 0;
@@ -259,17 +259,19 @@ static int handle_token_arr_name(
     }
     fprintf(
         fasm,
-        "    movq stack_ptr, %%rax\n"
-        "    movabsq $%s%s%sarr_name_%s, %%rbx\n"
+        "    ldr x9, =stack_ptr"
+        "    ldr x10, [x9]"
+        "    ldr x11, =%s%s%sarr_name_%s\n"
         "%s"
         "    movq %%rbx, (%%rax)\n"
-        "    addq $8, %%rax\n"
-        "    movq %%rax, stack_ptr\n",
+        "    str x11, [x10]\n"
+        "    add x10, x10, #8\n"
+        "    str x10, [x9]\n",
         function ? "function_" : "",
         function ? function : "",
         function ? "_" : "",
         token->data.arr_name,
-        function ? "    movq (%rbx), %rbx\n" : ""
+        function ? "    ldr x11, [x11]\n" : ""
     );
     return 0;
 }
@@ -2714,7 +2716,7 @@ static int handle_token_command(
         switch (op.type) {
         case TOKEN_INT_LIT:
             fputs(
-                "    call print_int\n",
+                "    bl print_int\n",
                 fasm
             );
             break;
