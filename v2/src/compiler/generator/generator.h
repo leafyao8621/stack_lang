@@ -14,7 +14,6 @@ typedef struct Generator {
     Architecture architecture;
     Parser parser;
     DArrayToken stack;
-    HashMapStringDArrayToken ret_vals;
     String ofn;
 } Generator;
 

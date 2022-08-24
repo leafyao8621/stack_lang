@@ -1,39 +1,39 @@
-_def ?get_marked #state _begin
+_def ?get_marked # #state _begin
     #out #state 3840 & 8 >> =
     #out
 _end
 
-_def ?inc_marked #state _begin
+_def ?inc_marked # #state _begin
     #state #state 127 & #state 3840 & 256 + 3840 & | =
     #state
 _end
 
-_def ?dec_marked #state _begin
+_def ?dec_marked # #state _begin
     #state #state 127 & #state 3840 & 256 - 3840 & | =
     #state
 _end
 
-_def ?get_rem #state _begin
+_def ?get_rem # #state _begin
     #state #state 63 & =
     #state
 _end
 
-_def ?dec_rem #state _begin
+_def ?dec_rem # #state _begin
     #state --
     #state
 _end
 
-_def ?set_loss #state _begin
+_def ?set_loss # #state _begin
     #state #state 4096 | =
     #state
 _end
 
-_def ?get_loss #state _begin
+_def ?get_loss # #state _begin
     #state #state 4096 & =
     #state
 _end
 
-_def ?initialize @board _begin
+_def ?initialize # @board _begin
     #i 0 =
     _while #i 10 < _do
         #cond 1 =
@@ -65,7 +65,7 @@ _def ?initialize @board _begin
     #state
 _end
 
-_def ?show @board #reveal _begin
+_def ?show X @board #reveal _begin
     " " _print
     #i 0 =
     _while #i 8 < _do
@@ -107,7 +107,7 @@ _def ?show @board #reveal _begin
     _end
 _end
 
-_def ?mark @board #row #col #state _begin
+_def ?mark # @board #row #col #state _begin
     #idx #row 3 << #col + =
     #cur @board #idx [] 64 & =
     #cur _if
@@ -119,7 +119,7 @@ _def ?mark @board #row #col #state _begin
     #state
 _end
 
-_def ?check @board #row #col #state @stack _begin
+_def ?check # @board #row #col #state @stack _begin
     #idx #row 3 << #col + =
     #cur @board #idx [] =
     #cur 16 &
@@ -142,18 +142,17 @@ _def ?check @board #row #col #state @stack _begin
     _end
 _end
 
-_def ?show_game_state @board #state _begin
-    #state ?set_loss _println
-    ; #state ?get_loss _if
-    ;     "Loss" _println
-    ;     @board 1 ?show
-    ; _else
-    ;     @board 0 ?show
-    ;     "Marked: " _print
-    ;     @board ?get_marked _println
-    ;     "Remaining: " _print
-    ;     @board ?get_rem _println
-    ; _end
+_def ?show_game_state X @board #state _begin
+    #state ?get_loss _if
+        "Loss" _println
+        @board 1 ?show
+    _else
+        @board 0 ?show
+        "Marked: " _print
+        #state ?get_marked _println
+        "Remaining: " _print
+        #state ?get_rem _println
+    _end
 _end
 @board[64]
 @stack[64]

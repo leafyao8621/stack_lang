@@ -113,6 +113,7 @@ DEF_HASHMAP(String, Idx)
 typedef struct Function {
     DArrayToken args;
     DArrayToken tokens;
+    DArrayToken ret_vals;
     HashSetString int_name;
     HashSetString str_name;
 } Function;

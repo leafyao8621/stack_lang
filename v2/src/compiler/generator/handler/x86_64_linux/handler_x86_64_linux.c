@@ -3136,18 +3136,21 @@ static int handle_token_function_call(
         "    call function_%s\n",
         token->data.function_call
     );
-    DArrayToken *ret_vals;
+    Function *cur_function;
     ret =
-        HashMapStringDArrayToken_fetch(
-            &generator->ret_vals,
+        HashMapStringFunction_fetch(
+            &generator->parser.function_name,
             &token->data.function_call,
-            &ret_vals
+            &cur_function
         );
     if (ret) {
         return ret;
     }
-    Token *iter_ret_vals = ret_vals->data;
-    for (size_t i = 0; i < ret_vals->size; ++i, ++iter_ret_vals) {
+    Token *iter_ret_vals = cur_function->ret_vals.data;
+    for (
+        size_t i = 0;
+        i < function->ret_vals.size;
+        ++i, ++iter_ret_vals) {
         ret = DArrayToken_push(&generator->stack, iter_ret_vals);
         if (ret) {
             return ret;
@@ -3240,39 +3243,6 @@ int handle_function_definitions_x86_64_linux(Generator *generator, FILE *fasm) {
                 }
             }
             fputs("    ret\n", fasm);
-            Token *iter_stack = generator->stack.data;
-            DArrayToken *ret_vals;
-            ret =
-                HashMapStringDArrayToken_fetch(
-                    &generator->ret_vals,
-                    &iter_function_name->key,
-                    &ret_vals
-                );
-            if (ret) {
-                return ret;
-            }
-            ret = DArrayToken_initialize(ret_vals, 10);
-            if (ret) {
-                return ret;
-            }
-            for (size_t i = 0; i < generator->stack.size; ++i, ++iter_stack) {
-                ret = DArrayToken_pop(&generator->stack);
-                if (ret) {
-                    return ret;
-                }
-                switch (iter_stack->type) {
-                case TOKEN_INT_NAME:
-                case TOKEN_STR_NAME:
-                case TOKEN_ARR_NAME:
-                    ret = DArrayToken_push(ret_vals, iter_stack);
-                    if (ret) {
-                        return ret;
-                    }
-                    break;
-                default:
-                    return ERR_INVALID_RETURN;
-                }
-            }
         }
     }
     return 0;

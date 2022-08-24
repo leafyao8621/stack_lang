@@ -1,4 +1,4 @@
-_def ?print_fp #x #decimal_places _begin
+_def ?print_fp X #x #decimal_places _begin
     #divisor 1 =
     #i 0 =
     _while #i #decimal_places < _do
@@ -25,7 +25,7 @@ _def ?print_fp #x #decimal_places _begin
     #remainder _print
 _end
 
-_def ?multiply_fp #x #y #decimal_places _begin
+_def ?multiply_fp # #x #y #decimal_places _begin
     #divisor 1 =
     #i 0 =
     _while #i #decimal_places < _do
@@ -36,7 +36,7 @@ _def ?multiply_fp #x #y #decimal_places _begin
     #res
 _end
 
-_def ?check_price #start_price #up_prob #rate #threshold #time _begin
+_def ?check_price # #start_price #up_prob #rate #threshold #time _begin
     #i 0 =
     #cond 1 =
     #price #start_price =
@@ -55,7 +55,7 @@ _def ?check_price #start_price #up_prob #rate #threshold #time _begin
     #price
 _end
 
-_def ?simulate
+_def ?simulate #
     #start_price #up_prob #rate #threshold #time #iter #verbose _begin
     #i 0 =
     #cnt 0 =
