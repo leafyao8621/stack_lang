@@ -1,8 +1,8 @@
-#a 123 =
-#b 456 =
+#a -456 =
+#b 123 =
 
-123 456 * _println
-#a 456 * _println
-123 #b * _println
-#a #b * _println
+456 123 % _println
+#a 123 % _println
+456 #b % _println
+#a #b % _println
 
