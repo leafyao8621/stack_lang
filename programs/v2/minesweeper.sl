@@ -162,11 +162,11 @@ _def ?check # @board #row #col #state @stack _begin
                         #c 8 < && _if
                             #cur #r 3 << #c | =
                             #val @board #cur [] =
-                            @board #cur [] #val 32 | =
                             #val 16 & !
                             #val 32 & ! &&
                             #val 64 & ! && _if
                                 #state #state ?dec_rem =
+                                @board #cur [] #val 32 | =
                                 #val 15 & ! _if
                                     @stack #stack_ptr [] #cur =
                                     #stack_ptr ++
