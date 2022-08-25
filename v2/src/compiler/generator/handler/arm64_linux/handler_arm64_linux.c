@@ -1802,38 +1802,34 @@ static int handle_token_operator(
         switch (op1.type) {
         case TOKEN_INT_LIT:
             fputs(
-                "    movq stack_ptr, %rax\n"
-                "    subq $8, %rax\n"
-                "    movq (%rax), %rbx\n"
-                "    movabsq $0, %r10\n"
-                "    movabsq $-2, %r11\n"
-                "    movabsq $-1, %r12\n"
-                "    cmpq %r10, %rbx\n"
-                "    cmovneq %r12, %r11\n"
-                "    movq %r11, %rbx\n"
-                "    notq %rbx\n"
-                "    movq %rbx, (%rax)\n"
-                "    addq $8, %rax\n"
-                "    movq %rax, stack_ptr\n",
+                "    ldr x9, =stack_ptr\n"
+                "    ldr x10, [x9]\n"
+                "    sub x10, x10, #8\n"
+                "    ldr x11, [x10]\n"
+                "    mov x12, #1\n"
+                "    mov x13, #0\n"
+                "    cmp x11, #0\n"
+                "    csel x11, x12, x13, eq\n"
+                "    str x11, [x10]\n"
+                "    add x10, x10, 8\n"
+                "    str x10, [x9]\n",
                 fasm
             );
             break;
         case TOKEN_INT_NAME:
             fputs(
-                "    movq stack_ptr, %rax\n"
-                "    subq $8, %rax\n"
-                "    movq (%rax), %rbx\n"
-                "    movq (%rbx), %rbx\n"
-                "    movabsq $0, %r10\n"
-                "    movabsq $-2, %r11\n"
-                "    movabsq $-1, %r12\n"
-                "    cmpq %r10, %rbx\n"
-                "    cmovneq %r12, %r11\n"
-                "    movq %r11, %rbx\n"
-                "    notq %rbx\n"
-                "    movq %rbx, (%rax)\n"
-                "    addq $8, %rax\n"
-                "    movq %rax, stack_ptr\n",
+                "    ldr x9, =stack_ptr\n"
+                "    ldr x10, [x9]\n"
+                "    sub x10, x10, #8\n"
+                "    ldr x11, [x10]\n"
+                "    ldr x11, [x11]\n"
+                "    mov x12, #1\n"
+                "    mov x13, #0\n"
+                "    cmp x11, #0\n"
+                "    csel x11, x12, x13, eq\n"
+                "    str x11, [x10]\n"
+                "    add x10, x10, 8\n"
+                "    str x10, [x9]\n",
                 fasm
             );
             break;

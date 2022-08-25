@@ -1,4 +1,4 @@
-#a -1 =
+#a 0 =
 #b 2 =
 
 ; 8 2 << _println
@@ -6,5 +6,5 @@
 ; 8 #b << _println
 ; #a #b << _println
 
--1 ~ _println
-#a ~ _println
+0 ! _println
+#a ! _println
