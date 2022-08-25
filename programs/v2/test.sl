@@ -1,10 +1,9 @@
-#a 0 =
-#b 2 =
+#a 11 =
+#b 3 =
 
-; 8 2 << _println
-; #a 2 << _println
-; 8 #b << _println
-; #a #b << _println
+11 3 & _println
+#a 3 & _println
+11 #b & _println
+#a #b & _println
 
-0 ! _println
-#a ! _println
+
