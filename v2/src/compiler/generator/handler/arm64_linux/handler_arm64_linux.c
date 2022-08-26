@@ -2952,27 +2952,27 @@ static int handle_token_command(
         case TOKEN_INT_LIT:
             fprintf(
                 fasm,
-                "    movq stack_ptr, %%rax\n"
-                "    subq $8, %%rax\n"
-                "    movq (%%rax), %%rbx\n"
-                "    movq %%rax, stack_ptr\n"
-                "    movabsq $0, %%r10\n"
-                "    cmpq %%rbx, %%r10\n"
-                "    je eloop_%lu\n",
+                "    ldr x9, =stack_ptr\n"
+                "    ldr x10, [x9]\n"
+                "    sub x10, x10, #8\n"
+                "    ldr x11, [x10]\n"
+                "    str x10, [x9]\n"
+                "    cmp x11, #0\n"
+                "    beq eloop_%lu\n",
                 tgt.data.command.data.command_end_loop.idx
             );
             break;
         case TOKEN_INT_NAME:
             fprintf(
                 fasm,
-                "    movq stack_ptr, %%rax\n"
-                "    subq $8, %%rax\n"
-                "    movq (%%rax), %%rbx\n"
-                "    movq (%%rbx), %%rbx\n"
-                "    movq %%rax, stack_ptr\n"
-                "    movabsq $0, %%r10\n"
-                "    cmpq %%rbx, %%r10\n"
-                "    je eloop_%lu\n",
+                "    ldr x9, =stack_ptr\n"
+                "    ldr x10, [x9]\n"
+                "    sub x10, x10, #8\n"
+                "    ldr x11, [x10]\n"
+                "    ldr x11, [x11]\n"
+                "    str x10, [x9]\n"
+                "    cmp x11, #0\n"
+                "    beq eloop_%lu\n",
                 tgt.data.command.data.command_end_loop.idx
             );
             break;
