@@ -274,6 +274,31 @@ const char *text_start_arm64_linux_2 =
     "    str x10, [x9]\n"
     "    ret";
 
+const char *text_start_arm64_linux_3 =
+    "srand:\n"
+    "    ldr x9, =stack_ptr\n"
+    "    ldr x10, [x9]\n"
+    "    sub x10, x10, #8\n"
+    "    ldr x11, [x10]\n"
+    "    ldr x12, =seed\n"
+    "    str x11, [x12]\n"
+    "    str x10, [x9]\n"
+    "    ret\n"
+    "rand:\n"
+    "    ldr x9, =seed\n"
+    "    ldr x10, [x9]\n"
+    "    ldr x11, =2862933555777941757\n"
+    "    ldr x12, =3037000493\n"
+    "    mul x10, x10, x11\n"
+    "    add x10, x10, x12\n"
+    "    str x10, [x9]\n"
+    "    ldr x11, =stack_ptr\n"
+    "    ldr x12, [x11]\n"
+    "    str x10, [x12]\n"
+    "    add x12, x12, #8\n"
+    "    str x12, [x11]\n"
+    "    ret";
+
 const char *program_start_arm64_linux =
     "_start:\n"
     "    ldr x9, =stack\n"

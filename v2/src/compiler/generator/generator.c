@@ -95,6 +95,7 @@ int generator_generate(Generator *generator) {
         fprintf(fasm, "%s\n", text_start_arm64_linux_0);
         fprintf(fasm, "%s\n", text_start_arm64_linux_1);
         fprintf(fasm, "%s\n", text_start_arm64_linux_2);
+        fprintf(fasm, "%s\n", text_start_arm64_linux_3);
         break;
     }
     switch (generator->architecture) {
