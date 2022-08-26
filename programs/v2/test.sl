@@ -7,5 +7,7 @@
 ; #a #b ^ _println
 
 #a _println
-#a --
+#a 5 -=
+#a _println
+#a #b -=
 #a _println
