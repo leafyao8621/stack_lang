@@ -12,7 +12,7 @@ _end
 #i 0 =
 _while #i 100 < _do
     #i ++
-    @arr #i [] #i
+    @arr #i [] #i =
 _end
 
 @arr 100 ?sum _println
