@@ -249,3 +249,26 @@ input_eif0:
     str x11, [x12]
     str x10, [x9]
     ret
+srand:
+    ldr x9, =stack_ptr
+    ldr x10, [x9]
+    sub x10, x10, #8
+    ldr x11, [x10]
+    ldr x12, =seed
+    str x11, [x12]
+    str x10, [x9]
+    ret
+rand:
+    ldr x9, =seed
+    ldr x10, [x9]
+    ldr x11, =2862933555777941757
+    ldr x12, =3037000493
+    mul x10, x10, x11
+    add x10, x10, x12
+    str x10, [x9]
+    ldr x11, =stack_ptr
+    ldr x12, [x11]
+    str x10, [x12]
+    add x12, x12, #8
+    str x12, [x11]
+    ret
