@@ -206,7 +206,8 @@ input:
     mov x1, x9
     mov x2, #1
     svc #0
-    ldr x10, [x9]
+    mov x10, #0
+    ldrb w10, [x9]
     sub x12, x10, #48
     mov x13, #-1
     mov x14, #0
@@ -225,7 +226,8 @@ input_loop0:
     mov x1, x9
     mov x2, #1
     svc #0
-    ldr x10, [x9]
+    mov x10, #0
+    ldrb w10, [x9]
     cmp x10, #10
     beq input_end_loop0
     mul x11, x11, x20
