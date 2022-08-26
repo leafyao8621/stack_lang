@@ -199,3 +199,53 @@ println_int_eif2:
     mov x2, #1
     svc #0
     ret
+input:
+    ldr x9, =str_buf
+    mov x8, #63
+    mov x0, #0
+    mov x1, x9
+    mov x2, #1
+    svc #0
+    ldr x10, [x9]
+    sub x12, x10, #48
+    mov x13, #-1
+    mov x14, #0
+    cmp x10, #48
+    csel x11, x12, x14, ge
+    cmp x10, #57
+    csel x11, x12, x14, le
+    cmp x10, #45
+    csel x11, x11, x14, ne
+    cmp x10, #45
+    csel x21, x11, x14, ne
+    mov x20, #10
+input_loop0:
+    mov x8, #63
+    mov x0, #0
+    mov x1, x9
+    mov x2, #1
+    svc #0
+    ldr x10, [x9]
+    cmp x10, #10
+    beq input_end_loop0
+    mul x11, x11, x20
+    sub x13, x10, #48
+    mov x14, #0
+    cmp x10, #48
+    csel x12, x13, x14, ge
+    cmp x10, #57
+    csel x12, x13, x14, le
+    add x11, x11, x12
+    b input_loop0
+input_end_loop0:
+    cmp x21, #0
+    bne input_eif0
+    neg x11, x11
+input_eif0:
+    ldr x9, =stack_ptr
+    ldr x10, [x9]
+    sub x10, x10, #8
+    ldr x12, [x10]
+    str x11, [x12]
+    str x10, [x9]
+    ret
