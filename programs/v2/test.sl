@@ -11,8 +11,8 @@ _end
 @arr[100]
 #i 0 =
 _while #i 100 < _do
+    @arr #i [] #i 1 + =
     #i ++
-    @arr #i [] #i =
 _end
 
 @arr 100 ?sum _println
