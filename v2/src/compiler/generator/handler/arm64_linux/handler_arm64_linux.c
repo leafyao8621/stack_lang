@@ -2615,34 +2615,36 @@ static int handle_token_operator(
             switch (op2.type) {
             case TOKEN_INT_LIT:
                 fputs(
-                    "    movq stack_ptr, %rax\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rbx\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rcx\n"
-                    "    movq (%rcx), %rcx\n"
-                    "    addq %rbx, %rcx\n"
-                    "    movb (%rcx), %cl\n"
-                    "    movb %cl, (%rax)\n"
-                    "    addq $8, %rax\n"
-                    "    movq %rax, stack_ptr\n",
+                    "    ldr x9, =stack_ptr\n"
+                    "    ldr x10, [x9]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x11, [x10]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x12, [x10]\n"
+                    "    ldr x12, [x12]\n"
+                    "    add x12, x12, x11\n"
+                    "    ldrb w12, [x12]\n"
+                    "    strb w12, [x10]\n"
+                    "    add x10, x10, #8\n"
+                    "    str x10, [x9]\n",
                     fasm
                 );
                 break;
             case TOKEN_INT_NAME:
                 fputs(
-                    "    movq stack_ptr, %rax\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rbx\n"
-                    "    movq (%rbx), %rbx\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rcx\n"
-                    "    movq (%rcx), %rcx\n"
-                    "    addq %rbx, %rcx\n"
-                    "    movb (%rcx), %cl\n"
-                    "    movb %cl, (%rax)\n"
-                    "    addq $8, %rax\n"
-                    "    movq %rax, stack_ptr\n",
+                    "    ldr x9, =stack_ptr\n"
+                    "    ldr x10, [x9]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x11, [x10]\n"
+                    "    ldr x11, [x11]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x12, [x10]\n"
+                    "    ldr x12, [x12]\n"
+                    "    add x12, x12, x11\n"
+                    "    ldrb w12, [x12]\n"
+                    "    strb w12, [x10]\n"
+                    "    add x10, x10, #8\n"
+                    "    str x10, [x9]\n",
                     fasm
                 );
                 break;
@@ -2655,32 +2657,34 @@ static int handle_token_operator(
             switch (op2.type) {
             case TOKEN_INT_LIT:
                 fputs(
-                    "    movq stack_ptr, %rax\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rbx\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rcx\n"
-                    "    addq %rbx, %rcx\n"
-                    "    movb (%rcx), %cl\n"
-                    "    movb %cl, (%rax)\n"
-                    "    addq $8, %rax\n"
-                    "    movq %rax, stack_ptr\n",
+                    "    ldr x9, =stack_ptr\n"
+                    "    ldr x10, [x9]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x11, [x10]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x12, [x10]\n"
+                    "    add x12, x12, x11\n"
+                    "    ldrb w12, [x12]\n"
+                    "    strb w12, [x10]\n"
+                    "    add x10, x10, #8\n"
+                    "    str x10, [x9]\n",
                     fasm
                 );
                 break;
             case TOKEN_INT_NAME:
                 fputs(
-                    "    movq stack_ptr, %rax\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rbx\n"
-                    "    movq (%rbx), %rbx\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rcx\n"
-                    "    addq %rbx, %rcx\n"
-                    "    movb (%rcx), %cl\n"
-                    "    movb %cl, (%rax)\n"
-                    "    addq $8, %rax\n"
-                    "    movq %rax, stack_ptr\n",
+                    "    ldr x9, =stack_ptr\n"
+                    "    ldr x10, [x9]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x11, [x10]\n"
+                    "    ldr x11, [x11]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x12, [x10]\n"
+                    "    add x12, x12, x11\n"
+                    "    ldrb w12, [x12]\n"
+                    "    strb w12, [x10]\n"
+                    "    add x10, x10, #8\n"
+                    "    str x10, [x9]\n",
                     fasm
                 );
                 break;
@@ -2780,7 +2784,7 @@ static int handle_token_command(
             break;
         case TOKEN_STR_CHAR:
             fputs(
-                "    call print_chr\n",
+                "    bl print_chr\n",
                 fasm
             );
             break;
@@ -2838,7 +2842,7 @@ static int handle_token_command(
             break;
         case TOKEN_STR_CHAR:
             fputs(
-                "    call println_chr\n",
+                "    bl println_chr\n",
                 fasm
             );
             break;
