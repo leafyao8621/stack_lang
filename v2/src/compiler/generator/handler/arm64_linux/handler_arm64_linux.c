@@ -2726,7 +2726,9 @@ static int handle_token_command(
         switch (op.type) {
         case TOKEN_INT_NAME:
             fputs(
-                "    call input\n",
+                "    stp x29, x30, [sp, #-16]!\n"
+                "    bl input\n"
+                "    ldp x29, x30, [sp], #16\n",
                 fasm
             );
             break;
@@ -3034,7 +3036,9 @@ static int handle_token_command(
         switch (op.type) {
         case TOKEN_INT_LIT:
             fputs(
-                "    call srand\n",
+                "    stp x29, x30, [sp, #-16]!\n"
+                "    bl srand\n"
+                "    ldp x29, x30, [sp], #16\n",
                 fasm
             );
             break;
@@ -3057,7 +3061,9 @@ static int handle_token_command(
         break;
     case TOKEN_COMMAND_RAND:
         fputs(
-            "    call rand\n",
+            "    stp x29, x30, [sp, #-16]!\n"
+            "    bl rand\n"
+            "    ldp x29, x30, [sp], #16\n",
             fasm
         );
         tgt.type = TOKEN_INT_LIT;

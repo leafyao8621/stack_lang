@@ -3,7 +3,6 @@ _def ?sum # @arr #len $msg _begin
     #out 0 =
     _while #i #len < _do
         #out @arr #i [] +=
-        #out _println
         #i ++
     _end
     $msg _println
@@ -17,5 +16,6 @@ _while #i 100 < _do
     #i ++
 _end
 
-@arr 100 "Abc" ?sum _println
+#n _input
+@arr #n "Done" ?sum _println
 
