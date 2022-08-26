@@ -1,4 +1,4 @@
-_def ?sum @arr #len _begin
+_def ?sum # @arr #len _begin
     #i 0 =
     #out 0 =
     _while #i #len < _do
