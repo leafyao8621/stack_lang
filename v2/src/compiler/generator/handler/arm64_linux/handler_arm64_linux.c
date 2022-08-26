@@ -2746,7 +2746,9 @@ static int handle_token_command(
         switch (op.type) {
         case TOKEN_INT_LIT:
             fputs(
-                "    bl print_int\n",
+                "    stp x29, x30, [sp, #-16]!\n"
+                "    bl print_int\n"
+                "    ldp x29, x30, [sp], #16\n",
                 fasm
             );
             break;
@@ -2758,14 +2760,20 @@ static int handle_token_command(
                 "    ldr x11, [x10]\n"
                 "    ldr x11, [x11]\n"
                 "    str x11, [x10]\n"
-                "    bl print_int\n",
+                "    stp x29, x30, [sp, #-16]!\n"
+                "    bl print_int\n"
+                "    ldp x29, x30, [sp], #16\n",
                 fasm
             );
             break;
         case TOKEN_STR_LIT:
             fputs(
+                "    stp x29, x30, [sp, #-16]!\n"
                 "    bl calc_strlen\n"
-                "    bl print_str\n",
+                "    ldp x29, x30, [sp], #16\n"
+                "    stp x29, x30, [sp, #-16]!\n"
+                "    bl print_str\n"
+                "    ldp x29, x30, [sp], #16\n",
                 fasm
             );
             break;
@@ -2777,14 +2785,20 @@ static int handle_token_command(
                 "    ldr x11, [x10]\n"
                 "    ldr x11, [x11]\n"
                 "    str x11, [x10]\n"
+                "    stp x29, x30, [sp, #-16]!\n"
                 "    bl calc_strlen\n"
-                "    bl print_str\n",
+                "    ldp x29, x30, [sp], #16\n"
+                "    stp x29, x30, [sp, #-16]!\n"
+                "    bl print_str\n"
+                "    ldp x29, x30, [sp], #16\n",
                 fasm
             );
             break;
         case TOKEN_STR_CHAR:
             fputs(
-                "    bl print_chr\n",
+                "    stp x29, x30, [sp, #-16]!\n"
+                "    bl print_chr\n"
+                "    ldp x29, x30, [sp], #16\n",
                 fasm
             );
             break;
@@ -2804,7 +2818,9 @@ static int handle_token_command(
         switch (op.type) {
         case TOKEN_INT_LIT:
             fputs(
-                "    bl println_int\n",
+                "    stp x29, x30, [sp, #-16]!\n"
+                "    bl println_int\n"
+                "    ldp x29, x30, [sp], #16\n",
                 fasm
             );
             break;
@@ -2816,14 +2832,20 @@ static int handle_token_command(
                 "    ldr x11, [x10]\n"
                 "    ldr x11, [x11]\n"
                 "    str x11, [x10]\n"
-                "    bl println_int\n",
+                "    stp x29, x30, [sp, #-16]!\n"
+                "    bl println_int\n"
+                "    ldp x29, x30, [sp], #16\n",
                 fasm
             );
             break;
         case TOKEN_STR_LIT:
             fputs(
+                "    stp x29, x30, [sp, #-16]!\n"
                 "    bl calc_strlen\n"
-                "    bl println_str\n",
+                "    ldp x29, x30, [sp], #16\n"
+                "    stp x29, x30, [sp, #-16]!\n"
+                "    bl println_str\n"
+                "    ldp x29, x30, [sp], #16\n",
                 fasm
             );
             break;
@@ -2835,14 +2857,20 @@ static int handle_token_command(
                 "    ldr x11, [x10]\n"
                 "    ldr x11, [x11]\n"
                 "    str x11, [x10]\n"
+                "    stp x29, x30, [sp, #-16]!\n"
                 "    bl calc_strlen\n"
-                "    bl println_str\n",
+                "    ldp x29, x30, [sp], #16\n"
+                "    stp x29, x30, [sp, #-16]!\n"
+                "    bl println_str\n"
+                "    ldp x29, x30, [sp], #16\n",
                 fasm
             );
             break;
         case TOKEN_STR_CHAR:
             fputs(
-                "    bl println_chr\n",
+                "    stp x29, x30, [sp, #-16]!\n"
+                "    bl println_chr\n"
+                "    ldp x29, x30, [sp], #16\n",
                 fasm
             );
             break;
@@ -3176,7 +3204,9 @@ static int handle_token_function_call(
     }
     fprintf(
         fasm,
-        "    bl function_%s\n",
+        "    stp x29, x30, [sp, #-16]!\n"
+        "    bl function_%s\n"
+        "    ldp x29, x30, [sp], #16\n",
         token->data.function_call
     );
     Function *cur_function;
