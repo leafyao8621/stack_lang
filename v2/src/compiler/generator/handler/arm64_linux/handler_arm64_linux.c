@@ -2309,30 +2309,32 @@ static int handle_token_operator(
             switch (op2.type) {
             case TOKEN_INT_LIT:
                 fputs(
-                    "    movq stack_ptr, %rax\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rbx\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rcx\n"
-                    "    xorq %rcx, %rbx\n"
-                    "    movq %rbx, (%rax)\n"
-                    "    addq $8, %rax\n"
-                    "    movq %rax, stack_ptr\n",
+                    "    ldr x9, =stack_ptr\n"
+                    "    ldr x10, [x9]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x11, [x10]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x12, [x10]\n"
+                    "    eor x11, x11, x12\n"
+                    "    str x11, [x10]\n"
+                    "    add x10, x10, 8\n"
+                    "    str x10, [x9]\n",
                     fasm
                 );
                 break;
             case TOKEN_INT_NAME:
                 fputs(
-                    "    movq stack_ptr, %rax\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rbx\n"
-                    "    movq (%rbx), %rbx\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rcx\n"
-                    "    xorq %rcx, %rbx\n"
-                    "    movq %rbx, (%rax)\n"
-                    "    addq $8, %rax\n"
-                    "    movq %rax, stack_ptr\n",
+                    "    ldr x9, =stack_ptr\n"
+                    "    ldr x10, [x9]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x11, [x10]\n"
+                    "    ldr x11, [x11]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x12, [x10]\n"
+                    "    eor x11, x11, x12\n"
+                    "    str x11, [x10]\n"
+                    "    add x10, x10, 8\n"
+                    "    str x10, [x9]\n",
                     fasm
                 );
                 break;
@@ -2344,32 +2346,34 @@ static int handle_token_operator(
             switch (op2.type) {
             case TOKEN_INT_LIT:
                 fputs(
-                    "    movq stack_ptr, %rax\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rbx\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rcx\n"
-                    "    movq (%rcx), %rcx\n"
-                    "    xorq %rcx, %rbx\n"
-                    "    movq %rbx, (%rax)\n"
-                    "    addq $8, %rax\n"
-                    "    movq %rax, stack_ptr\n",
+                    "    ldr x9, =stack_ptr\n"
+                    "    ldr x10, [x9]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x11, [x10]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x12, [x10]\n"
+                    "    ldr x12, [x12]\n"
+                    "    eor x11, x11, x12\n"
+                    "    str x11, [x10]\n"
+                    "    add x10, x10, 8\n"
+                    "    str x10, [x9]\n",
                     fasm
                 );
                 break;
             case TOKEN_INT_NAME:
                 fputs(
-                    "    movq stack_ptr, %rax\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rbx\n"
-                    "    movq (%rbx), %rbx\n"
-                    "    subq $8, %rax\n"
-                    "    movq (%rax), %rcx\n"
-                    "    movq (%rcx), %rcx\n"
-                    "    xorq %rcx, %rbx\n"
-                    "    movq %rbx, (%rax)\n"
-                    "    addq $8, %rax\n"
-                    "    movq %rax, stack_ptr\n",
+                    "    ldr x9, =stack_ptr\n"
+                    "    ldr x10, [x9]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x11, [x10]\n"
+                    "    ldr x11, [x11]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x12, [x10]\n"
+                    "    ldr x12, [x12]\n"
+                    "    eor x11, x11, x12\n"
+                    "    str x11, [x10]\n"
+                    "    add x10, x10, 8\n"
+                    "    str x10, [x9]\n",
                     fasm
                 );
                 break;

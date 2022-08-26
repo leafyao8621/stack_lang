@@ -1,9 +1,9 @@
-#a 1 =
-#b 0 =
+#a 5 =
+#b 3 =
 
-2 1 || _println
-#a 1 || _println
-2 #b || _println
-#a #b || _println
+5 3 ^ _println
+#a 3 ^ _println
+5 #b ^ _println
+#a #b ^ _println
 
 
