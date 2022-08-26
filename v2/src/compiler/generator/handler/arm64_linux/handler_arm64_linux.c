@@ -3087,11 +3087,13 @@ static int handle_token_function_call(
             case TOKEN_INT_LIT:
                 fprintf(
                     fasm,
-                    "    movq stack_ptr, %%rax\n"
-                    "    subq $8, %%rax\n"
-                    "    movq (%%rax), %%rbx\n"
-                    "    movq %%rbx, function_%s_int_name_%s\n"
-                    "    movq %%rax, stack_ptr\n",
+                    "    ldr x9, =stack_ptr\n"
+                    "    ldr x10, [x9]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x11, [x10]\n"
+                    "    ldr x12, =function_%s_int_name_%s\n"
+                    "    str x11, [x12]\n"
+                    "    str x10, [x9]\n",
                     token->data.function_call,
                     iter_args->data.int_name
                 );
@@ -3099,12 +3101,14 @@ static int handle_token_function_call(
             case TOKEN_INT_NAME:
                 fprintf(
                     fasm,
-                    "    movq stack_ptr, %%rax\n"
-                    "    subq $8, %%rax\n"
-                    "    movq (%%rax), %%rbx\n"
-                    "    movq (%%rbx), %%rbx\n"
-                    "    movq %%rbx, function_%s_int_name_%s\n"
-                    "    movq %%rax, stack_ptr\n",
+                    "    ldr x9, =stack_ptr\n"
+                    "    ldr x10, [x9]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x11, [x10]\n"
+                    "    ldr x11, [x11]\n"
+                    "    ldr x12, =function_%s_int_name_%s\n"
+                    "    str x11, [x12]\n"
+                    "    str x10, [x9]\n",
                     token->data.function_call,
                     iter_args->data.int_name
                 );
@@ -3118,11 +3122,13 @@ static int handle_token_function_call(
             case TOKEN_STR_LIT:
                 fprintf(
                     fasm,
-                    "    movq stack_ptr, %%rax\n"
-                    "    subq $8, %%rax\n"
-                    "    movq (%%rax), %%rbx\n"
-                    "    movq %%rbx, function_%s_str_name_%s\n"
-                    "    movq %%rax, stack_ptr\n",
+                    "    ldr x9, =stack_ptr\n"
+                    "    ldr x10, [x9]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x11, [x10]\n"
+                    "    ldr x12, =function_%s_str_name_%s\n"
+                    "    str x11, [x12]\n"
+                    "    str x10, [x9]\n",
                     token->data.function_call,
                     iter_args->data.str_name
                 );
@@ -3130,12 +3136,14 @@ static int handle_token_function_call(
             case TOKEN_STR_NAME:
                 fprintf(
                     fasm,
-                    "    movq stack_ptr, %%rax\n"
-                    "    subq $8, %%rax\n"
-                    "    movq (%%rax), %%rbx\n"
-                    "    movq (%%rbx), %%rbx\n"
-                    "    movq %%rbx, function_%s_str_name_%s\n"
-                    "    movq %%rax, stack_ptr\n",
+                    "    ldr x9, =stack_ptr\n"
+                    "    ldr x10, [x9]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x11, [x10]\n"
+                    "    ldr x11, [x11]\n"
+                    "    ldr x12, =function_%s_str_name_%s\n"
+                    "    str x11, [x12]\n"
+                    "    str x10, [x9]\n",
                     token->data.function_call,
                     iter_args->data.str_name
                 );
@@ -3149,11 +3157,13 @@ static int handle_token_function_call(
             case TOKEN_ARR_NAME:
                 fprintf(
                     fasm,
-                    "    movq stack_ptr, %%rax\n"
-                    "    subq $8, %%rax\n"
-                    "    movq (%%rax), %%rbx\n"
-                    "    movq %%rbx, function_%s_arr_name_%s\n"
-                    "    movq %%rax, stack_ptr\n",
+                    "    ldr x9, =stack_ptr\n"
+                    "    ldr x10, [x9]\n"
+                    "    sub x10, x10, #8\n"
+                    "    ldr x11, [x10]\n"
+                    "    ldr x12, =function_%s_arr_name_%s\n"
+                    "    str x11, [x12]\n"
+                    "    str x10, [x9]\n",
                     token->data.function_call,
                     iter_args->data.arr_name
                 );
@@ -3166,7 +3176,7 @@ static int handle_token_function_call(
     }
     fprintf(
         fasm,
-        "    call function_%s\n",
+        "    bl function_%s\n",
         token->data.function_call
     );
     Function *cur_function;
