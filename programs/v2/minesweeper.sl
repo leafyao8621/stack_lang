@@ -118,8 +118,8 @@ _def ?show X @board #reveal _begin
 _end
 
 _def ?mark # @board #row #col #state _begin
-    #cur @board #idx [] 32 & _if
-        #idx #row 3 << #col + =
+    #idx #row 3 << #col + =
+    @board #idx [] 32 & ! _if
         #cur @board #idx [] 64 & =
         #cur _if
             #state #state ?dec_marked =
@@ -141,41 +141,44 @@ _def ?check # @board #row #col #state @stack _begin
     #state 4096 & _if
         #state
     _else
-        @board #idx [] #cur 32 | =
-        #state #state ?dec_rem =
-        #cur 15 & ! _if
-            #stack_ptr 0 =
-            @stack #stack_ptr [] #idx =
-            #stack_ptr ++
-            _while #stack_ptr _do
-                #stack_ptr --
-                #idx @stack #stack_ptr [] =
-                #row #idx 3 >> =
-                #col #idx 7 & =
-                #r #row 1 - =
-                _while #r #row 2 + < _do
-                    #c #col 1 - =
-                    _while #c #col 2 + < _do
-                        #r 0 >=
-                        #r 8 < &&
-                        #c 0 >= &&
-                        #c 8 < && _if
-                            #cur #r 3 << #c | =
-                            #val @board #cur [] =
-                            #val 16 & !
-                            #val 32 & ! &&
-                            #val 64 & ! && _if
-                                #state #state ?dec_rem =
-                                @board #cur [] #val 32 | =
-                                #val 15 & ! _if
-                                    @stack #stack_ptr [] #cur =
-                                    #stack_ptr ++
+        #cur 32 & !
+        #cur 64 & ! && _if
+            @board #idx [] #cur 32 | =
+            #state #state ?dec_rem =
+            #cur 15 & ! _if
+                #stack_ptr 0 =
+                @stack #stack_ptr [] #idx =
+                #stack_ptr ++
+                _while #stack_ptr _do
+                    #stack_ptr --
+                    #idx @stack #stack_ptr [] =
+                    #row #idx 3 >> =
+                    #col #idx 7 & =
+                    #r #row 1 - =
+                    _while #r #row 2 + < _do
+                        #c #col 1 - =
+                        _while #c #col 2 + < _do
+                            #r 0 >=
+                            #r 8 < &&
+                            #c 0 >= &&
+                            #c 8 < && _if
+                                #cur #r 3 << #c | =
+                                #val @board #cur [] =
+                                #val 16 & !
+                                #val 32 & ! &&
+                                #val 64 & ! && _if
+                                    #state #state ?dec_rem =
+                                    @board #cur [] #val 32 | =
+                                    #val 15 & ! _if
+                                        @stack #stack_ptr [] #cur =
+                                        #stack_ptr ++
+                                    _end
                                 _end
                             _end
+                            #c ++
                         _end
-                        #c ++
+                        #r ++
                     _end
-                    #r ++
                 _end
             _end
         _end
