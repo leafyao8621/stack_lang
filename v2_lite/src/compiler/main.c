@@ -27,6 +27,8 @@ int main(void) {
     for (i = 0; i < 10; ++i) {
         if (hashset.data[i].in_use) {
             puts(hashset.data[i].item);
+        } else {
+            puts("EMPTY");
         }
     }
     return 0;
