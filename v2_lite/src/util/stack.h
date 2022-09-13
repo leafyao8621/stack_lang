@@ -1,13 +1,11 @@
 #ifndef UTIL_STACK_H_
 #define UTIL_STACK_H_
 
-#include <stdint.h>
-
 #include "errcodes.h"
 
 #define DEF_STACK(Type, Capacity)\
 typedef struct Stack##Type##Capacity {\
-    uint16_t size;\
+    unsigned short size;\
     Type data[Capacity], *tail;\
 } Stack##Type##Capacity;\
 int Stack##Type##Capacity##_initialize(Stack##Type##Capacity *stack);\

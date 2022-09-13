@@ -8,7 +8,7 @@ DEF_STACK_FUNCTIONS(String, 2)
 
 int main(void) {
     int ret = ERR_OK;
-    uint16_t i = 0;
+    unsigned short i = 0;
     StackString2 stack;
     String buf[3] = {
         "abc",
