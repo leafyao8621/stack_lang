@@ -2,5 +2,7 @@
 #define UTIL_H_
 
 #include "stack.h"
+#include "hash/hash.h"
+#include "eq/eq.h"
 
 #endif
