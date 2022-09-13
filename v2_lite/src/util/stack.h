@@ -5,7 +5,7 @@
 
 #define DEF_STACK(Type, Capacity)\
 typedef struct Stack##Type##Capacity {\
-    unsigned short size;\
+    size_t size;\
     Type data[Capacity], *tail;\
 } Stack##Type##Capacity;\
 int Stack##Type##Capacity##_initialize(Stack##Type##Capacity *stack);\
