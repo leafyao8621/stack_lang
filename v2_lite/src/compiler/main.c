@@ -10,6 +10,7 @@ int main(void) {
     int ret = ERR_OK;
     size_t i = 0;
     HashSetString10 hashset;
+    unsigned char check = 0;
     String buf[12] = {
         "def",
         "abc",
@@ -21,6 +22,20 @@ int main(void) {
         "stu",
         "vwx",
         "wza",
+        "123",
+        "456"
+    };
+    String buf1[12] = {
+        "defx",
+        "abc",
+        "ghiq",
+        "abc",
+        "jklf",
+        "mno",
+        "pqr",
+        "stu",
+        "vwx",
+        "wzab",
         "123",
         "456"
     };
@@ -39,6 +54,11 @@ int main(void) {
         } else {
             puts("EMPTY");
         }
+    }
+    for (i = 0; i < 12; ++i) {
+        ret = HashSetString10_check(&hashset, buf1 + i, &check);
+        printf("%s: %hhu\n", buf1[i], check);
+        printf("%d: %s\n", ret, errcode_lookup[ret]);
     }
     return 0;
 }
