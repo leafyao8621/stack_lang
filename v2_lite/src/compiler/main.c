@@ -10,17 +10,26 @@ int main(void) {
     int ret = ERR_OK;
     size_t i = 0;
     HashSetString10 hashset;
-    String buf[3] = {
-        "abc",
+    String buf[12] = {
         "def",
-        "ghi"
+        "abc",
+        "ghi",
+        "abc",
+        "jkl",
+        "mno",
+        "pqr",
+        "stu",
+        "vwx",
+        "wza",
+        "123",
+        "456"
     };
     HashSetString10_initialize(
         &hashset,
         hash_function_string,
         eq_function_string
     );
-    for (i = 0; i < 3; ++i) {
+    for (i = 0; i < 12; ++i) {
         ret = HashSetString10_insert(&hashset, buf + i);
         printf("%d: %s\n", ret, errcode_lookup[ret]);
     }
