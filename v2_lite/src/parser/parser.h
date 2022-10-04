@@ -103,5 +103,45 @@ typedef struct Token {
 } Token;
 
 DEF_STACK(Token, 10)
+DEF_STACK(Token, 2000)
+DEF_HASHSET(String, 10)
+
+typedef struct Function {
+    StackToken10 args;
+    StackToken2000 tokens;
+    StackToken10 ret_vals;
+    HashSetString10 int_name;
+    HashSetString10 str_name;
+} Function;
+
+typedef size_t Size;
+
+DEF_STACK(Idx, 10)
+DEF_STACK(Character, 5000)
+DEF_HASHSET(String, 200)
+DEF_HASHMAP(String, Size, 10)
+DEF_HASHMAP(String, Function, 10)
+DEF_HASHMAP(String, Idx, 14)
+
+typedef struct Parser {
+    unsigned char function_definition;
+    size_t idx_if, idx_else, idx_while, idx_do, idx_end_if, idx_end_loop;
+    StackToken2000 tokens, *cur_token_buf;
+    StackIdx10 stack;
+    StackCharacter5000 str_buf;
+    HashSetString200 str_lit;
+    HashSetString10 int_name;
+    HashSetString10 str_name;
+    HashMapStringSize10 arr_name;
+    HashMapStringFunction10 function_name;
+    HashMapStringIdx14 handler_lookup;
+    Function *cur_function;
+    FILE *fin;
+} Parser;
+
+int parser_initialize(Parser *parser, String fn);
+int parser_parse(Parser *parser);
+int parser_log(Parser *parser, FILE *fout);
+int parser_finalize(Parser *parser);
 
 #endif
