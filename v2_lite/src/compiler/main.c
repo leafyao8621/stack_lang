@@ -3,13 +3,14 @@
 #include "../util/util.h"
 
 typedef char *String;
-DEF_HASHSET(String, 10)
-DEF_HASHSET_FUNCTIONS(String, 10)
+typedef int Int;
+DEF_HASHMAP(String, Int, 10)
+DEF_HASHMAP_FUNCTIONS(String, Int, 10)
 
 int main(void) {
     int ret = ERR_OK;
     size_t i = 0;
-    HashSetString10 hashset;
+    HashMapStringInt10 hashmap;
     unsigned char check = 0;
     String buf[12] = {
         "def",
@@ -39,26 +40,37 @@ int main(void) {
         "123",
         "456"
     };
-    HashSetString10_initialize(
-        &hashset,
+    HashMapStringInt10_initialize(
+        &hashmap,
         hash_function_string,
         eq_function_string
     );
     for (i = 0; i < 12; ++i) {
-        ret = HashSetString10_insert(&hashset, buf + i);
+        int *ptr;
+        ret = HashMapStringInt10_fetch(&hashmap, buf + i, &ptr);
+        if (!ret) {
+            *ptr = i;
+        }
         printf("%d: %s\n", ret, errcode_lookup[ret]);
     }
     for (i = 0; i < 10; ++i) {
-        if (hashset.data[i].in_use) {
-            puts(hashset.data[i].item);
+        if (hashmap.data[i].in_use) {
+            printf("%s: %d\n", hashmap.data[i].key, hashmap.data[i].value);
         } else {
             puts("EMPTY");
         }
     }
     for (i = 0; i < 12; ++i) {
-        ret = HashSetString10_check(&hashset, buf1 + i, &check);
-        printf("%s: %hhu\n", buf1[i], check);
+        ret = HashMapStringInt10_check(&hashmap, buf1 + i, &check);
+        printf("%s: %hhu ", buf1[i], check);
+        if (check) {
+            int *ptr;
+            ret = HashMapStringInt10_fetch(&hashmap, buf1 + i, &ptr);
+            printf("%d", *ptr);
+        }
+        putchar(10);
         printf("%d: %s\n", ret, errcode_lookup[ret]);
+
     }
     return 0;
 }

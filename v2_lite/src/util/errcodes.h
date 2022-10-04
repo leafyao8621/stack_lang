@@ -6,7 +6,8 @@
 #define ERR_STACK_OVERFLOW 2
 #define ERR_STACK_EMPTY 3
 #define ERR_HASHSET_FULL 4
+#define ERR_HASHMAP_FULL 5
 
-extern const char *errcode_lookup[5];
+extern const char *errcode_lookup[6];
 
 #endif
