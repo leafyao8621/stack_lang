@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #ifndef UTIL_HASH_MAP_H_
 #define UTIL_HASH_MAP_H_
 
@@ -96,9 +95,5 @@ int HashMap##Key##Value##Capacity##_check(\
     *out = i != Capacity;\
     return ERR_OK;\
 }
-=======
-#ifndef HASH_MAP_H_
-#define HASH_MAP_H_
->>>>>>> c54cbb228952b6515248eab5fe32813df8a7e152
 
 #endif
