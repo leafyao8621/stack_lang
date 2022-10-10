@@ -12,26 +12,31 @@ typedef struct HashSet##Type##Capacity##Token {\
 } HashSet##Type##Capacity##Token;\
 typedef struct HashSet##Type##Capacity {\
     HashSet##Type##Capacity##Token data[Capacity];\
-    size_t (*hash)(Type*);\
-    unsigned char (*eq)(Type*, Type*);\
+    size_t (*hash)(Type);\
+    unsigned char (*eq)(Type, Type);\
 } HashSet##Type##Capacity;\
 int HashSet##Type##Capacity##_initialze(\
     HashSet##Type##Capacity *hashset,\
-    size_t (*hash)(Type*),\
-    unsigned char (*eq)(Type*, Type*));\
+    size_t (*hash)(Type),\
+    unsigned char (*eq)(Type, Type));\
 int HashSet##Type##Capacity##_insert(\
     HashSet##Type##Capacity *hashset,\
-    Type *item);\
+    Type item);\
 int HashSet##Type##Capacity##_check(\
     HashSet##Type##Capacity *hashset,\
-    Type *item,\
-    unsigned char *out);
+    Type item,\
+    unsigned char *out);\
+int HashSet##Type##Capacity##_find(\
+    HashSet##Type##Capacity *hashset,\
+    Type item,\
+    unsigned char *found,\
+    size_t *out);
 
 #define DEF_HASHSET_FUNCTIONS(Type, Capacity)\
 int HashSet##Type##Capacity##_initialize(\
     HashSet##Type##Capacity *hashset,\
-    size_t (*hash)(Type*),\
-    unsigned char (*eq)(Type*, Type*)) {\
+    size_t (*hash)(Type),\
+    unsigned char (*eq)(Type, Type)) {\
     if (!hashset || !hash || !eq) {\
         return ERR_NULL_PTR;\
     }\
@@ -46,7 +51,7 @@ int HashSet##Type##Capacity##_initialize(\
 }\
 int HashSet##Type##Capacity##_insert(\
     HashSet##Type##Capacity *hashset,\
-    Type *item) {\
+    Type item) {\
     size_t idx, i;\
     HashSet##Type##Capacity##Token *iter;\
     if (!hashset || !item) {\
@@ -58,7 +63,7 @@ int HashSet##Type##Capacity##_insert(\
         i = 0;\
         i < Capacity &&\
         iter->in_use &&\
-        !hashset->eq(&iter->item, item);\
+        !hashset->eq(iter->item, item);\
         ++i,\
         idx = (idx + 1) % Capacity,\
         iter = hashset->data + idx);\
@@ -66,12 +71,12 @@ int HashSet##Type##Capacity##_insert(\
         return ERR_HASHSET_FULL;\
     }\
     iter->in_use = 1;\
-    iter->item = *item;\
+    iter->item = item;\
     return ERR_OK;\
 }\
 int HashSet##Type##Capacity##_check(\
     HashSet##Type##Capacity *hashset,\
-    Type *item,\
+    Type item,\
     unsigned char *out) {\
     size_t idx, i;\
     HashSet##Type##Capacity##Token *iter;\
@@ -83,12 +88,42 @@ int HashSet##Type##Capacity##_check(\
     for (\
         i = 0;\
         i < Capacity &&\
-        iter->in_use &&\
-        !hashset->eq(&iter->item, item);\
+        !iter->in_use ||\
+        (\
+            iter->in_use &&\
+            !hashset->eq(iter->item, item)\
+        );\
         ++i,\
         idx = (idx + 1) % Capacity,\
         iter = hashset->data + idx);\
     *out = i != Capacity;\
+    return ERR_OK;\
+}\
+int HashSet##Type##Capacity##_find(\
+    HashSet##Type##Capacity *hashset,\
+    Type item,\
+    unsigned char *found,\
+    size_t *out) {\
+    size_t idx, i;\
+    HashSet##Type##Capacity##Token *iter;\
+    if (!hashset || !item) {\
+        return ERR_NULL_PTR;\
+    }\
+    idx = hashset->hash(item) % Capacity;\
+    iter = hashset->data + idx;\
+    for (\
+        i = 0;\
+        i < Capacity &&\
+        !iter->in_use ||\
+        (\
+            iter->in_use &&\
+            !hashset->eq(iter->item, item)\
+        );\
+        ++i,\
+        idx = (idx + 1) % Capacity,\
+        iter = hashset->data + idx);\
+    *found = i != Capacity;\
+    *out = idx;\
     return ERR_OK;\
 }
 

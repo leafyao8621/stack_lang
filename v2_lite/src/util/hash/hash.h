@@ -3,6 +3,6 @@
 
 #include <string.h>
 
-size_t hash_function_string(char **str);
+size_t hash_function_string(char *str);
 
 #endif

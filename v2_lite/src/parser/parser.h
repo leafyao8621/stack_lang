@@ -115,6 +115,7 @@ typedef struct Function {
 } Function;
 
 DEF_STACK(Idx, 10)
+DEF_STACK(Character, 500)
 DEF_STACK(Character, 5000)
 DEF_HASHSET(String, 200)
 DEF_HASHMAP(String, Size, 10)
@@ -126,6 +127,7 @@ typedef struct Parser {
     size_t idx_if, idx_else, idx_while, idx_do, idx_end_if, idx_end_loop;
     StackToken2000 tokens, *cur_token_buf;
     StackIdx10 stack;
+    StackCharacter500 token_buf;
     StackCharacter5000 str_buf;
     HashSetString200 str_lit;
     HashSetString10 int_name;
