@@ -10,7 +10,8 @@ typedef struct Stack##Type##Capacity {\
 } Stack##Type##Capacity;\
 int Stack##Type##Capacity##_initialize(Stack##Type##Capacity *stack);\
 int Stack##Type##Capacity##_push(Stack##Type##Capacity *stack, Type *item);\
-int Stack##Type##Capacity##_pop(Stack##Type##Capacity *stack);
+int Stack##Type##Capacity##_pop(Stack##Type##Capacity *stack);\
+int Stack##Type##Capacity##_clear(Stack##Type##Capacity *stack);
 
 #define DEF_STACK_FUNCTIONS(Type, Capacity)\
 int Stack##Type##Capacity##_initialize(Stack##Type##Capacity *stack) {\
@@ -41,6 +42,17 @@ int Stack##Type##Capacity##_pop(Stack##Type##Capacity *stack) {\
     }\
     --stack->size;\
     --stack->tail;\
+    return ERR_OK;\
+}\
+int Stack##Type##Capacity##_clear(Stack##Type##Capacity *stack) {\
+    if (!stack) {\
+        return ERR_NULL_PTR;\
+    }\
+    if (!stack->size) {\
+        return ERR_STACK_EMPTY;\
+    }\
+    stack->size = 0;\
+    stack->tail = stack->data;\
     return ERR_OK;\
 }
 

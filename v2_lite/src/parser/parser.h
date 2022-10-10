@@ -114,8 +114,6 @@ typedef struct Function {
     HashSetString10 str_name;
 } Function;
 
-typedef size_t Size;
-
 DEF_STACK(Idx, 10)
 DEF_STACK(Character, 5000)
 DEF_HASHSET(String, 200)
