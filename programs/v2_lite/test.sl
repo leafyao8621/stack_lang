@@ -8,3 +8,7 @@
 #bcd
 $abc
 $bcd
+@abc[123]
+@bcd[234]
+@abc
+@bcd
