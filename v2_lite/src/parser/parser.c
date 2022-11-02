@@ -111,6 +111,13 @@ int parser_log(Parser *parser, FILE *fout) {
                 iter->data.int_name
             );
             break;
+        case TOKEN_STR_NAME:
+            fprintf(
+                fout,
+                "STR_NAME\n%s\n",
+                iter->data.str_name
+            );
+            break;
         }
     }
     return ERR_OK;
@@ -314,6 +321,83 @@ int handle_int_name(Parser *parser) {
     return ERR_OK;
 }
 
+int handle_str_name(Parser *parser) {
+    int in, ret;
+    Character chr;
+    Token token;
+    unsigned char found;
+    Idx idx;
+    for (
+        in = fgetc(parser->fin);
+        !feof(parser->fin) &&
+        (
+            (in >= 'A' && in <= 'Z') ||
+            (in >= 'a' && in <= 'z') ||
+            in == '_'
+        );
+        in = fgetc(parser->fin)) {
+        chr = in;
+        ret = StackCharacter500_push(&parser->token_buf, &chr);
+        if (ret) {
+            return ret;
+        }
+    }
+    chr = 0;
+    ret = StackCharacter500_push(&parser->token_buf, &chr);
+    if (ret) {
+        return ret;
+    }
+    puts(parser->token_buf.data);
+    ret =
+        HashSetString10_find(
+            parser->cur_function ?
+            &parser->cur_function->str_name :
+            &parser->str_name,
+            parser->token_buf.data,
+            &found,
+            &idx
+        );
+    if (ret) {
+        return ret;
+    }
+    if (!found) {
+        strcpy(parser->str_buf.tail, parser->token_buf.data);
+
+        parser->str_buf.size += parser->token_buf.size;
+        ret =
+            HashSetString10_insert(
+                parser->cur_function ?
+                &parser->cur_function->str_name :
+                &parser->str_name,
+                parser->str_buf.tail
+            );
+        if (ret) {
+            return ret;
+        }
+        ret =
+            HashSetString10_find(
+                parser->cur_function ?
+                &parser->cur_function->str_name :
+                &parser->str_name,
+                parser->str_buf.tail,
+                &found,
+                &idx
+            );
+        parser->str_buf.tail += parser->token_buf.size;
+    }
+    StackCharacter500_clear(&parser->token_buf);
+    token.type = TOKEN_STR_NAME;
+    token.data.str_name =
+        parser->cur_function ?
+        parser->cur_function->str_name.data[idx].item :
+        parser->str_name.data[idx].item;
+    ret = StackToken2000_push(parser->cur_token_buf, &token);
+    if (ret) {
+        return ret;
+    }
+    return ERR_OK;
+}
+
 int parser_parse(Parser *parser) {
     int in, ret;
     Character chr;
@@ -357,6 +441,12 @@ int parser_parse(Parser *parser) {
             break;
         case '#':
             ret = handle_int_name(parser);
+            if (ret) {
+                return ret;
+            }
+            break;
+        case '$':
+            ret = handle_str_name(parser);
             if (ret) {
                 return ret;
             }

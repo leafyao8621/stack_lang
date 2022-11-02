@@ -6,3 +6,5 @@
 "a\tb\nc\\"
 #abc
 #bcd
+$abc
+$bcd
