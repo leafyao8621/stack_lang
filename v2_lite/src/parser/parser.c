@@ -43,6 +43,16 @@ int parser_initialize(Parser *parser, String fn) {
         eq_function_string
     );
 
+    HashSetString10_initialize(
+        &parser->int_name,
+        hash_function_string,
+        eq_function_string
+    );
+    HashSetString10_initialize(
+        &parser->str_name,
+        hash_function_string,
+        eq_function_string
+    );
     return ERR_OK;
 }
 
@@ -92,6 +102,13 @@ int parser_log(Parser *parser, FILE *fout) {
                 "STR_LIT\nidx: %lu\nstr: %s\n",
                 iter->data.str_lit,
                 parser->str_lit.data[iter->data.str_lit].item
+            );
+            break;
+        case TOKEN_INT_NAME:
+            fprintf(
+                fout,
+                "INT_NAME\n%s\n",
+                iter->data.int_name
             );
             break;
         }
@@ -179,7 +196,6 @@ int handle_str_lit(Parser *parser) {
     if (ret) {
         return ret;
     }
-    puts(parser->token_buf.data);
     ret =
         HashSetString200_find(
             &parser->str_lit,
@@ -214,6 +230,83 @@ int handle_str_lit(Parser *parser) {
     StackCharacter500_clear(&parser->token_buf);
     token.type = TOKEN_STR_LIT;
     token.data.str_lit = idx;
+    ret = StackToken2000_push(parser->cur_token_buf, &token);
+    if (ret) {
+        return ret;
+    }
+    return ERR_OK;
+}
+
+int handle_int_name(Parser *parser) {
+    int in, ret;
+    Character chr;
+    Token token;
+    unsigned char found;
+    Idx idx;
+    for (
+        in = fgetc(parser->fin);
+        !feof(parser->fin) &&
+        (
+            (in >= 'A' && in <= 'Z') ||
+            (in >= 'a' && in <= 'z') ||
+            in == '_'
+        );
+        in = fgetc(parser->fin)) {
+        chr = in;
+        ret = StackCharacter500_push(&parser->token_buf, &chr);
+        if (ret) {
+            return ret;
+        }
+    }
+    chr = 0;
+    ret = StackCharacter500_push(&parser->token_buf, &chr);
+    if (ret) {
+        return ret;
+    }
+    puts(parser->token_buf.data);
+    ret =
+        HashSetString10_find(
+            parser->cur_function ?
+            &parser->cur_function->int_name :
+            &parser->int_name,
+            parser->token_buf.data,
+            &found,
+            &idx
+        );
+    if (ret) {
+        return ret;
+    }
+    if (!found) {
+        strcpy(parser->str_buf.tail, parser->token_buf.data);
+
+        parser->str_buf.size += parser->token_buf.size;
+        ret =
+            HashSetString10_insert(
+                parser->cur_function ?
+                &parser->cur_function->int_name :
+                &parser->int_name,
+                parser->str_buf.tail
+            );
+        if (ret) {
+            return ret;
+        }
+        ret =
+            HashSetString10_find(
+                parser->cur_function ?
+                &parser->cur_function->int_name :
+                &parser->int_name,
+                parser->str_buf.tail,
+                &found,
+                &idx
+            );
+        parser->str_buf.tail += parser->token_buf.size;
+    }
+    StackCharacter500_clear(&parser->token_buf);
+    token.type = TOKEN_INT_NAME;
+    token.data.int_name =
+        parser->cur_function ?
+        parser->cur_function->int_name.data[idx].item :
+        parser->int_name.data[idx].item;
     ret = StackToken2000_push(parser->cur_token_buf, &token);
     if (ret) {
         return ret;
@@ -261,6 +354,12 @@ int parser_parse(Parser *parser) {
         case ' ':
         case '\t':
         case '\n':
+            break;
+        case '#':
+            ret = handle_int_name(parser);
+            if (ret) {
+                return ret;
+            }
             break;
         default:
             return ERR_INVALID_TOKEN;
