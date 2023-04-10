@@ -7,7 +7,7 @@ LIB_INTERPRETER = lib/libsliv3.so
 BIN_INTERPRETER = sli
 
 %.o: %.c
-	@cp src/interpreter/core/core.h src/parser/parser.h include/sliv3
+	@cp src/util/errcode.h src/interpreter/core/core.h src/parser/parser.h include/sliv3
 	$(CC) $(CFLAGS) -g -c $< -o $@ -Iinclude
 
 $(LIB_INTERPRETER): $(OBJ_INTERPRETER)

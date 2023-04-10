@@ -1,7 +1,13 @@
 #ifndef PARSER_PARSER_H_
 #define PARSER_PARSER_H_
 
+#include <stdio.h>
+
+#include <containers/dstring.h>
 #include <containers/darray.h>
+#include <containers/hashmap.h>
+
+#include <sliv3/errcode.h>
 
 typedef enum SLTokenType {
     SL_TOKEN_TYPE_INT_LITERAL,
@@ -21,13 +27,26 @@ typedef struct SLToken {
 
 DEF_DARRAY(Token)
 
+typedef int Idx;
+
+DEF_HASHMAP(String, Idx)
+
+typedef HashMapStringIdx VarIdx;
+
+typedef struct SLFunction {
+    VarIdx par, local;
+    DArrayToken code;
+    DArrayToken ret;
+} SLFunction;
+
 typedef struct SLParser {
     DArrayToken code;
 } SLParser;
 
-int parser_initialize(SLParser *parser);
-int parser_parse(SLParser *parser, char *str);
-int parser_clear_code(SLParser *parser);
-int parser_finalize(SLParser *parser);
+SLErrCode slparser_initialize(SLParser *parser);
+SLErrCode slparser_parse(SLParser *parser, char *str);
+SLErrCode slparser_clear_code(SLParser *parser);
+SLErrCode slparser_finalize(SLParser *parser);
+SLErrCode slparser_log(FILE *fout);
 
 #endif

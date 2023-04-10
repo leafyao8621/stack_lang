@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include <sliv3/parser.h>
 
 #include <containers/dstring.h>
