@@ -2,6 +2,7 @@
 #define PARSER_PARSER_H_
 
 #include <stdio.h>
+#include <stdint.h>
 
 #include <containers/dstring.h>
 #include <containers/darray.h>
@@ -14,6 +15,8 @@ typedef enum SLTokenType {
     SL_TOKEN_TYPE_INT_VAR,
     SL_TOKEN_TYPE_FLOAT_LITERAL,
     SL_TOKEN_TYPE_FLOAT_VAR,
+    SL_TOKEN_TYPE_CHAR_LITERAL,
+    SL_TOKEN_TYPE_CHAR_VAR,
     SL_TOKEN_TYPE_STR_LITERAL,
     SL_TOKEN_TYPE_STR_VAR,
     SL_TOKEN_TYPE_ARR,
@@ -21,26 +24,47 @@ typedef enum SLTokenType {
     SL_TOKEN_TYPE_FUNCTION
 } SLTokenType;
 
+typedef size_t Idx;
+
+typedef enum SLArrayType {
+    SL_ARRAY_TYPE_INT,
+    SL_ARRAY_TYPE_FLOAT,
+    SL_ARRAY_TYPE_CHAR,
+    SL_ARRAY_TYPE_STR,
+    SL_ARRAY_TYPE_ARR
+} SLArrayType;
+
 typedef struct SLToken {
     SLTokenType type;
+    union {
+        int64_t int_literal;
+        Idx int_var;
+        double float_literal;
+        Idx float_var;
+        Idx str_literal;
+        Idx str_var;
+        struct {
+
+        }
+    } data;
 } SLToken;
 
 DEF_DARRAY(SLToken)
 
-typedef int Idx;
-
 DEF_HASHMAP(String, Idx)
 
-typedef HashMapStringIdx VarIdx;
-
 typedef struct SLFunction {
-    VarIdx par, local;
-    DArrayToken code;
-    DArrayToken ret;
+    HashMapStringIdx par_lookup, local_lookup;
+    DArraySLToken code;
+    DArraySLToken ret;
 } SLFunction;
 
+DEF_DARRAY(SLFunction)
+
 typedef struct SLParser {
-    DArrayToken code;
+    DArraySLFunction functions;
+    HashMapStringIdx function_lookup;
+    DArraySLToken code;
 } SLParser;
 
 SLErrCode slparser_initialize(SLParser *parser);

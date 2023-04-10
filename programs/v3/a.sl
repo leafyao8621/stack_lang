@@ -1,10 +1,4 @@
-#var_a 10 -2 + 5 * 10 - 2 / =
-#var_a _println
-#bc #var_a 1 - =
-#bc _println
-
-#a 1 =
-#a ! _println
-
-#a 1 =
-#a ~ _println
+#float_a 123 =
+#float_b 123.0 =
+#int_a 123 =
+#int_b 123.0 =

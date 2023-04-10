@@ -9,6 +9,9 @@
 			"include": "#strings"
 		},
 		{
+			"include": "#chars"
+		},
+		{
 			"include": "#variables"
 		},
 		{
@@ -26,7 +29,7 @@
 			"patterns": [
 				{
 					"name": "keyword",
-					"match": "\\b(_do|_end|_print|_println|_def|_begin|_input|_rand|_srand)\\b"
+					"match": "\\b(_do|_end|_print|_println|_def|_begin|_input|_rand|_srand|_alloc|_realloc|_return|_break|_continue|_for)\\b"
 				},
 				{
 					"name": "keyword.control",
@@ -45,12 +48,23 @@
 				}
 			]
 		},
+		"chars": {
+			"name": "string.quoted.single.stacklang",
+			"begin": "'",
+			"end": "'",
+			"patterns": [
+				{
+					"name": "constant.character.escape.stacklang",
+					"match": "\\\\."
+				}
+			]
+		},
 		"variables": {
 			"name": "variable.name.stacklang",
 			"patterns": [
 				{
 					"name": "variable.name",
-					"match": "#[A-Za-z][0-9A-Za-z_]*|@[A-Za-z][0-9A-Za-z_]*|\\$[A-Za-z][0-9A-Za-z_]*|%[A-Za-z][0-9A-Za-z_]*"
+					"match": "#!?[A-Za-z][0-9A-Za-z_]*|@[%#$&@]?!?[A-Za-z][0-9A-Za-z_]*|\\$!?[A-Za-z][0-9A-Za-z_]*|%!?[A-Za-z][0-9A-Za-z_]*|&!?[A-Za-z][0-9A-Za-z_]*"
 				}
 			]
 		},
@@ -78,11 +92,6 @@
 				{
 					"name": "comment.line",
 					"match": ";.*\\n"
-				},
-				{
-					"name": "comment.block",
-					"begin": "{",
-					"end": "}"
 				}
 			]
 		}
