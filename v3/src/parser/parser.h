@@ -23,9 +23,9 @@ typedef enum SLTokenType {
 
 typedef struct SLToken {
     SLTokenType type;
-} Token;
+} SLToken;
 
-DEF_DARRAY(Token)
+DEF_DARRAY(SLToken)
 
 typedef int Idx;
 
