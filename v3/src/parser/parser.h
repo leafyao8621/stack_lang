@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #include <containers/dstring.h>
 #include <containers/darray.h>
@@ -34,6 +35,26 @@ typedef enum SLArrayType {
     SL_ARRAY_TYPE_ARR
 } SLArrayType;
 
+typedef enum SLCommandType {
+    SL_COMMAND_TYPE_PRINT,
+    SL_COMMAND_TYPE_PRINTLN,
+    SL_COMMAND_TYPE_INPUT,
+    SL_COMMAND_TYPE_SRAND,
+    SL_COMMAND_TYPE_RAND,
+    SL_COMMAND_TYPE_ALLOC,
+    SL_COMMAND_TYPE_REALLOC,
+    SL_COMMAND_TYPE_IF,
+    SL_COMMAND_TYPE_ELSE,
+    SL_COMMAND_TYPE_END,
+    SL_COMMAND_TYPE_WHILE,
+    SL_COMMAND_TYPE_DO,
+    SL_COMMAND_TYPE_FOR,
+    SL_COMMAND_TYPE_BREAK,
+    SL_COMMAND_TYPE_CONTINUE,
+    SL_COMMAND_TYPE_DEF,
+    SL_COMMAND_TYPE_RETURN
+} SLCommandType;
+
 typedef struct SLToken {
     SLTokenType type;
     union {
@@ -41,11 +62,19 @@ typedef struct SLToken {
         Idx int_var;
         double float_literal;
         Idx float_var;
+        char char_literal;
+        Idx char_var;
         Idx str_literal;
         Idx str_var;
         struct {
-
-        }
+            Idx idx;
+            SLArrayType type;
+        } arr;
+        struct {
+            SLCommandType type;
+            SLToken *tgt;
+        } command;
+        SLToken *function;
     } data;
 } SLToken;
 
@@ -62,8 +91,8 @@ typedef struct SLFunction {
 DEF_DARRAY(SLFunction)
 
 typedef struct SLParser {
-    DArraySLFunction functions;
     HashMapStringIdx function_lookup;
+    DArraySLFunction functions;
     DArraySLToken code;
 } SLParser;
 
