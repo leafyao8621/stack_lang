@@ -55,19 +55,30 @@ typedef enum SLCommandType {
     SL_COMMAND_TYPE_RETURN
 } SLCommandType;
 
+typedef enum VariableLocation {
+    VARIABLE_LOCATION_LOCAL,
+    VARIABLE_LOCATION_PARAMETER,
+    VARIABLE_LOCATION_GLOBAL
+} VariableLocation;
+
+typedef struct VariableData {
+    VariableLocation location;
+    Idx idx;
+} VariableData;
+
 typedef struct SLToken {
     SLTokenType type;
     union {
         int64_t int_literal;
-        Idx int_var;
+        VariableData int_var;
         double float_literal;
-        Idx float_var;
+        VariableData float_var;
         char char_literal;
-        Idx char_var;
-        Idx str_literal;
-        Idx str_var;
+        VariableData char_var;
+        VariableData str_literal;
+        VariableData str_var;
         struct {
-            Idx idx;
+            VariableData var_data;
             SLArrayType type;
         } arr;
         struct {
