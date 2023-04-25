@@ -19,7 +19,12 @@ int main(void) {
     String buf;
     DArrayChar_initialize(&buf, 1000);
     read_file("../programs/v3/a.sl", &buf);
-    puts(buf.data);
+    SLParser parser;
+    SLParser_initialize(&parser);
+    SLErrCode ret = SLParser_parse(&parser, buf.data);
+    printf("RET: %d\nMSG: %s\n", ret, sl_errcode_lookup[ret]);
+    SLParser_log(&parser, stdout);
+    SLParser_finalize(&parser);
     DArrayChar_finalize(&buf);
     return 0;
 }

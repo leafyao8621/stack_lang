@@ -66,7 +66,9 @@ typedef struct VariableData {
     Idx idx;
 } VariableData;
 
-typedef struct SLToken {
+typedef struct SLToken SLToken;
+
+struct SLToken {
     SLTokenType type;
     union {
         int64_t int_literal;
@@ -75,7 +77,7 @@ typedef struct SLToken {
         VariableData float_var;
         char char_literal;
         VariableData char_var;
-        VariableData str_literal;
+        Idx str_literal;
         VariableData str_var;
         struct {
             VariableData var_data;
@@ -85,9 +87,9 @@ typedef struct SLToken {
             SLCommandType type;
             SLToken *tgt;
         } command;
-        SLToken *function;
+        Idx function;
     } data;
-} SLToken;
+};
 
 DEF_DARRAY(SLToken)
 
@@ -99,18 +101,20 @@ typedef struct SLFunction {
     DArraySLToken ret;
 } SLFunction;
 
+DEF_DARRAY(String)
 DEF_DARRAY(SLFunction)
 
 typedef struct SLParser {
-    HashMapStringIdx function_lookup;
+    HashMapStringIdx function_lookup, global_lookup;
+    DArrayString str_literals;
     DArraySLFunction functions;
     DArraySLToken code;
 } SLParser;
 
-SLErrCode slparser_initialize(SLParser *parser);
-SLErrCode slparser_parse(SLParser *parser, char *str);
-SLErrCode slparser_clear_code(SLParser *parser);
-SLErrCode slparser_finalize(SLParser *parser);
-SLErrCode slparser_log(FILE *fout);
+SLErrCode SLParser_initialize(SLParser *parser);
+SLErrCode SLParser_parse(SLParser *parser, char *str);
+SLErrCode SLParser_clear_code(SLParser *parser);
+SLErrCode SLParser_finalize(SLParser *parser);
+SLErrCode SLParser_log(SLParser *parser, FILE *fout);
 
 #endif
