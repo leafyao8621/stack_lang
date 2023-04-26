@@ -21,6 +21,7 @@ typedef enum SLTokenType {
     SL_TOKEN_TYPE_STR_LITERAL,
     SL_TOKEN_TYPE_STR_VAR,
     SL_TOKEN_TYPE_ARR,
+    SL_TOKEN_TYPE_OPERATOR,
     SL_TOKEN_TYPE_COMMAND,
     SL_TOKEN_TYPE_FUNCTION
 } SLTokenType;
@@ -34,6 +35,32 @@ typedef enum SLArrayType {
     SL_ARRAY_TYPE_STR,
     SL_ARRAY_TYPE_ARR
 } SLArrayType;
+
+typedef enum SLOperatorType {
+    SL_OPERATOR_TYPE_ADD,
+    SL_OPERATOR_TYPE_SUBTRACT,
+    SL_OPERATOR_TYPE_MULTIPLY,
+    SL_OPERATOR_TYPE_DIVIDE,
+    SL_OPERATOR_TYPE_MODULO,
+    SL_OPERATOR_TYPE_LSHIFT,
+    SL_OPERATOR_TYPE_RSHIFT,
+    SL_OPERATOR_TYPE_RLSHIFT,
+    SL_OPERATOR_TYPE_BNOT,
+    SL_OPERATOR_TYPE_BAND,
+    SL_OPERATOR_TYPE_BOR,
+    SL_OPERATOR_TYPE_BXOR,
+    SL_OPERATOR_TYPE_LNOT,
+    SL_OPERATOR_TYPE_LAND,
+    SL_OPERATOR_TYPE_LOR,
+    SL_OPERATOR_TYPE_LXOR,
+    SL_OPERATOR_TYPE_EQ,
+    SL_OPERATOR_TYPE_NEQ,
+    SL_OPERATOR_TYPE_LT,
+    SL_OPERATOR_TYPE_GT,
+    SL_OPERATOR_TYPE_LEQ,
+    SL_OPERATOR_TYPE_GEQ,
+    SL_OPERATOR_TYPE_ASSIGN
+} SLOperatorType;
 
 typedef enum SLCommandType {
     SL_COMMAND_TYPE_PRINT,
@@ -61,10 +88,10 @@ typedef enum VariableLocation {
     VARIABLE_LOCATION_GLOBAL
 } VariableLocation;
 
-typedef struct VariableData {
+typedef struct SLVariableData {
     VariableLocation location;
     Idx idx;
-} VariableData;
+} SLVariableData;
 
 typedef struct SLToken SLToken;
 
@@ -72,17 +99,18 @@ struct SLToken {
     SLTokenType type;
     union {
         int64_t int_literal;
-        VariableData int_var;
+        SLVariableData int_var;
         double float_literal;
-        VariableData float_var;
+        SLVariableData float_var;
         char char_literal;
-        VariableData char_var;
+        SLVariableData char_var;
         Idx str_literal;
-        VariableData str_var;
+        SLVariableData str_var;
         struct {
-            VariableData var_data;
+            SLVariableData var_data;
             SLArrayType type;
         } arr;
+        SLOperatorType operator;
         struct {
             SLCommandType type;
             SLToken *tgt;
@@ -93,10 +121,15 @@ struct SLToken {
 
 DEF_DARRAY(SLToken)
 
-DEF_HASHMAP(String, Idx)
+typedef struct SLVariableTypeName {
+    SLTokenType type;
+    String name;
+} SLVariableTypeName;
+
+DEF_HASHMAP(SLVariableTypeName, Idx)
 
 typedef struct SLFunction {
-    HashMapStringIdx par_lookup, local_lookup;
+    HashMapSLVariableTypeNameIdx par_lookup, local_lookup;
     DArraySLToken code;
     DArraySLToken ret;
 } SLFunction;
@@ -105,7 +138,7 @@ DEF_DARRAY(String)
 DEF_DARRAY(SLFunction)
 
 typedef struct SLParser {
-    HashMapStringIdx function_lookup, global_lookup;
+    HashMapSLVariableTypeNameIdx function_lookup, global_lookup;
     DArrayString str_literals;
     DArraySLFunction functions;
     DArraySLToken code;

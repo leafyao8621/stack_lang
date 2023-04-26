@@ -88,10 +88,10 @@ typedef enum VariableLocation {
     VARIABLE_LOCATION_GLOBAL
 } VariableLocation;
 
-typedef struct VariableData {
+typedef struct SLVariableData {
     VariableLocation location;
     Idx idx;
-} VariableData;
+} SLVariableData;
 
 typedef struct SLToken SLToken;
 
@@ -99,15 +99,15 @@ struct SLToken {
     SLTokenType type;
     union {
         int64_t int_literal;
-        VariableData int_var;
+        SLVariableData int_var;
         double float_literal;
-        VariableData float_var;
+        SLVariableData float_var;
         char char_literal;
-        VariableData char_var;
+        SLVariableData char_var;
         Idx str_literal;
-        VariableData str_var;
+        SLVariableData str_var;
         struct {
-            VariableData var_data;
+            SLVariableData var_data;
             SLArrayType type;
         } arr;
         SLOperatorType operator;
@@ -121,10 +121,15 @@ struct SLToken {
 
 DEF_DARRAY(SLToken)
 
-DEF_HASHMAP(String, Idx)
+typedef struct SLVariableTypeName {
+    SLTokenType type;
+    String name;
+} SLVariableTypeName;
+
+DEF_HASHMAP(SLVariableTypeName, Idx)
 
 typedef struct SLFunction {
-    HashMapStringIdx par_lookup, local_lookup;
+    HashMapSLVariableTypeNameIdx par_lookup, local_lookup;
     DArraySLToken code;
     DArraySLToken ret;
 } SLFunction;
@@ -133,7 +138,7 @@ DEF_DARRAY(String)
 DEF_DARRAY(SLFunction)
 
 typedef struct SLParser {
-    HashMapStringIdx function_lookup, global_lookup;
+    HashMapSLVariableTypeNameIdx function_lookup, global_lookup;
     DArrayString str_literals;
     DArraySLFunction functions;
     DArraySLToken code;

@@ -1,13 +1,13 @@
-#include <containers/eq.h>
-#include <containers/hash.h>
-
 #include "parser.h"
 
 DEF_DARRAY_FUNCTIONS(SLToken)
 DEF_DARRAY_FUNCTIONS(String)
 DEF_DARRAY_FUNCTIONS(SLFunction)
 
-DEF_HASHMAP_FUNCTIONS(String, Idx)
+DEF_HASHMAP_FUNCTIONS(SLVariableTypeName, Idx)
+
+bool eq_sl_variable_type_name(SLVariableTypeName *a, SLVariableTypeName *b);
+size_t hash_sl_variable_type_name(SLVariableTypeName *a);
 
 SLErrCode SLParser_initialize(SLParser *parser) {
     if (!parser) {
@@ -18,21 +18,21 @@ SLErrCode SLParser_initialize(SLParser *parser) {
         return SL_ERR_OUT_OF_MEMORY;
     }
     ret =
-        HashMapStringIdx_initialize(
+        HashMapSLVariableTypeNameIdx_initialize(
             &parser->function_lookup,
             10,
-            containers_eq_dstr,
-            containers_hash_dstr
+            eq_sl_variable_type_name,
+            hash_sl_variable_type_name
         );
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
     ret =
-        HashMapStringIdx_initialize(
+        HashMapSLVariableTypeNameIdx_initialize(
             &parser->global_lookup,
             10,
-            containers_eq_dstr,
-            containers_hash_dstr
+            eq_sl_variable_type_name,
+            hash_sl_variable_type_name
         );
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
@@ -57,8 +57,8 @@ SLErrCode SLParser_finalize(SLParser *parser) {
         return SL_ERR_NULL_PTR;
     }
     DArraySLToken_finalize(&parser->code);
-    HashMapStringIdx_finalize(&parser->function_lookup);
-    HashMapStringIdx_finalize(&parser->global_lookup);
+    HashMapSLVariableTypeNameIdx_finalize(&parser->function_lookup);
+    HashMapSLVariableTypeNameIdx_finalize(&parser->global_lookup);
     DArraySLFunction_finalize(&parser->functions);
     return SL_ERR_OK;
 }
@@ -75,6 +75,15 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
                 i,
                 iter->data.int_literal,
                 iter->data.int_literal
+            );
+            break;
+        case SL_TOKEN_TYPE_FLOAT_LITERAL:
+            fprintf(
+                fout,
+                "IDX: %lu\nType: FLOAT_LITERAL\nDEC: %lE\nHEX: 0x%016lX\n",
+                i,
+                iter->data.float_literal,
+                *(uint64_t*)&iter->data.float_literal
             );
             break;
         default:
