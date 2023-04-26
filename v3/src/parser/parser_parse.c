@@ -2,10 +2,17 @@
 
 #include "parser.h"
 
+DEF_DARRAY(Idx)
+
+DEF_DARRAY_FUNCTIONS(Idx)
+
 struct SLParserBuffer {
     String token_buf;
     HashMapSLVariableTypeNameIdx str_literal_lookup;
     DArraySLToken *cur_token_buf;
+    bool global;
+    Idx cur_function, global_offset;
+    DArrayIdx parameter_offsets, local_offsets;
 };
 
 bool eq_sl_variable_type_name(SLVariableTypeName *a, SLVariableTypeName *b);
@@ -26,12 +33,25 @@ SLErrCode SLParserBuffer_initialize(struct SLParserBuffer *buffer) {
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
+    buffer->global = true;
+    buffer->cur_function = 0;
+    buffer->global_offset = 0;
+    ret = DArrayIdx_initialize(&buffer->parameter_offsets, 10);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
+    ret = DArrayIdx_initialize(&buffer->local_offsets, 10);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
     return SL_ERR_OK;
 }
 
 void SLParserBuffer_finalize(struct SLParserBuffer *buffer) {
     DArrayChar_finalize(&buffer->token_buf);
     HashMapSLVariableTypeNameIdx_finalize(&buffer->str_literal_lookup);
+    DArrayIdx_finalize(&buffer->parameter_offsets);
+    DArrayIdx_finalize(&buffer->local_offsets);
 }
 
 SLErrCode handle_number_literal(
@@ -212,6 +232,8 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
                 SLParserBuffer_finalize(&buffer);
                 return err;
             }
+            break;
+        case '%':
             break;
         }
     }
