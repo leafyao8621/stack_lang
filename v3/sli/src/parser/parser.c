@@ -174,6 +174,19 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
                 iter->data.int_var.idx
             );
             break;
+        case SL_TOKEN_TYPE_CHAR_LITERAL:
+            fprintf(
+                fout,
+                "IDX: %lu\nType: CHAR_LITERAL\nCHAR: %s%c\nHEX: 0x%02hhX\n",
+                i,
+                iter->data.char_literal >= 32 ?
+                "" : "NON_PRINTABLE",
+                iter->data.char_literal >= 32 ?
+                iter->data.char_literal :
+                '*',
+                iter->data.char_literal
+            );
+            break;
         default:
             break;
         }

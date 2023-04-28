@@ -211,6 +211,9 @@ SLErrCode handle_variable(
     struct SLParserBuffer *buffer,
     char **iter) {
     SLVariableTypeName vtn;
+    if (!parser || !buffer || !iter) {
+        return SL_ERR_NULL_PTR;
+    }
     switch (**iter) {
     case '%':
         vtn.type = SL_TOKEN_TYPE_INT_VAR;
@@ -332,6 +335,79 @@ SLErrCode handle_variable(
     return SL_ERR_OK;
 }
 
+SLErrCode handle_char_literal(
+    SLParser *parser,
+    struct SLParserBuffer *buffer,
+    char **iter) {
+    if (!parser || !buffer || !iter) {
+        return SL_ERR_NULL_PTR;
+    }
+    SLToken token;
+    token.type = SL_TOKEN_TYPE_CHAR_LITERAL;
+    if ((*iter)[1] == '\\') {
+        switch ((*iter)[2]) {
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+            if ((*iter)[3] != '\'') {
+                return SL_ERR_INVALID_CHAR_LITERAL;
+            }
+            token.data.char_literal = (*iter)[2] - '0';
+            *iter += 3;
+            break;
+        case 't':
+            if ((*iter)[3] != '\'') {
+                return SL_ERR_INVALID_CHAR_LITERAL;
+            }
+            token.data.char_literal = '\t';
+            *iter += 3;
+            break;
+        case 'n':
+            if ((*iter)[3] != '\'') {
+                return SL_ERR_INVALID_CHAR_LITERAL;
+            }
+            token.data.char_literal = '\n';
+            *iter += 3;
+            break;
+        case '\'':
+            if ((*iter)[3] != '\'') {
+                return SL_ERR_INVALID_CHAR_LITERAL;
+            }
+            token.data.char_literal = '\'';
+            *iter += 3;
+            break;
+        case '\\':
+            if ((*iter)[3] != '\'') {
+                return SL_ERR_INVALID_CHAR_LITERAL;
+            }
+            token.data.char_literal = '\\';
+            *iter += 3;
+            break;
+        }
+    } else {
+        if ((*iter)[2] != '\'') {
+            return SL_ERR_INVALID_CHAR_LITERAL;
+        }
+        if ((*iter)[1] == '\'') {
+            return SL_ERR_INVALID_CHAR_LITERAL;
+        }
+        token.data.char_literal = (*iter)[1];
+        *iter += 2;
+    }
+    int ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
+    if (ret) {
+        return SL_ERR_NULL_PTR;
+    }
+    return SL_ERR_OK;
+}
+
 SLErrCode SLParser_parse(SLParser *parser, char *str) {
     if (!parser || !str) {
         return SL_ERR_NULL_PTR;
@@ -363,6 +439,13 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
         case '#':
         case '&':
             err = handle_variable(parser, &buffer, &iter);
+            if (err) {
+                SLParserBuffer_finalize(&buffer);
+                return err;
+            }
+            break;
+        case '\'':
+            err = handle_char_literal(parser, &buffer, &iter);
             if (err) {
                 SLParserBuffer_finalize(&buffer);
                 return err;
