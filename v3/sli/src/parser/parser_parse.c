@@ -296,7 +296,20 @@ SLErrCode handle_variable(
                 DArrayChar_finalize(&vtn.name);
                 return SL_ERR_OUT_OF_MEMORY;
             }
-            *offset = buffer->global_offset++;
+            *offset = buffer->global_offset;
+            switch (token.type) {
+            case SL_TOKEN_TYPE_INT_VAR:
+                buffer->global_offset += 8;
+                break;
+            case SL_TOKEN_TYPE_FLOAT_VAR:
+                buffer->global_offset += 8;
+                break;
+            case SL_TOKEN_TYPE_CHAR_VAR:
+                buffer->global_offset++;
+                break;
+            default:
+                break;
+            }
         }
         switch (token.type) {
         case SL_TOKEN_TYPE_INT_VAR:
