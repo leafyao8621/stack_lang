@@ -18,6 +18,8 @@ $(BIN): $(LIB)
 .PHONY: clean all
 all: $(BIN)
 	@echo "compiled"
+valgrind: $(BIN)
+	@valgrind -s --leak-check=full ./$(BIN)
 clean:
 	@rm $(OBJ)
 	@rm $(LIB)
