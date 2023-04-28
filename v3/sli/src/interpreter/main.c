@@ -18,7 +18,7 @@ void read_file(char *fn, String *buf) {
 int main(void) {
     String buf;
     DArrayChar_initialize(&buf, 1000);
-    read_file("../programs/v3/a.sl", &buf);
+    read_file("../../programs/v3/a.sl", &buf);
     SLParser parser;
     SLParser_initialize(&parser);
     SLErrCode ret = SLParser_parse(&parser, buf.data);

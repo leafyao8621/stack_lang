@@ -216,6 +216,10 @@ SLErrCode handle_variable(
         vtn.type = SL_TOKEN_TYPE_INT_VAR;
         ++(*iter);
         break;
+    case '#':
+        vtn.type = SL_TOKEN_TYPE_INT_VAR;
+        ++(*iter);
+        break;
     }
     int ret = 0;
     for (
@@ -333,6 +337,7 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
             }
             break;
         case '%':
+        case '#':
             err = handle_variable(parser, &buffer, &iter);
             if (err) {
                 SLParserBuffer_finalize(&buffer);

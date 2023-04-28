@@ -32,8 +32,7 @@ typedef enum SLArrayType {
     SL_ARRAY_TYPE_INT,
     SL_ARRAY_TYPE_FLOAT,
     SL_ARRAY_TYPE_CHAR,
-    SL_ARRAY_TYPE_STR,
-    SL_ARRAY_TYPE_ARR
+    SL_ARRAY_TYPE_STR
 } SLArrayType;
 
 typedef enum SLOperatorType {
@@ -108,6 +107,7 @@ struct SLToken {
         SLVariableData str_var;
         struct {
             SLVariableData var_data;
+            Idx dim;
             SLArrayType type;
         } arr;
         SLOperatorType operator;
