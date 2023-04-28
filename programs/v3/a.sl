@@ -15,3 +15,9 @@
 %int_b
 
 %int_a
+
+#int_a
+#float_a
+
+#float_b
+#float_a

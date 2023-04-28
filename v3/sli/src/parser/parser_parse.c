@@ -217,7 +217,7 @@ SLErrCode handle_variable(
         ++(*iter);
         break;
     case '#':
-        vtn.type = SL_TOKEN_TYPE_INT_VAR;
+        vtn.type = SL_TOKEN_TYPE_FLOAT_VAR;
         ++(*iter);
         break;
     }
@@ -297,6 +297,9 @@ SLErrCode handle_variable(
         switch (token.type) {
         case SL_TOKEN_TYPE_INT_VAR:
             token.data.int_var.idx = *offset;
+            break;
+        case SL_TOKEN_TYPE_FLOAT_VAR:
+            token.data.float_var.idx = *offset;
             break;
         default:
             break;

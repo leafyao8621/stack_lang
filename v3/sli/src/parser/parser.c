@@ -135,10 +135,12 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
             );
             break;
         case SL_TOKEN_TYPE_INT_VAR:
+        case SL_TOKEN_TYPE_FLOAT_VAR:
             fprintf(
                 fout,
-                "IDX: %lu\nType: INT_VAR\nLocation: %s\nOffset: %lu\n",
+                "IDX: %lu\nType: %s\nLocation: %s\nOffset: %lu\n",
                 i,
+                type_lookup[iter->type],
                 location_lookup[iter->data.int_var.location],
                 iter->data.int_var.idx
             );
