@@ -220,6 +220,10 @@ SLErrCode handle_variable(
         vtn.type = SL_TOKEN_TYPE_FLOAT_VAR;
         ++(*iter);
         break;
+    case '&':
+        vtn.type = SL_TOKEN_TYPE_CHAR_VAR;
+        ++(*iter);
+        break;
     }
     int ret = 0;
     for (
@@ -301,6 +305,9 @@ SLErrCode handle_variable(
         case SL_TOKEN_TYPE_FLOAT_VAR:
             token.data.float_var.idx = *offset;
             break;
+        case SL_TOKEN_TYPE_CHAR_VAR:
+            token.data.char_var.idx = *offset;
+            break;
         default:
             break;
         }
@@ -341,6 +348,7 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
             break;
         case '%':
         case '#':
+        case '&':
             err = handle_variable(parser, &buffer, &iter);
             if (err) {
                 SLParserBuffer_finalize(&buffer);
