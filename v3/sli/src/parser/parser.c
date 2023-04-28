@@ -1,9 +1,13 @@
+#include <containers/eq.h>
+#include <containers/hash.h>
+
 #include "parser.h"
 
 DEF_DARRAY_FUNCTIONS(SLToken)
 DEF_DARRAY_FUNCTIONS(String)
 DEF_DARRAY_FUNCTIONS(SLFunction)
 
+DEF_HASHMAP_FUNCTIONS(String, Idx)
 DEF_HASHMAP_FUNCTIONS(SLVariableTypeName, Idx)
 
 bool eq_sl_variable_type_name(SLVariableTypeName *a, SLVariableTypeName *b);
@@ -14,6 +18,16 @@ SLErrCode SLParser_initialize(SLParser *parser) {
         return SL_ERR_NULL_PTR;
     }
     int ret = DArraySLToken_initialize(&parser->code, 100);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
+    ret =
+        HashMapStringIdx_initialize(
+            &parser->str_literal_lookup,
+            10,
+            containers_eq_dstr,
+            containers_hash_dstr
+        );
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
@@ -41,6 +55,10 @@ SLErrCode SLParser_initialize(SLParser *parser) {
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
+    ret = DArrayString_initialize(&parser->str_literals, 10);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
     return SL_ERR_OK;
 }
 
@@ -57,6 +75,7 @@ SLErrCode SLParser_finalize(SLParser *parser) {
         return SL_ERR_NULL_PTR;
     }
     DArraySLToken_finalize(&parser->code);
+    HashMapStringIdx_finalize(&parser->str_literal_lookup);
     HashMapSLVariableTypeNameIdx_finalize(&parser->function_lookup);
     HashMapSLVariableTypeNameIdxNode *iter_global_lookup =
         parser->global_lookup.data;
@@ -71,6 +90,15 @@ SLErrCode SLParser_finalize(SLParser *parser) {
     }
     HashMapSLVariableTypeNameIdx_finalize(&parser->global_lookup);
     DArraySLFunction_finalize(&parser->functions);
+    String *iter_str_literals = parser->str_literals.data;
+    for (
+        size_t i = 0;
+        i < parser->str_literals.size;
+        ++i,
+        ++iter_str_literals) {
+        DArrayChar_finalize(iter_str_literals);
+    }
+    DArrayString_finalize(&parser->str_literals);
     return SL_ERR_OK;
 }
 
