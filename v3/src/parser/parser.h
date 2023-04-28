@@ -82,14 +82,14 @@ typedef enum SLCommandType {
     SL_COMMAND_TYPE_RETURN
 } SLCommandType;
 
-typedef enum VariableLocation {
-    VARIABLE_LOCATION_LOCAL,
-    VARIABLE_LOCATION_PARAMETER,
-    VARIABLE_LOCATION_GLOBAL
-} VariableLocation;
+typedef enum SLVariableLocation {
+    SL_VARIABLE_LOCATION_LOCAL,
+    SL_VARIABLE_LOCATION_PARAMETER,
+    SL_VARIABLE_LOCATION_GLOBAL
+} SLVariableLocation;
 
 typedef struct SLVariableData {
-    VariableLocation location;
+    SLVariableLocation location;
     Idx idx;
 } SLVariableData;
 

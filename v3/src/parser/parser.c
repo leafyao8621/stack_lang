@@ -58,12 +58,60 @@ SLErrCode SLParser_finalize(SLParser *parser) {
     }
     DArraySLToken_finalize(&parser->code);
     HashMapSLVariableTypeNameIdx_finalize(&parser->function_lookup);
+    HashMapSLVariableTypeNameIdxNode *iter_global_lookup =
+        parser->global_lookup.data;
+    for (
+        size_t i = 0;
+        i < parser->global_lookup.capacity;
+        ++i,
+        ++iter_global_lookup) {
+        if (iter_global_lookup->in_use) {
+            DArrayChar_finalize(&iter_global_lookup->key.name);
+        }
+    }
     HashMapSLVariableTypeNameIdx_finalize(&parser->global_lookup);
     DArraySLFunction_finalize(&parser->functions);
     return SL_ERR_OK;
 }
 
 SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
+    static const char *location_lookup[3] = {
+        "SL_VARIABLE_LOCATION_LOCAL",
+        "SL_VARIABLE_LOCATION_PARAMETER",
+        "SL_VARIABLE_LOCATION_GLOBAL"
+    };
+    static const char *type_lookup[12] = {
+        "SL_TOKEN_TYPE_INT_LITERAL",
+        "SL_TOKEN_TYPE_INT_VAR",
+        "SL_TOKEN_TYPE_FLOAT_LITERAL",
+        "SL_TOKEN_TYPE_FLOAT_VAR",
+        "SL_TOKEN_TYPE_CHAR_LITERAL",
+        "SL_TOKEN_TYPE_CHAR_VAR",
+        "SL_TOKEN_TYPE_STR_LITERAL",
+        "SL_TOKEN_TYPE_STR_VAR",
+        "SL_TOKEN_TYPE_ARR",
+        "SL_TOKEN_TYPE_OPERATOR",
+        "SL_TOKEN_TYPE_COMMAND",
+        "SL_TOKEN_TYPE_FUNCTION"
+    };
+    fputs("Global Variables:\n", fout);
+    HashMapSLVariableTypeNameIdxNode *iter_global_lookup =
+        parser->global_lookup.data;
+    for (
+        size_t i = 0;
+        i < parser->global_lookup.capacity;
+        ++i,
+        ++iter_global_lookup) {
+        if (iter_global_lookup->in_use) {
+            fprintf(
+                fout,
+                "Name: %s\nType: %s\nOffset: %lu\n",
+                iter_global_lookup->key.name.data,
+                type_lookup[iter_global_lookup->key.type],
+                iter_global_lookup->value
+            );
+        }
+    }
     fputs("Code:\n", fout);
     SLToken *iter = parser->code.data;
     for (size_t i = 0; i < parser->code.size; ++i, ++iter) {
@@ -84,6 +132,15 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
                 i,
                 iter->data.float_literal,
                 *(uint64_t*)&iter->data.float_literal
+            );
+            break;
+        case SL_TOKEN_TYPE_INT_VAR:
+            fprintf(
+                fout,
+                "IDX: %lu\nType: INT_VAR\nLocation: %s\nOffset: %lu\n",
+                i,
+                location_lookup[iter->data.int_var.location],
+                iter->data.int_var.idx
             );
             break;
         default:
