@@ -143,12 +143,17 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
     fputs("Code:\n", fout);
     SLToken *iter = parser->code.data;
     for (size_t i = 0; i < parser->code.size; ++i, ++iter) {
+        fprintf(
+            fout,
+            "IDX: %lu\nType: %s\n",
+            i,
+            type_lookup[iter->type]
+        );
         switch (iter->type) {
         case SL_TOKEN_TYPE_INT_LITERAL:
             fprintf(
                 fout,
-                "IDX: %lu\nType: INT_LITERAL\nDEC: %ld\nHEX: 0x%016lX\n",
-                i,
+                "DEC: %ld\nHEX: 0x%016lX\n",
                 iter->data.int_literal,
                 iter->data.int_literal
             );
@@ -156,8 +161,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         case SL_TOKEN_TYPE_FLOAT_LITERAL:
             fprintf(
                 fout,
-                "IDX: %lu\nType: FLOAT_LITERAL\nDEC: %lE\nHEX: 0x%016lX\n",
-                i,
+                "DEC: %lE\nHEX: 0x%016lX\n",
                 iter->data.float_literal,
                 *(uint64_t*)&iter->data.float_literal
             );
@@ -167,9 +171,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         case SL_TOKEN_TYPE_CHAR_VAR:
             fprintf(
                 fout,
-                "IDX: %lu\nType: %s\nLocation: %s\nOffset: %lu\n",
-                i,
-                type_lookup[iter->type],
+                "Location: %s\nOffset: %lu\n",
                 location_lookup[iter->data.int_var.location],
                 iter->data.int_var.idx
             );
@@ -177,8 +179,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         case SL_TOKEN_TYPE_CHAR_LITERAL:
             fprintf(
                 fout,
-                "IDX: %lu\nType: CHAR_LITERAL\nCHAR: %s%c\nHEX: 0x%02hhX\n",
-                i,
+                "CHAR: %s%c\nHEX: 0x%02hhX\n",
                 iter->data.char_literal >= 32 ?
                 "" : "NON_PRINTABLE",
                 iter->data.char_literal >= 32 ?
