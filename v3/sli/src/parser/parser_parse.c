@@ -444,6 +444,32 @@ SLErrCode handle_str_literal(
     if (!parser || !buffer || !iter) {
         return SL_ERR_NULL_PTR;
     }
+    int ret = 0;
+    char chr = 0;
+    for (++(*iter); **iter && **iter != '"'; ++(*iter)) {
+        switch (**iter) {
+        case '\n':
+            return SL_ERR_INVALID_STR_LITERAL;
+        case '\\':
+            break;
+        default:
+            ret = DArrayChar_push_back(&buffer->token_buf, *iter);
+            if (ret) {
+                return SL_ERR_OUT_OF_MEMORY;
+            }
+            break;
+        }
+    }
+    if (!**iter) {
+        return SL_ERR_INVALID_STR_LITERAL;
+    }
+    chr = 0;
+    ret = DArrayChar_push_back(&buffer->token_buf, &chr);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
+    puts(buffer->token_buf.data);
+    DArrayChar_clear(&buffer->token_buf);
     return SL_ERR_OK;
 }
 
