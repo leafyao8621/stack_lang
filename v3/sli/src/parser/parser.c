@@ -180,9 +180,11 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
             fprintf(
                 fout,
                 "CHAR: %s%c\nHEX: 0x%02hhX\n",
-                iter->data.char_literal >= 32 ?
+                iter->data.char_literal >= 32 &&
+                !(iter->data.char_literal & 0x80) ?
                 "" : "NON_PRINTABLE",
-                iter->data.char_literal >= 32 ?
+                iter->data.char_literal >= 32 &&
+                !(iter->data.char_literal & 0x80) ?
                 iter->data.char_literal :
                 '*',
                 iter->data.char_literal

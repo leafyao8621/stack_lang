@@ -342,6 +342,8 @@ SLErrCode handle_char_literal(
     if (!parser || !buffer || !iter) {
         return SL_ERR_NULL_PTR;
     }
+    int ret = 0;
+    char chr = 0;
     SLToken token;
     token.type = SL_TOKEN_TYPE_CHAR_LITERAL;
     if ((*iter)[1] == '\\') {
@@ -390,6 +392,33 @@ SLErrCode handle_char_literal(
             token.data.char_literal = '\\';
             *iter += 3;
             break;
+        case 'x':
+            ret = DArrayChar_push_back_batch(&buffer->token_buf, "0x", 2);
+            if (ret) {
+                return SL_ERR_OUT_OF_MEMORY;
+            }
+            ret = DArrayChar_push_back_batch(&buffer->token_buf, *iter + 3, 2);
+            if (ret) {
+                return SL_ERR_OUT_OF_MEMORY;
+            }
+            ret = DArrayChar_push_back(&buffer->token_buf, &chr);
+            if (ret) {
+                return SL_ERR_OUT_OF_MEMORY;
+            }
+            if ((*iter)[5] != '\'') {
+                return SL_ERR_INVALID_CHAR_LITERAL;
+            }
+            ret = sscanf(
+                buffer->token_buf.data,
+                "%lx",
+                (uint64_t*)&token.data.char_literal
+            );
+            if (ret == -1) {
+                return SL_ERR_INVALID_CHAR_LITERAL;
+            }
+            DArrayChar_clear(&buffer->token_buf);
+            *iter += 5;
+            break;
         }
     } else {
         if ((*iter)[2] != '\'') {
@@ -401,7 +430,7 @@ SLErrCode handle_char_literal(
         token.data.char_literal = (*iter)[1];
         *iter += 2;
     }
-    int ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
+    ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
     if (ret) {
         return SL_ERR_NULL_PTR;
     }
