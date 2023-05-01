@@ -437,6 +437,16 @@ SLErrCode handle_char_literal(
     return SL_ERR_OK;
 }
 
+SLErrCode handle_str_literal(
+    SLParser *parser,
+    struct SLParserBuffer *buffer,
+    char **iter) {
+    if (!parser || !buffer || !iter) {
+        return SL_ERR_NULL_PTR;
+    }
+    return SL_ERR_OK;
+}
+
 SLErrCode SLParser_parse(SLParser *parser, char *str) {
     if (!parser || !str) {
         return SL_ERR_NULL_PTR;
@@ -475,6 +485,13 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
             break;
         case '\'':
             err = handle_char_literal(parser, &buffer, &iter);
+            if (err) {
+                SLParserBuffer_finalize(&buffer);
+                return err;
+            }
+            break;
+        case '"':
+            err = handle_str_literal(parser, &buffer, &iter);
             if (err) {
                 SLParserBuffer_finalize(&buffer);
                 return err;

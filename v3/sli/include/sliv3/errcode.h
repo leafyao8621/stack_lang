@@ -8,9 +8,10 @@ typedef enum SLErrCode {
     SL_ERR_INVALID_INT_LITERAL,
     SL_ERR_INVALID_FLOAT_LITERAL,
     SL_ERR_INVALID_VARIABLE_NAME,
-    SL_ERR_INVALID_CHAR_LITERAL
+    SL_ERR_INVALID_CHAR_LITERAL,
+    SL_ERR_INVALID_STR_LITERAL
 } SLErrCode;
 
-extern const char *sl_errcode_lookup[7];
+extern const char *sl_errcode_lookup[8];
 
 #endif
