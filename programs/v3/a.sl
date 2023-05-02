@@ -39,3 +39,6 @@ $str_a
 "abcd"
 "bcde"
 "abcd"
+"abc\x20\n\t\"\x80"
+"abc\x20\n\t\"\x90"
+"abc\x20\n\t\"\x80"

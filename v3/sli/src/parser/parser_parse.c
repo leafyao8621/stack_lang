@@ -423,8 +423,8 @@ SLErrCode handle_char_literal(
             }
             ret = sscanf(
                 buffer->token_buf.data,
-                "%lx",
-                (uint64_t*)&token.data.char_literal
+                "%hhx",
+                (uint8_t*)&token.data.char_literal
             );
             if (ret == -1) {
                 return SL_ERR_INVALID_CHAR_LITERAL;
@@ -460,10 +460,64 @@ SLErrCode handle_str_literal(
     int ret = 0;
     char chr = 0;
     for (++(*iter); **iter && **iter != '"'; ++(*iter)) {
+        char hex_buf[5] = {0};
         switch (**iter) {
         case '\n':
             return SL_ERR_INVALID_STR_LITERAL;
         case '\\':
+            switch (*(++(*iter))) {
+            case '"':
+                ret = DArrayChar_push_back(&buffer->token_buf, *iter);
+                if (ret) {
+                    return SL_ERR_OUT_OF_MEMORY;
+                }
+                break;
+            case 't':
+                chr = '\t';
+                ret = DArrayChar_push_back(&buffer->token_buf, &chr);
+                if (ret) {
+                    return SL_ERR_OUT_OF_MEMORY;
+                }
+                break;
+            case 'n':
+                chr = '\n';
+                ret = DArrayChar_push_back(&buffer->token_buf, &chr);
+                if (ret) {
+                    return SL_ERR_OUT_OF_MEMORY;
+                }
+                break;
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                chr = **iter - '0';
+                ret = DArrayChar_push_back(&buffer->token_buf, &chr);
+                if (ret) {
+                    return SL_ERR_OUT_OF_MEMORY;
+                }
+                break;
+            case 'x':
+                memcpy(hex_buf, "0x", 2);
+                memcpy(hex_buf + 2, *iter + 1, 2);
+                ret = sscanf(hex_buf, "%hhx", (uint8_t*)&chr);
+                if (ret == -1) {
+                    return SL_ERR_INVALID_STR_LITERAL;
+                }
+                ret = DArrayChar_push_back(&buffer->token_buf, &chr);
+                if (ret) {
+                    return SL_ERR_OUT_OF_MEMORY;
+                }
+                (*iter) += 2;
+                break;
+            default:
+                return SL_ERR_INVALID_STR_LITERAL;
+            }
             break;
         default:
             ret = DArrayChar_push_back(&buffer->token_buf, *iter);

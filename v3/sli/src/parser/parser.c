@@ -107,7 +107,7 @@ void str_repr_log(char *str, FILE *fout) {
                 fputs("\\t", fout);
                 break;
             default:
-                fprintf(fout, "\\x%02X", *i);
+                fprintf(fout, "\\x%02hhX", *i);
                 break;
             }
         }
@@ -147,7 +147,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
             i
         );
         str_repr_log(iter_str_literals->data, fout);
-        fputs("\"", fout);
+        fputs("\"\n", fout);
     }
     fputs("Global Variables:\n", fout);
     HashMapSLVariableTypeNameIdxNode *iter_global_lookup =
