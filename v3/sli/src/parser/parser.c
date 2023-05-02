@@ -169,6 +169,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         case SL_TOKEN_TYPE_INT_VAR:
         case SL_TOKEN_TYPE_FLOAT_VAR:
         case SL_TOKEN_TYPE_CHAR_VAR:
+        case SL_TOKEN_TYPE_STR_VAR:
             fprintf(
                 fout,
                 "Location: %s\nOffset: %lu\n",

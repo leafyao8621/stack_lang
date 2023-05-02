@@ -19,6 +19,12 @@
 &char_b
 &char_a
 
+$int_a
+$str_a
+$str_b
+$str_a
+
+
 'a'
 '\0'
 '\n'

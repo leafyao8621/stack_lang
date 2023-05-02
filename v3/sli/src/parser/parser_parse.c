@@ -227,6 +227,10 @@ SLErrCode handle_variable(
         vtn.type = SL_TOKEN_TYPE_CHAR_VAR;
         ++(*iter);
         break;
+    case '$':
+        vtn.type = SL_TOKEN_TYPE_STR_VAR;
+        ++(*iter);
+        break;
     }
     int ret = 0;
     for (
@@ -300,6 +304,7 @@ SLErrCode handle_variable(
                 return SL_ERR_OUT_OF_MEMORY;
             }
             *offset = buffer->global_offset;
+            printf("%lu\n", *offset);
             switch (token.type) {
             case SL_TOKEN_TYPE_INT_VAR:
                 buffer->global_offset += 8;
@@ -309,6 +314,9 @@ SLErrCode handle_variable(
                 break;
             case SL_TOKEN_TYPE_CHAR_VAR:
                 buffer->global_offset++;
+                break;
+            case SL_TOKEN_TYPE_STR_VAR:
+                buffer->global_offset += 8;
                 break;
             default:
                 break;
@@ -323,6 +331,9 @@ SLErrCode handle_variable(
             break;
         case SL_TOKEN_TYPE_CHAR_VAR:
             token.data.char_var.idx = *offset;
+            break;
+        case SL_TOKEN_TYPE_STR_VAR:
+            token.data.str_var.idx = *offset;
             break;
         default:
             break;
@@ -503,6 +514,7 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
         case '%':
         case '#':
         case '&':
+        case '$':
             err = handle_variable(parser, &buffer, &iter);
             if (err) {
                 SLParserBuffer_finalize(&buffer);
