@@ -7,7 +7,6 @@ DEF_DARRAY_FUNCTIONS(SLToken)
 DEF_DARRAY_FUNCTIONS(String)
 DEF_DARRAY_FUNCTIONS(SLFunction)
 
-DEF_HASHMAP_FUNCTIONS(String, Idx)
 DEF_HASHMAP_FUNCTIONS(SLVariableTypeName, Idx)
 
 bool eq_sl_variable_type_name(SLVariableTypeName *a, SLVariableTypeName *b);
@@ -18,16 +17,6 @@ SLErrCode SLParser_initialize(SLParser *parser) {
         return SL_ERR_NULL_PTR;
     }
     int ret = DArraySLToken_initialize(&parser->code, 100);
-    if (ret) {
-        return SL_ERR_OUT_OF_MEMORY;
-    }
-    ret =
-        HashMapStringIdx_initialize(
-            &parser->str_literal_lookup,
-            10,
-            containers_eq_dstr,
-            containers_hash_dstr
-        );
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
@@ -75,7 +64,6 @@ SLErrCode SLParser_finalize(SLParser *parser) {
         return SL_ERR_NULL_PTR;
     }
     DArraySLToken_finalize(&parser->code);
-    HashMapStringIdx_finalize(&parser->str_literal_lookup);
     HashMapSLVariableTypeNameIdx_finalize(&parser->function_lookup);
     HashMapSLVariableTypeNameIdxNode *iter_global_lookup =
         parser->global_lookup.data;
@@ -102,6 +90,30 @@ SLErrCode SLParser_finalize(SLParser *parser) {
     return SL_ERR_OK;
 }
 
+void str_repr_log(char *str, FILE *fout) {
+    for (char *i = str; *i; ++i) {
+        if (*i >= 32 && !(*i & 0x80)) {
+            if (*i == '"') {
+                fputs("\\\"", fout);
+            } else {
+                fputc(*i, fout);
+            }
+        } else {
+            switch (*i) {
+            case '\n':
+                fputs("\\n", fout);
+                break;
+            case '\t':
+                fputs("\\t", fout);
+                break;
+            default:
+                fprintf(fout, "\\x%02X", *i);
+                break;
+            }
+        }
+    }
+}
+
 SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
     static const char *location_lookup[3] = {
         "SL_VARIABLE_LOCATION_LOCAL",
@@ -122,6 +134,21 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "SL_TOKEN_TYPE_COMMAND",
         "SL_TOKEN_TYPE_FUNCTION"
     };
+    fputs("String Literals:\n", fout);
+    String *iter_str_literals = parser->str_literals.data;
+    for (
+        size_t i = 0;
+        i < parser->str_literals.size;
+        ++i,
+        ++iter_str_literals) {
+        fprintf(
+            fout,
+            "Idx: %lu\nValue: \"",
+            i
+        );
+        str_repr_log(iter_str_literals->data, fout);
+        fputs("\"", fout);
+    }
     fputs("Global Variables:\n", fout);
     HashMapSLVariableTypeNameIdxNode *iter_global_lookup =
         parser->global_lookup.data;
@@ -167,14 +194,35 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
             );
             break;
         case SL_TOKEN_TYPE_INT_VAR:
-        case SL_TOKEN_TYPE_FLOAT_VAR:
-        case SL_TOKEN_TYPE_CHAR_VAR:
-        case SL_TOKEN_TYPE_STR_VAR:
             fprintf(
                 fout,
                 "Location: %s\nOffset: %lu\n",
                 location_lookup[iter->data.int_var.location],
                 iter->data.int_var.idx
+            );
+            break;
+        case SL_TOKEN_TYPE_FLOAT_VAR:
+            fprintf(
+                fout,
+                "Location: %s\nOffset: %lu\n",
+                location_lookup[iter->data.float_var.location],
+                iter->data.float_var.idx
+            );
+            break;
+        case SL_TOKEN_TYPE_CHAR_VAR:
+            fprintf(
+                fout,
+                "Location: %s\nOffset: %lu\n",
+                location_lookup[iter->data.char_var.location],
+                iter->data.char_var.idx
+            );
+            break;
+        case SL_TOKEN_TYPE_STR_VAR:
+            fprintf(
+                fout,
+                "Location: %s\nOffset: %lu\n",
+                location_lookup[iter->data.str_var.location],
+                iter->data.str_var.idx
             );
             break;
         case SL_TOKEN_TYPE_CHAR_LITERAL:
@@ -189,6 +237,13 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
                 iter->data.char_literal :
                 '*',
                 iter->data.char_literal
+            );
+            break;
+        case SL_TOKEN_TYPE_STR_LITERAL:
+            fprintf(
+                fout,
+                "Offset: %lu\n",
+                iter->data.str_literal
             );
             break;
         default:

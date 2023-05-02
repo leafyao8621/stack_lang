@@ -1,22 +1,25 @@
 #include <stdio.h>
 
+#include <containers/eq.h>
+#include <containers/hash.h>
+
 #include "parser.h"
 
 DEF_DARRAY(Idx)
 
 DEF_DARRAY_FUNCTIONS(Idx)
 
+DEF_HASHMAP(String, Idx)
+DEF_HASHMAP_FUNCTIONS(String, Idx)
+
 struct SLParserBuffer {
     String token_buf;
-    HashMapSLVariableTypeNameIdx str_literal_lookup;
+    HashMapStringIdx str_literal_lookup;
     DArraySLToken *cur_token_buf;
     bool global;
     Idx cur_function, global_offset;
     DArrayIdx parameter_offsets, local_offsets;
 };
-
-bool eq_sl_variable_type_name(SLVariableTypeName *a, SLVariableTypeName *b);
-size_t hash_sl_variable_type_name(SLVariableTypeName *a);
 
 SLErrCode SLParserBuffer_initialize(struct SLParserBuffer *buffer) {
     int ret = DArrayChar_initialize(&buffer->token_buf, 100);
@@ -24,11 +27,11 @@ SLErrCode SLParserBuffer_initialize(struct SLParserBuffer *buffer) {
         return SL_ERR_OUT_OF_MEMORY;
     }
     ret =
-        HashMapSLVariableTypeNameIdx_initialize(
+        HashMapStringIdx_initialize(
             &buffer->str_literal_lookup,
             10,
-            eq_sl_variable_type_name,
-            hash_sl_variable_type_name
+            containers_eq_dstr,
+            containers_hash_dstr
         );
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
@@ -49,7 +52,7 @@ SLErrCode SLParserBuffer_initialize(struct SLParserBuffer *buffer) {
 
 void SLParserBuffer_finalize(struct SLParserBuffer *buffer) {
     DArrayChar_finalize(&buffer->token_buf);
-    HashMapSLVariableTypeNameIdx_finalize(&buffer->str_literal_lookup);
+    HashMapStringIdx_finalize(&buffer->str_literal_lookup);
     DArrayIdx_finalize(&buffer->parameter_offsets);
     DArrayIdx_finalize(&buffer->local_offsets);
 }
@@ -478,8 +481,51 @@ SLErrCode handle_str_literal(
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
-    puts(buffer->token_buf.data);
+    SLToken token;
+    token.type = SL_TOKEN_TYPE_STR_LITERAL;
+    bool found = false;
+    HashMapStringIdx_find(
+        &buffer->str_literal_lookup,
+        &buffer->token_buf,
+        &found
+    );
+    if (!found) {
+        String tmp;
+        ret = DArrayChar_initialize(&tmp, buffer->token_buf.size);
+        if (ret) {
+            return SL_ERR_OUT_OF_MEMORY;
+        }
+        DArrayChar_push_back_batch(
+            &tmp,
+            buffer->token_buf.data,
+            buffer->token_buf.size
+        );
+        Idx *tgt;
+        ret = HashMapStringIdx_fetch(&buffer->str_literal_lookup, &tmp, &tgt);
+        if (ret) {
+            DArrayChar_finalize(&tmp);
+            return SL_ERR_OUT_OF_MEMORY;
+        }
+        *tgt = buffer->str_literal_lookup.size - 1;
+        ret = DArrayString_push_back(&parser->str_literals, &tmp);
+        if (ret) {
+            DArrayChar_finalize(&tmp);
+            return SL_ERR_OUT_OF_MEMORY;
+        }
+        token.data.str_literal = *tgt;
+    } else {
+        Idx *tgt;
+        HashMapStringIdx_fetch(
+            &buffer->str_literal_lookup, &buffer->token_buf,
+            &tgt
+        );
+        token.data.str_literal = *tgt;
+    }
     DArrayChar_clear(&buffer->token_buf);
+    ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
+    if (ret) {
+        return SL_ERR_NULL_PTR;
+    }
     return SL_ERR_OK;
 }
 

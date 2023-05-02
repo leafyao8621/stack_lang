@@ -126,7 +126,6 @@ typedef struct SLVariableTypeName {
     String name;
 } SLVariableTypeName;
 
-DEF_HASHMAP(String, Idx)
 DEF_HASHMAP(SLVariableTypeName, Idx)
 
 typedef struct SLFunction {
@@ -139,7 +138,6 @@ DEF_DARRAY(String)
 DEF_DARRAY(SLFunction)
 
 typedef struct SLParser {
-    HashMapStringIdx str_literal_lookup;
     HashMapSLVariableTypeNameIdx function_lookup, global_lookup;
     DArrayString str_literals;
     DArraySLFunction functions;

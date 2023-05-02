@@ -37,3 +37,5 @@ $str_a
 '\x80'
 
 "abcd"
+"bcde"
+"abcd"
