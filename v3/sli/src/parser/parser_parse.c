@@ -304,7 +304,6 @@ SLErrCode handle_variable(
                 return SL_ERR_OUT_OF_MEMORY;
             }
             *offset = buffer->global_offset;
-            printf("%lu\n", *offset);
             switch (token.type) {
             case SL_TOKEN_TYPE_INT_VAR:
                 buffer->global_offset += 8;
