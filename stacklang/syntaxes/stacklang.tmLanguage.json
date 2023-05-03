@@ -64,7 +64,7 @@
 			"patterns": [
 				{
 					"name": "variable.name",
-					"match": "#[A-Za-z][0-9A-Za-z_]*|@[%#$&@]?[A-Za-z][0-9A-Za-z_]*|\\$[A-Za-z][0-9A-Za-z_]*|%[A-Za-z][0-9A-Za-z_]*|&[A-Za-z][0-9A-Za-z_]*"
+					"match": "#[A-Za-z][0-9A-Za-z_]*|@[%#$&@]+[A-Za-z][0-9A-Za-z_]*|\\$[A-Za-z][0-9A-Za-z_]*|%[A-Za-z][0-9A-Za-z_]*|&[A-Za-z][0-9A-Za-z_]*"
 				}
 			]
 		},

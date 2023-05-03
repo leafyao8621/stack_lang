@@ -134,6 +134,12 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "SL_TOKEN_TYPE_COMMAND",
         "SL_TOKEN_TYPE_FUNCTION"
     };
+    static const char *array_type_lookup[4] = {
+        "SL_ARRAY_TYPE_INT",
+        "SL_ARRAY_TYPE_FLOAT",
+        "SL_ARRAY_TYPE_CHAR",
+        "SL_ARRAY_TYPE_STR"
+    };
     fputs("String Literals:\n", fout);
     String *iter_str_literals = parser->str_literals.data;
     for (
@@ -223,6 +229,16 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
                 "Location: %s\nOffset: %lu\n",
                 location_lookup[iter->data.str_var.location],
                 iter->data.str_var.idx
+            );
+            break;
+        case SL_TOKEN_TYPE_ARR:
+            fprintf(
+                fout,
+                "Location: %s\nOffset: %lu\nDim: %lu\nType: %s\n",
+                location_lookup[iter->data.arr.var_data.location],
+                iter->data.arr.var_data.idx,
+                iter->data.arr.dim,
+                array_type_lookup[iter->data.arr.type]
             );
             break;
         case SL_TOKEN_TYPE_CHAR_LITERAL:

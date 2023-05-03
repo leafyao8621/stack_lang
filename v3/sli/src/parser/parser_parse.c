@@ -214,6 +214,8 @@ SLErrCode handle_variable(
     struct SLParserBuffer *buffer,
     char **iter) {
     SLVariableTypeName vtn;
+    Idx dim;
+    SLArrayType array_type;
     if (!parser || !buffer || !iter) {
         return SL_ERR_NULL_PTR;
     }
@@ -232,6 +234,27 @@ SLErrCode handle_variable(
         break;
     case '$':
         vtn.type = SL_TOKEN_TYPE_STR_VAR;
+        ++(*iter);
+        break;
+    case '@':
+        vtn.type = SL_TOKEN_TYPE_ARR;
+        for (dim = 0; **iter && **iter == '@'; ++dim, ++(*iter));
+        switch (**iter) {
+        case '%':
+            array_type = SL_ARRAY_TYPE_INT;
+            break;
+        case '#':
+            array_type = SL_ARRAY_TYPE_FLOAT;
+            break;
+        case '&':
+            array_type = SL_ARRAY_TYPE_CHAR;
+            break;
+        case '$':
+            array_type = SL_ARRAY_TYPE_STR;
+            break;
+        default:
+            return SL_ERR_INVALID_VARIABLE_NAME;
+        }
         ++(*iter);
         break;
     }
@@ -287,7 +310,6 @@ SLErrCode handle_variable(
     bool found = false;
     Idx *offset = 0;
     if (buffer->global) {
-        token.data.int_var.location = SL_VARIABLE_LOCATION_GLOBAL;
         HashMapSLVariableTypeNameIdx_find(&parser->global_lookup, &vtn, &found);
         if (found) {
             HashMapSLVariableTypeNameIdx_fetch(
@@ -320,22 +342,35 @@ SLErrCode handle_variable(
             case SL_TOKEN_TYPE_STR_VAR:
                 buffer->global_offset += 8;
                 break;
+            case SL_TOKEN_TYPE_ARR:
+                buffer->global_offset += 8;
+                break;
             default:
                 break;
             }
         }
         switch (token.type) {
         case SL_TOKEN_TYPE_INT_VAR:
+            token.data.int_var.location = SL_VARIABLE_LOCATION_GLOBAL;
             token.data.int_var.idx = *offset;
             break;
         case SL_TOKEN_TYPE_FLOAT_VAR:
+            token.data.float_var.location = SL_VARIABLE_LOCATION_GLOBAL;
             token.data.float_var.idx = *offset;
             break;
         case SL_TOKEN_TYPE_CHAR_VAR:
+            token.data.char_var.location = SL_VARIABLE_LOCATION_GLOBAL;
             token.data.char_var.idx = *offset;
             break;
         case SL_TOKEN_TYPE_STR_VAR:
+            token.data.str_var.location = SL_VARIABLE_LOCATION_GLOBAL;
             token.data.str_var.idx = *offset;
+            break;
+        case SL_TOKEN_TYPE_ARR:
+            token.data.arr.var_data.location = SL_VARIABLE_LOCATION_GLOBAL;
+            token.data.arr.var_data.idx = *offset;
+            token.data.arr.dim = dim;
+            token.data.arr.type = array_type;
             break;
         default:
             break;
@@ -614,6 +649,7 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
         case '#':
         case '&':
         case '$':
+        case '@':
             err = handle_variable(parser, &buffer, &iter);
             if (err) {
                 SLParserBuffer_finalize(&buffer);

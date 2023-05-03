@@ -24,6 +24,11 @@ $str_a
 $str_b
 $str_a
 
+@@%int_a
+@@#arr_float_a
+@@$arr_str_a
+@@#arr_float_a
+@@&arr_char_a
 
 'a'
 '\0'
