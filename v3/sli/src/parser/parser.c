@@ -140,6 +140,37 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "SL_ARRAY_TYPE_CHAR",
         "SL_ARRAY_TYPE_STR"
     };
+    static const char *operator_lookup[23] = {
+        "+",
+        "-",
+        "*",
+        "/",
+        "%%",
+        "<<",
+        ">>",
+        ">>>",
+        "~",
+        "&",
+        "|",
+        "^",
+        "!",
+        "&&",
+        "||",
+        "==",
+        "!=",
+        "<",
+        ">",
+        "<=",
+        ">=",
+        "=",
+        "++",
+        "--",
+        "+=",
+        "-=",
+        "*=",
+        "/=",
+        "[]"
+    };
     fputs("String Literals:\n", fout);
     String *iter_str_literals = parser->str_literals.data;
     for (
@@ -262,6 +293,12 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
                 iter->data.str_literal
             );
             break;
+        case SL_TOKEN_TYPE_OPERATOR:
+            fprintf(
+                fout,
+                "Operator: %s\n",
+                operator_lookup[iter->data.operator]
+            );
         default:
             break;
         }

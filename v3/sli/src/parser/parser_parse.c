@@ -19,6 +19,7 @@ struct SLParserBuffer {
     bool global;
     Idx cur_function, global_offset;
     DArrayIdx parameter_offsets, local_offsets;
+    DArraySLToken operation_stack;
 };
 
 SLErrCode SLParserBuffer_initialize(struct SLParserBuffer *buffer) {
@@ -47,6 +48,10 @@ SLErrCode SLParserBuffer_initialize(struct SLParserBuffer *buffer) {
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
+    ret = DArraySLToken_initialize(&buffer->operation_stack, 10);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
     return SL_ERR_OK;
 }
 
@@ -55,6 +60,7 @@ void SLParserBuffer_finalize(struct SLParserBuffer *buffer) {
     HashMapStringIdx_finalize(&buffer->str_literal_lookup);
     DArrayIdx_finalize(&buffer->parameter_offsets);
     DArrayIdx_finalize(&buffer->local_offsets);
+    DArraySLToken_finalize(&buffer->operation_stack);
 }
 
 SLErrCode handle_number_literal(
@@ -204,7 +210,11 @@ SLErrCode handle_number_literal(
     }
     ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
     if (ret) {
-        return SL_ERR_NULL_PTR;
+        return SL_ERR_OUT_OF_MEMORY;
+    }
+    ret = DArraySLToken_push_back(&buffer->operation_stack, &token);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
     }
     return SL_ERR_OK;
 }
@@ -378,7 +388,11 @@ SLErrCode handle_variable(
     }
     ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
     if (ret) {
-        return SL_ERR_NULL_PTR;
+        return SL_ERR_OUT_OF_MEMORY;
+    }
+    ret = DArraySLToken_push_back(&buffer->operation_stack, &token);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
     }
     return SL_ERR_OK;
 }
@@ -480,7 +494,11 @@ SLErrCode handle_char_literal(
     }
     ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
     if (ret) {
-        return SL_ERR_NULL_PTR;
+        return SL_ERR_OUT_OF_MEMORY;
+    }
+    ret = DArraySLToken_push_back(&buffer->operation_stack, &token);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
     }
     return SL_ERR_OK;
 }
@@ -613,6 +631,110 @@ SLErrCode handle_str_literal(
     DArrayChar_clear(&buffer->token_buf);
     ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
     if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
+    ret = DArraySLToken_push_back(&buffer->operation_stack, &token);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
+    return SL_ERR_OK;
+}
+
+SLErrCode handle_operator(
+    SLParser *parser,
+    struct SLParserBuffer *buffer,
+    char **iter) {
+    if (!parser || !buffer || !iter) {
+        return SL_ERR_NULL_PTR;
+    }
+    int ret = 0;
+    SLErrCode err = SL_ERR_OK;
+    SLToken token, token_res;
+    token.type = SL_TOKEN_TYPE_OPERATOR;
+    switch (**iter) {
+    case '%':
+        if (
+            ((*iter)[1] >= 'A' && (*iter)[1] <= 'Z') ||
+            ((*iter)[1] >= 'a' && (*iter)[1] <= 'z')) {
+            err = handle_variable(parser, buffer, iter);
+            return err;
+        }
+        token.data.operator = SL_OPERATOR_TYPE_MODULO;
+        break;
+    case '&':
+        if (
+            ((*iter)[1] >= 'A' && (*iter)[1] <= 'Z') ||
+            ((*iter)[1] >= 'a' && (*iter)[1] <= 'z')) {
+            err = handle_variable(parser, buffer, iter);
+            return err;
+        }
+        switch ((*iter)[1]) {
+        case ' ':
+        case '\t':
+        case '\n':
+        case '\0':
+            token.data.operator = SL_OPERATOR_TYPE_BAND;
+            break;
+        case '&':
+            token.data.operator = SL_OPERATOR_TYPE_LAND;
+            ++(*iter);
+            break;
+        default:
+            return SL_ERR_INVALID_OPERATOR;
+        }
+        ret = DArraySLToken_pop_back(&buffer->operation_stack);
+        if (ret) {
+            return SL_ERR_MISSING_OPERAND;
+        }
+        ret = DArraySLToken_pop_back(&buffer->operation_stack);
+        if (ret) {
+            return SL_ERR_MISSING_OPERAND;
+        }
+        switch (
+            buffer
+                ->operation_stack
+                .data[buffer->operation_stack.size]
+                .type) {
+        case SL_TOKEN_TYPE_INT_LITERAL:
+        case SL_TOKEN_TYPE_INT_VAR:
+            switch (
+                buffer
+                    ->operation_stack
+                    .data[buffer->operation_stack.size + 1]
+                    .type) {
+            case SL_TOKEN_TYPE_INT_LITERAL:
+            case SL_TOKEN_TYPE_INT_VAR:
+                token_res.type = SL_TOKEN_TYPE_INT_LITERAL;
+                ret =
+                    DArraySLToken_push_back(
+                        &buffer->operation_stack,
+                        &token_res
+                    );
+                if (ret) {
+                    return SL_ERR_OUT_OF_MEMORY;
+                }
+                break;
+            default:
+                return SL_ERR_TYPE_MISMATCH;
+            }
+            break;
+        default:
+            return SL_ERR_TYPE_MISMATCH;
+        }
+        break;
+    case '-':
+        if ((*iter)[1] >= '0' && (*iter)[1] <= '9') {
+            ret = DArrayChar_push_back(&buffer->token_buf, *iter);
+            if (ret) {
+                return SL_ERR_OUT_OF_MEMORY;
+            }
+            ++(*iter);
+            err = handle_number_literal(parser, buffer, iter);
+            return err;
+        }
+    }
+    ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
+    if (ret) {
         return SL_ERR_NULL_PTR;
     }
     return SL_ERR_OK;
@@ -645,9 +767,7 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
                 return err;
             }
             break;
-        case '%':
         case '#':
-        case '&':
         case '$':
         case '@':
             err = handle_variable(parser, &buffer, &iter);
@@ -665,6 +785,25 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
             break;
         case '"':
             err = handle_str_literal(parser, &buffer, &iter);
+            if (err) {
+                SLParserBuffer_finalize(&buffer);
+                return err;
+            }
+            break;
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '%':
+        case '<':
+        case '>':
+        case '!':
+        case '&':
+        case '|':
+        case '^':
+        case '~':
+        case '=':
+            err = handle_operator(parser, &buffer, &iter);
             if (err) {
                 SLParserBuffer_finalize(&buffer);
                 return err;
