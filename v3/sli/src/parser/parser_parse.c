@@ -718,6 +718,29 @@ SLErrCode handle_operator(
                 return SL_ERR_TYPE_MISMATCH;
             }
             break;
+        case SL_TOKEN_TYPE_CHAR_LITERAL:
+        case SL_TOKEN_TYPE_CHAR_VAR:
+            switch (
+                buffer
+                    ->operation_stack
+                    .data[buffer->operation_stack.size + 1]
+                    .type) {
+            case SL_TOKEN_TYPE_CHAR_LITERAL:
+            case SL_TOKEN_TYPE_CHAR_VAR:
+                token_res.type = SL_TOKEN_TYPE_CHAR_LITERAL;
+                ret =
+                    DArraySLToken_push_back(
+                        &buffer->operation_stack,
+                        &token_res
+                    );
+                if (ret) {
+                    return SL_ERR_OUT_OF_MEMORY;
+                }
+                break;
+            default:
+                return SL_ERR_TYPE_MISMATCH;
+            }
+            break;
         default:
             return SL_ERR_TYPE_MISMATCH;
         }
@@ -825,6 +848,29 @@ SLErrCode handle_operator(
                     return SL_ERR_TYPE_MISMATCH;
                 }
                 break;
+            case SL_TOKEN_TYPE_CHAR_LITERAL:
+            case SL_TOKEN_TYPE_CHAR_VAR:
+                switch (
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size + 1]
+                        .type) {
+                case SL_TOKEN_TYPE_CHAR_LITERAL:
+                case SL_TOKEN_TYPE_CHAR_VAR:
+                    token_res.type = SL_TOKEN_TYPE_CHAR_LITERAL;
+                    ret =
+                        DArraySLToken_push_back(
+                            &buffer->operation_stack,
+                            &token_res
+                        );
+                    if (ret) {
+                        return SL_ERR_OUT_OF_MEMORY;
+                    }
+                    break;
+                default:
+                    return SL_ERR_TYPE_MISMATCH;
+                }
+                break;
             default:
                 return SL_ERR_TYPE_MISMATCH;
             }
@@ -840,6 +886,7 @@ SLErrCode handle_operator(
                     .data[buffer->operation_stack.size]
                     .type) {
             case SL_TOKEN_TYPE_INT_VAR:
+            case SL_TOKEN_TYPE_CHAR_VAR:
                 break;
             default:
                 return SL_ERR_TYPE_MISMATCH;
@@ -870,6 +917,19 @@ SLErrCode handle_operator(
                 case SL_TOKEN_TYPE_INT_VAR:
                 case SL_TOKEN_TYPE_FLOAT_LITERAL:
                 case SL_TOKEN_TYPE_FLOAT_VAR:
+                    break;
+                default:
+                    return SL_ERR_TYPE_MISMATCH;
+                }
+                break;
+            case SL_TOKEN_TYPE_CHAR_VAR:
+                switch (
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size + 1]
+                        .type) {
+                case SL_TOKEN_TYPE_CHAR_LITERAL:
+                case SL_TOKEN_TYPE_CHAR_VAR:
                     break;
                 default:
                     return SL_ERR_TYPE_MISMATCH;
