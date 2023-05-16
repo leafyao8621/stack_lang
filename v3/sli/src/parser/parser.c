@@ -145,7 +145,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "-",
         "*",
         "/",
-        "%%",
+        "%",
         "<<",
         ">>",
         ">>>",

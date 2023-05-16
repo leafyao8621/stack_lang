@@ -5,8 +5,6 @@
 
 #include "parser.h"
 
-
-
 DEF_DARRAY_FUNCTIONS(Idx)
 
 DEF_HASHMAP_FUNCTIONS(String, Idx)
