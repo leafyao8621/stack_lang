@@ -156,4 +156,18 @@ SLErrCode SLParser_clear_code(SLParser *parser);
 SLErrCode SLParser_finalize(SLParser *parser);
 SLErrCode SLParser_log(SLParser *parser, FILE *fout);
 
+DEF_DARRAY(Idx)
+
+DEF_HASHMAP(String, Idx)
+
+struct SLParserBuffer {
+    String token_buf;
+    HashMapStringIdx str_literal_lookup;
+    DArraySLToken *cur_token_buf;
+    bool global;
+    Idx cur_function, global_offset;
+    DArrayIdx parameter_offsets, local_offsets;
+    DArraySLToken operation_stack;
+};
+
 #endif
