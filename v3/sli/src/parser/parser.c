@@ -140,7 +140,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "SL_ARRAY_TYPE_CHAR",
         "SL_ARRAY_TYPE_STR"
     };
-    static const char *operator_lookup[29] = {
+    static const char *operator_lookup[32] = {
         "+",
         "-",
         "*",
@@ -169,6 +169,9 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "-=",
         "*=",
         "/=",
+        "<<=",
+        ">>=",
+        ">>>=",
         "[]"
     };
     fputs("String Literals:\n", fout);
