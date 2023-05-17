@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -Werror
-SRC = $(wildcard src/parser/*.c) $(wildcard src/parser/*/*.c) $(wildcard src/util/*.c) $(wildcard src/interpreter/*/*.c)
+SRC = $(wildcard src/parser/*.c) $(wildcard src/parser/*/*.c) $(wildcard src/parser/*/*/*.c) $(wildcard src/util/*.c) $(wildcard src/interpreter/*/*.c)
 OBJ = $(SRC:.c=.o)
 LIB = lib/libsliv3.so
 BIN = sli
