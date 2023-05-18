@@ -61,6 +61,11 @@ SLErrCode handle_operator_gt(
     char **iter,
     SLToken *token);
 
+SLErrCode handle_operator_tilde(
+    struct SLParserBuffer *buffer,
+    char **iter,
+    SLToken *token);
+
 SLErrCode handle_operator(
     SLParser *parser,
     struct SLParserBuffer *buffer,
@@ -163,6 +168,17 @@ SLErrCode handle_operator(
     case '>':
         err =
             handle_operator_gt(
+                buffer,
+                iter,
+                &token
+            );
+        if (ret) {
+            return err;
+        }
+        break;
+    case '~':
+        err =
+            handle_operator_tilde(
                 buffer,
                 iter,
                 &token

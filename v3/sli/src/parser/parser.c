@@ -301,7 +301,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
             fprintf(
                 fout,
                 "Operator: %s\n",
-                operator_lookup[iter->data.operator]
+                operator_lookup[iter->data.operator_type]
             );
         default:
             break;

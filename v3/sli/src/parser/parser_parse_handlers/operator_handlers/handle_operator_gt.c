@@ -18,11 +18,11 @@ SLErrCode handle_operator_gt(
         case '\t':
         case '\n':
         case '\0':
-            token->data.operator = SL_OPERATOR_TYPE_RSHIFT;
+            token->data.operator_type = SL_OPERATOR_TYPE_RSHIFT;
             ++(*iter);
             break;
         case '=':
-            token->data.operator = SL_OPERATOR_TYPE_RSHIFT_ASSIGN;
+            token->data.operator_type = SL_OPERATOR_TYPE_RSHIFT_ASSIGN;
             *iter += 2;
             break;
         case '>':
@@ -31,11 +31,11 @@ SLErrCode handle_operator_gt(
             case '\t':
             case '\n':
             case '\0':
-                token->data.operator = SL_OPERATOR_TYPE_RLSHIFT;
+                token->data.operator_type = SL_OPERATOR_TYPE_RLSHIFT;
                 *iter += 2;
                 break;
             case '=':
-                token->data.operator = SL_OPERATOR_TYPE_RLSHIFT_ASSIGN;
+                token->data.operator_type = SL_OPERATOR_TYPE_RLSHIFT_ASSIGN;
                 *iter += 3;
                 break;
             default:
@@ -49,7 +49,7 @@ SLErrCode handle_operator_gt(
     default:
         return SL_ERR_INVALID_OPERATOR;
     }
-    switch (token->data.operator) {
+    switch (token->data.operator_type) {
     case SL_OPERATOR_TYPE_RSHIFT:
     case SL_OPERATOR_TYPE_RLSHIFT:
         ret = DArraySLToken_pop_back(&buffer->operation_stack);

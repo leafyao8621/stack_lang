@@ -31,14 +31,14 @@ SLErrCode handle_operator_ampersand(
     case '\t':
     case '\n':
     case '\0':
-        token->data.operator = SL_OPERATOR_TYPE_BAND;
+        token->data.operator_type = SL_OPERATOR_TYPE_BAND;
         break;
     case '&':
-        token->data.operator = SL_OPERATOR_TYPE_LAND;
+        token->data.operator_type = SL_OPERATOR_TYPE_LAND;
         ++(*iter);
         break;
     case '=':
-        token->data.operator = SL_OPERATOR_TYPE_BAND_ASSIGN;
+        token->data.operator_type = SL_OPERATOR_TYPE_BAND_ASSIGN;
         ++(*iter);
         break;
     default:
@@ -52,7 +52,7 @@ SLErrCode handle_operator_ampersand(
     if (ret) {
         return SL_ERR_MISSING_OPERAND;
     }
-    switch (token->data.operator) {
+    switch (token->data.operator_type) {
     case SL_OPERATOR_TYPE_BAND:
     case SL_OPERATOR_TYPE_LAND:
         switch (

@@ -16,20 +16,20 @@ SLErrCode handle_operator_plus(
     case '\t':
     case '\n':
     case '\0':
-        token->data.operator = SL_OPERATOR_TYPE_ADD;
+        token->data.operator_type = SL_OPERATOR_TYPE_ADD;
         break;
     case '+':
-        token->data.operator = SL_OPERATOR_TYPE_INC;
+        token->data.operator_type = SL_OPERATOR_TYPE_INC;
         ++(*iter);
         break;
     case '=':
-        token->data.operator = SL_OPERATOR_TYPE_ADD_ASSIGN;
+        token->data.operator_type = SL_OPERATOR_TYPE_ADD_ASSIGN;
         ++(*iter);
         break;
     default:
         return SL_ERR_INVALID_OPERATOR;
     }
-    switch (token->data.operator) {
+    switch (token->data.operator_type) {
     case SL_OPERATOR_TYPE_ADD:
         ret = DArraySLToken_pop_back(&buffer->operation_stack);
         if (ret) {

@@ -120,7 +120,7 @@ struct SLToken {
             Idx dim;
             SLArrayType type;
         } arr;
-        SLOperatorType operator;
+        SLOperatorType operator_type;
         struct {
             SLCommandType type;
             SLToken *tgt;

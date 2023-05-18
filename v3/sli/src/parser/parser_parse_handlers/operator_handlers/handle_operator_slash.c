@@ -16,16 +16,16 @@ SLErrCode handle_operator_slash(
     case '\t':
     case '\n':
     case '\0':
-        token->data.operator = SL_OPERATOR_TYPE_DIVIDE;
+        token->data.operator_type = SL_OPERATOR_TYPE_DIVIDE;
         break;
     case '=':
-        token->data.operator = SL_OPERATOR_TYPE_DIVIDE_ASSIGN;
+        token->data.operator_type = SL_OPERATOR_TYPE_DIVIDE_ASSIGN;
         ++(*iter);
         break;
     default:
         return SL_ERR_INVALID_OPERATOR;
     }
-    switch (token->data.operator) {
+    switch (token->data.operator_type) {
     case SL_OPERATOR_TYPE_DIVIDE:
         ret = DArraySLToken_pop_back(&buffer->operation_stack);
         if (ret) {

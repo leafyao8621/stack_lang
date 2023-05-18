@@ -34,20 +34,20 @@ SLErrCode handle_operator_dash(
     case '\t':
     case '\n':
     case '\0':
-        token->data.operator = SL_OPERATOR_TYPE_SUBTRACT;
+        token->data.operator_type = SL_OPERATOR_TYPE_SUBTRACT;
         break;
     case '-':
-        token->data.operator = SL_OPERATOR_TYPE_DEC;
+        token->data.operator_type = SL_OPERATOR_TYPE_DEC;
         ++(*iter);
         break;
     case '=':
-        token->data.operator = SL_OPERATOR_TYPE_SUBTRACT_ASSIGN;
+        token->data.operator_type = SL_OPERATOR_TYPE_SUBTRACT_ASSIGN;
         ++(*iter);
         break;
     default:
         return SL_ERR_INVALID_OPERATOR;
     }
-    switch (token->data.operator) {
+    switch (token->data.operator_type) {
     case SL_OPERATOR_TYPE_SUBTRACT:
         ret = DArraySLToken_pop_back(&buffer->operation_stack);
         if (ret) {

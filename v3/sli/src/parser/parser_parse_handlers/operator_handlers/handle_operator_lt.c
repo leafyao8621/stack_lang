@@ -18,11 +18,11 @@ SLErrCode handle_operator_lt(
         case '\t':
         case '\n':
         case '\0':
-            token->data.operator = SL_OPERATOR_TYPE_LSHIFT;
+            token->data.operator_type = SL_OPERATOR_TYPE_LSHIFT;
             ++(*iter);
             break;
         case '=':
-            token->data.operator = SL_OPERATOR_TYPE_LSHIFT_ASSIGN;
+            token->data.operator_type = SL_OPERATOR_TYPE_LSHIFT_ASSIGN;
             *iter += 2;
             break;
         default:
@@ -32,7 +32,7 @@ SLErrCode handle_operator_lt(
     default:
         return SL_ERR_INVALID_OPERATOR;
     }
-    switch (token->data.operator) {
+    switch (token->data.operator_type) {
     case SL_OPERATOR_TYPE_LSHIFT:
         ret = DArraySLToken_pop_back(&buffer->operation_stack);
         if (ret) {

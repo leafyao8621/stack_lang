@@ -31,12 +31,12 @@ SLErrCode handle_operator_percent(
     case '\t':
     case '\n':
     case '\0':
-        token->data.operator = SL_OPERATOR_TYPE_MODULO;
+        token->data.operator_type = SL_OPERATOR_TYPE_MODULO;
         break;
     default:
         return SL_ERR_INVALID_OPERATOR;
     }
-    switch (token->data.operator) {
+    switch (token->data.operator_type) {
     case SL_OPERATOR_TYPE_MODULO:
         ret = DArraySLToken_pop_back(&buffer->operation_stack);
         if (ret) {
