@@ -66,6 +66,13 @@ SLErrCode handle_operator_tilde(
     char **iter,
     SLToken *token);
 
+SLErrCode handle_operator_bang(
+    SLParser *parser,
+    struct SLParserBuffer *buffer,
+    char **iter,
+    SLToken *token,
+    bool *early_exit);
+
 SLErrCode handle_operator(
     SLParser *parser,
     struct SLParserBuffer *buffer,
@@ -185,6 +192,22 @@ SLErrCode handle_operator(
             );
         if (ret) {
             return err;
+        }
+        break;
+    case '!':
+        err =
+            handle_operator_bang(
+                parser,
+                buffer,
+                iter,
+                &token,
+                &early_exit
+            );
+        if (ret) {
+            return err;
+        }
+        if (early_exit) {
+            return SL_ERR_OK;
         }
         break;
     }
