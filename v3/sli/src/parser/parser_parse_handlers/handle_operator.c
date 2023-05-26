@@ -73,6 +73,11 @@ SLErrCode handle_operator_bang(
     SLToken *token,
     bool *early_exit);
 
+SLErrCode handle_operator_eq(
+    struct SLParserBuffer *buffer,
+    char **iter,
+    SLToken *token);
+
 SLErrCode handle_operator(
     SLParser *parser,
     struct SLParserBuffer *buffer,
@@ -89,7 +94,7 @@ SLErrCode handle_operator(
     case '%':
         err =
             handle_operator_percent(parser, buffer, iter, &token, &early_exit);
-        if (ret) {
+        if (err) {
             return err;
         }
         if (early_exit) {
@@ -105,7 +110,7 @@ SLErrCode handle_operator(
                 &token,
                 &early_exit
             );
-        if (ret) {
+        if (err) {
             return err;
         }
         if (early_exit) {
@@ -121,7 +126,7 @@ SLErrCode handle_operator(
                 &token,
                 &early_exit
             );
-        if (ret) {
+        if (err) {
             return err;
         }
         if (early_exit) {
@@ -135,7 +140,7 @@ SLErrCode handle_operator(
                 iter,
                 &token
             );
-        if (ret) {
+        if (err) {
             return err;
         }
         break;
@@ -146,7 +151,7 @@ SLErrCode handle_operator(
                 iter,
                 &token
             );
-        if (ret) {
+        if (err) {
             return err;
         }
         break;
@@ -157,7 +162,7 @@ SLErrCode handle_operator(
                 iter,
                 &token
             );
-        if (ret) {
+        if (err) {
             return err;
         }
         break;
@@ -168,7 +173,7 @@ SLErrCode handle_operator(
                 iter,
                 &token
             );
-        if (ret) {
+        if (err) {
             return err;
         }
         break;
@@ -179,7 +184,7 @@ SLErrCode handle_operator(
                 iter,
                 &token
             );
-        if (ret) {
+        if (err) {
             return err;
         }
         break;
@@ -190,7 +195,7 @@ SLErrCode handle_operator(
                 iter,
                 &token
             );
-        if (ret) {
+        if (err) {
             return err;
         }
         break;
@@ -203,11 +208,22 @@ SLErrCode handle_operator(
                 &token,
                 &early_exit
             );
-        if (ret) {
+        if (err) {
             return err;
         }
         if (early_exit) {
             return SL_ERR_OK;
+        }
+        break;
+    case '=':
+        err =
+            handle_operator_eq(
+                buffer,
+                iter,
+                &token
+            );
+        if (err) {
+            return err;
         }
         break;
     }
