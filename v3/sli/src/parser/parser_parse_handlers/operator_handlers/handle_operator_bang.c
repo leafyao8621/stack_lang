@@ -84,10 +84,6 @@ SLErrCode handle_operator_bang(
         if (ret) {
             return SL_ERR_MISSING_OPERAND;
         }
-        ret = DArraySLToken_pop_back(&buffer->operation_stack);
-        if (ret) {
-            return SL_ERR_MISSING_OPERAND;
-        }
         switch (
             buffer
                 ->operation_stack
