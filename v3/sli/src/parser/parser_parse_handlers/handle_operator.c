@@ -78,6 +78,11 @@ SLErrCode handle_operator_eq(
     char **iter,
     SLToken *token);
 
+SLErrCode handle_operator_bracket(
+    struct SLParserBuffer *buffer,
+    char **iter,
+    SLToken *token);
+
 SLErrCode handle_operator(
     SLParser *parser,
     struct SLParserBuffer *buffer,
@@ -226,6 +231,16 @@ SLErrCode handle_operator(
             return err;
         }
         break;
+    case '[':
+        err =
+            handle_operator_bracket(
+                buffer,
+                iter,
+                &token
+            );
+        if (err) {
+            return err;
+        }
     }
     ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
     if (ret) {

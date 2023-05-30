@@ -138,6 +138,7 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
         case '^':
         case '~':
         case '=':
+        case '[':
             err = handle_operator(parser, &buffer, &iter);
             if (err) {
                 SLParserBuffer_finalize(&buffer);

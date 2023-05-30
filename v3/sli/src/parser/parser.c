@@ -134,12 +134,6 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "SL_TOKEN_TYPE_COMMAND",
         "SL_TOKEN_TYPE_FUNCTION"
     };
-    static const char *array_type_lookup[4] = {
-        "SL_ARRAY_TYPE_INT",
-        "SL_ARRAY_TYPE_FLOAT",
-        "SL_ARRAY_TYPE_CHAR",
-        "SL_ARRAY_TYPE_STR"
-    };
     static const char *operator_lookup[35] = {
         "+",
         "-",
@@ -275,7 +269,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
                 location_lookup[iter->data.arr.var_data.location],
                 iter->data.arr.var_data.idx,
                 iter->data.arr.dim,
-                array_type_lookup[iter->data.arr.type]
+                type_lookup[iter->data.arr.type]
             );
             break;
         case SL_TOKEN_TYPE_CHAR_LITERAL:

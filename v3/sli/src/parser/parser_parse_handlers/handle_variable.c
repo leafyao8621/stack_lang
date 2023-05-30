@@ -11,7 +11,7 @@ SLErrCode handle_variable(
     char **iter) {
     SLVariableTypeName vtn;
     Idx dim;
-    SLArrayType array_type;
+    SLTokenType array_type;
     if (!parser || !buffer || !iter) {
         return SL_ERR_NULL_PTR;
     }
@@ -37,16 +37,16 @@ SLErrCode handle_variable(
         for (dim = 0; **iter && **iter == '@'; ++dim, ++(*iter));
         switch (**iter) {
         case '%':
-            array_type = SL_ARRAY_TYPE_INT;
+            array_type = SL_TOKEN_TYPE_INT_VAR;
             break;
         case '#':
-            array_type = SL_ARRAY_TYPE_FLOAT;
+            array_type = SL_TOKEN_TYPE_FLOAT_VAR;
             break;
         case '&':
-            array_type = SL_ARRAY_TYPE_CHAR;
+            array_type = SL_TOKEN_TYPE_CHAR_VAR;
             break;
         case '$':
-            array_type = SL_ARRAY_TYPE_STR;
+            array_type = SL_TOKEN_TYPE_STR_VAR;
             break;
         default:
             return SL_ERR_INVALID_VARIABLE_NAME;
