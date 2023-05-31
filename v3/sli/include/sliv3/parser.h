@@ -145,6 +145,7 @@ DEF_DARRAY(SLFunction)
 
 typedef struct SLParser {
     HashMapSLVariableTypeNameIdx function_lookup, global_lookup;
+    size_t global_size;
     DArrayString str_literals;
     DArraySLFunction functions;
     DArraySLToken code;

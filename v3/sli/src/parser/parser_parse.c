@@ -159,6 +159,7 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
             break;
         }
     }
+    parser->global_size = buffer.global_offset;
     SLParserBuffer_finalize(&buffer);
     return SL_ERR_OK;
 }

@@ -1,4 +1,4 @@
-#include <sliv3/parser.h>
+#include <sliv3/core.h>
 
 #include <containers/dstring.h>
 
@@ -19,12 +19,12 @@ int main(void) {
     String buf;
     DArrayChar_initialize(&buf, 1000);
     read_file("../../programs/v3/a.sl", &buf);
-    SLParser parser;
-    SLParser_initialize(&parser);
-    SLErrCode ret = SLParser_parse(&parser, buf.data);
+    SLInterpreter interpreter;
+    SLInterpreter_initialize(&interpreter);
+    SLErrCode ret = SLInterpreter_parse(&interpreter, buf.data);
     printf("RET: %d\nMSG: %s\n", ret, sl_errcode_lookup[ret]);
-    SLParser_log(&parser, stdout);
-    SLParser_finalize(&parser);
+    SLParser_log(&interpreter.parser, stdout);
+    SLParser_finalize(&interpreter.parser);
     DArrayChar_finalize(&buf);
     return 0;
 }
