@@ -75,6 +75,11 @@ SLErrCode handle_operator(
     struct SLParserBuffer *buffer,
     char **iter);
 
+SLErrCode handle_command(
+    SLParser *parser,
+    struct SLParserBuffer *buffer,
+    char **iter);
+
 SLErrCode SLParser_parse(SLParser *parser, char *str) {
     if (!parser || !str) {
         return SL_ERR_NULL_PTR;
@@ -140,6 +145,13 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
         case '=':
         case '[':
             err = handle_operator(parser, &buffer, &iter);
+            if (err) {
+                SLParserBuffer_finalize(&buffer);
+                return err;
+            }
+            break;
+        case '_':
+            err = handle_command(parser, &buffer, &iter);
             if (err) {
                 SLParserBuffer_finalize(&buffer);
                 return err;
