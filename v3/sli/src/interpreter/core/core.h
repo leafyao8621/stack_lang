@@ -12,6 +12,6 @@ typedef struct SLInterpreter {
 SLErrCode SLInterpreter_initialize(SLInterpreter *interpreter);
 SLErrCode SLInterpreter_parse(SLInterpreter *interpreter, char *str);
 SLErrCode SLInterpreter_run(SLInterpreter *interpreter);
-SLErrCode SLInterpreter_finalize(SLInterpreter *intepreter)
+SLErrCode SLInterpreter_finalize(SLInterpreter *intepreter);
 
 #endif
