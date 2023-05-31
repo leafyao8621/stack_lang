@@ -13,6 +13,5 @@ SLErrCode runtime_handle_str_literal(SLInterpreter *interpreter) {
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
-    ++interpreter->current;
     return SL_ERR_OK;
 }

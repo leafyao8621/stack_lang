@@ -56,7 +56,8 @@ SLErrCode SLInterpreter_run(SLInterpreter *interpreter) {
     for (
         ;
         interpreter->current->type != SL_TOKEN_TYPE_COMMAND ||
-        interpreter->current->data.command.type != SL_COMMAND_TYPE_HALT;) {
+        interpreter->current->data.command.type != SL_COMMAND_TYPE_HALT;
+        ++interpreter->current) {
         switch (interpreter->current->type) {
         case SL_TOKEN_TYPE_INT_LITERAL:
             err = runtime_handle_int_literal(interpreter);

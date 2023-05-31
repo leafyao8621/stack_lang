@@ -38,6 +38,5 @@ SLErrCode runtime_handle_command(SLInterpreter *interpreter) {
     if (err) {
         return err;
     }
-    ++interpreter->current;
     return SL_ERR_OK;
 }
