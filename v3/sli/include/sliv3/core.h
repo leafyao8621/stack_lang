@@ -8,6 +8,7 @@ typedef struct SLInterpreter {
     SLParser parser;
     String global;
     SLToken *current;
+    DArraySLToken operation_stack;
 } SLInterpreter;
 
 SLErrCode SLInterpreter_initialize(SLInterpreter *interpreter);

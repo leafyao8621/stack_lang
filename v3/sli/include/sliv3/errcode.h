@@ -13,9 +13,10 @@ typedef enum SLErrCode {
     SL_ERR_INVALID_OPERATOR,
     SL_ERR_MISSING_OPERAND,
     SL_ERR_TYPE_MISMATCH,
-    SL_ERR_INVALID_COMMAND
+    SL_ERR_INVALID_COMMAND,
+    SL_ERR_INTERPRETER_NOT_INITIALIZED
 } SLErrCode;
 
-extern const char *sl_errcode_lookup[12];
+extern const char *sl_errcode_lookup[13];
 
 #endif

@@ -10,6 +10,11 @@ SLErrCode handle_command_print(
     char **iter,
     SLToken *token);
 
+SLErrCode handle_command_halt(
+    struct SLParserBuffer *buffer,
+    char **iter,
+    SLToken *token);
+
 typedef SLErrCode (*Handler)(struct SLParserBuffer*, char**, SLToken*);
 
 SLErrCode handle_command(
@@ -19,7 +24,7 @@ SLErrCode handle_command(
     if (!parser || !buffer || !iter) {
         return SL_ERR_NULL_PTR;
     }
-    static const char *command_lookup[18] = {
+    static const char *command_lookup[19] = {
         "print",
         "println",
         "input",
@@ -37,9 +42,11 @@ SLErrCode handle_command(
         "continue",
         "struct",
         "def",
-        "return"
+        "return",
+        "halt"
     };
-    Handler handlers[18] = {
+    Handler handlers[19] = {
+        handle_command_print,
         handle_command_print,
         NULL,
         NULL,
@@ -57,7 +64,7 @@ SLErrCode handle_command(
         NULL,
         NULL,
         NULL,
-        NULL
+        handle_command_halt
     };
     int ret = 0;
     for (++(*iter); **iter >= 'a' && **iter <= 'z'; ++(*iter)) {
@@ -72,12 +79,12 @@ SLErrCode handle_command(
         return SL_ERR_OUT_OF_MEMORY;
     }
     size_t idx = 0;
-    for (const char **i = command_lookup; idx < 18; ++idx, ++i) {
+    for (const char **i = command_lookup; idx < 19; ++idx, ++i) {
         if (!strcmp(*i, buffer->token_buf.data)) {
             break;
         }
     }
-    if (idx == 18) {
+    if (idx == 19) {
         return SL_ERR_INVALID_COMMAND;
     }
     SLToken token;
@@ -87,6 +94,7 @@ SLErrCode handle_command(
     if (err) {
         return err;
     }
+    DArrayChar_clear(&buffer->token_buf);
     ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;

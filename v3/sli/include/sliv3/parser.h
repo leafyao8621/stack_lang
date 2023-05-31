@@ -84,7 +84,8 @@ typedef enum SLCommandType {
     SL_COMMAND_TYPE_CONTINUE,
     SL_COMMAND_TYPE_STRUCT,
     SL_COMMAND_TYPE_DEF,
-    SL_COMMAND_TYPE_RETURN
+    SL_COMMAND_TYPE_RETURN,
+    SL_COMMAND_TYPE_HALT
 } SLCommandType;
 
 typedef enum SLVariableLocation {

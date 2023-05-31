@@ -5,6 +5,10 @@ SLErrCode SLInterpreter_initialize(SLInterpreter *interpreter) {
         return SL_ERR_NULL_PTR;
     }
     interpreter->initialized = false;
+    int ret = DArraySLToken_initialize(&interpreter->operation_stack, 10);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
     return SLParser_initialize(&interpreter->parser);
 }
 
@@ -16,11 +20,65 @@ SLErrCode SLInterpreter_parse(SLInterpreter *interpreter, char *str) {
     if (err) {
         return err;
     }
-    // int ret = DArrayChar_initialize(interpreter->global, interpreter->parser.global_loo)
+    int ret =
+        DArrayChar_initialize(
+            &interpreter->global,
+            interpreter->parser.global_size
+        );
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
     interpreter->initialized = true;
+    interpreter->current = interpreter->parser.code.data;
     return SL_ERR_OK;
 }
 
 void SLInterpreter_finalize(SLInterpreter *interpreter) {
+    DArraySLToken_finalize(&interpreter->operation_stack);
     SLParser_finalize(&interpreter->parser);
+    if (interpreter->initialized) {
+        DArrayChar_finalize(&interpreter->global);
+    }
+}
+
+SLErrCode runtime_handle_int_literal(SLInterpreter *interpreter);
+SLErrCode runtime_handle_str_literal(SLInterpreter *interpreter);
+SLErrCode runtime_handle_command(SLInterpreter *interpreter);
+
+SLErrCode SLInterpreter_run(SLInterpreter *interpreter) {
+    if (!interpreter) {
+        return SL_ERR_NULL_PTR;
+    }
+    if (!interpreter->initialized) {
+        return SL_ERR_INTERPRETER_NOT_INITIALIZED;
+    }
+    SLErrCode err;
+    for (
+        ;
+        interpreter->current->type != SL_TOKEN_TYPE_COMMAND ||
+        interpreter->current->data.command.type != SL_COMMAND_TYPE_HALT;) {
+        switch (interpreter->current->type) {
+        case SL_TOKEN_TYPE_INT_LITERAL:
+            err = runtime_handle_int_literal(interpreter);
+            if (err) {
+                return err;
+            }
+            break;
+        case SL_TOKEN_TYPE_STR_LITERAL:
+            err = runtime_handle_str_literal(interpreter);
+            if (err) {
+                return err;
+            }
+            break;
+        case SL_TOKEN_TYPE_COMMAND:
+            err = runtime_handle_command(interpreter);
+            if (err) {
+                return err;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    return SL_ERR_OK;
 }

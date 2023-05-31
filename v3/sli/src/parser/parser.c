@@ -171,7 +171,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "^=",
         "[]"
     };
-    static const char *command_lookup[18] = {
+    static const char *command_lookup[19] = {
         "print",
         "println",
         "input",
@@ -189,7 +189,8 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "continue",
         "struct",
         "def",
-        "return"
+        "return",
+        "halt"
     };
     fputs("String Literals:\n", fout);
     String *iter_str_literals = parser->str_literals.data;

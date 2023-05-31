@@ -160,6 +160,16 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
         }
     }
     parser->global_size = buffer.global_offset;
+    if (buffer.global) {
+        SLToken token;
+        token.type = SL_TOKEN_TYPE_COMMAND;
+        token.data.command.type = SL_COMMAND_TYPE_HALT;
+        int ret = DArraySLToken_push_back(buffer.cur_token_buf, &token);
+        if (ret) {
+            SLParserBuffer_finalize(&buffer);
+            return SL_ERR_OUT_OF_MEMORY;
+        }
+    }
     SLParserBuffer_finalize(&buffer);
     return SL_ERR_OK;
 }
