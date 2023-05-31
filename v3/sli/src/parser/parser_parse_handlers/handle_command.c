@@ -24,7 +24,7 @@ SLErrCode handle_command(
     if (!parser || !buffer || !iter) {
         return SL_ERR_NULL_PTR;
     }
-    static const char *command_lookup[19] = {
+    static const char *command_lookup[20] = {
         "print",
         "println",
         "input",
@@ -38,6 +38,7 @@ SLErrCode handle_command(
         "while",
         "do",
         "for",
+        "step",
         "break",
         "continue",
         "struct",
@@ -45,9 +46,10 @@ SLErrCode handle_command(
         "return",
         "halt"
     };
-    Handler handlers[19] = {
+    Handler handlers[20] = {
         handle_command_print,
         handle_command_print,
+        NULL,
         NULL,
         NULL,
         NULL,
@@ -79,12 +81,12 @@ SLErrCode handle_command(
         return SL_ERR_OUT_OF_MEMORY;
     }
     size_t idx = 0;
-    for (const char **i = command_lookup; idx < 19; ++idx, ++i) {
+    for (const char **i = command_lookup; idx < 20; ++idx, ++i) {
         if (!strcmp(*i, buffer->token_buf.data)) {
             break;
         }
     }
-    if (idx == 19) {
+    if (idx == 20) {
         return SL_ERR_INVALID_COMMAND;
     }
     SLToken token;

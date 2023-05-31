@@ -29,7 +29,7 @@
 			"patterns": [
 				{
 					"name": "keyword",
-					"match": "\\b(_do|_end|_print|_println|_def|_begin|_input|_rand|_srand|_alloc|_realloc|_return|_break|_continue|_for)\\b"
+					"match": "\\b(_do|_end|_print|_println|_def|_begin|_input|_rand|_srand|_alloc|_realloc|_return|_break|_continue|_for|_struct|_halt)\\b"
 				},
 				{
 					"name": "keyword.control",

@@ -11,9 +11,10 @@ SLErrCode runtime_handle_command_println(SLInterpreter *interpreter);
 typedef SLErrCode (*Handler)(SLInterpreter*);
 
 SLErrCode runtime_handle_command(SLInterpreter *interpreter) {
-    Handler handlers[19] = {
+    Handler handlers[20] = {
         runtime_handle_command_print,
         runtime_handle_command_println,
+        NULL,
         NULL,
         NULL,
         NULL,
