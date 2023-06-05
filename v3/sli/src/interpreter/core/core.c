@@ -42,6 +42,11 @@ void SLInterpreter_finalize(SLInterpreter *interpreter) {
 }
 
 SLErrCode runtime_handle_int_literal(SLInterpreter *interpreter);
+SLErrCode runtime_handle_int_var(SLInterpreter *interpreter);
+SLErrCode runtime_handle_float_literal(SLInterpreter *interpreter);
+SLErrCode runtime_handle_float_var(SLInterpreter *interpreter);
+SLErrCode runtime_handle_char_literal(SLInterpreter *interpreter);
+SLErrCode runtime_handle_char_var(SLInterpreter *interpreter);
 SLErrCode runtime_handle_str_literal(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command(SLInterpreter *interpreter);
 
@@ -61,6 +66,36 @@ SLErrCode SLInterpreter_run(SLInterpreter *interpreter) {
         switch (interpreter->current->type) {
         case SL_TOKEN_TYPE_INT_LITERAL:
             err = runtime_handle_int_literal(interpreter);
+            if (err) {
+                return err;
+            }
+            break;
+        case SL_TOKEN_TYPE_INT_VAR:
+            err = runtime_handle_int_var(interpreter);
+            if (err) {
+                return err;
+            }
+            break;
+        case SL_TOKEN_TYPE_FLOAT_LITERAL:
+            err = runtime_handle_float_literal(interpreter);
+            if (err) {
+                return err;
+            }
+            break;
+        case SL_TOKEN_TYPE_FLOAT_VAR:
+            err = runtime_handle_float_var(interpreter);
+            if (err) {
+                return err;
+            }
+            break;
+        case SL_TOKEN_TYPE_CHAR_LITERAL:
+            err = runtime_handle_char_literal(interpreter);
+            if (err) {
+                return err;
+            }
+            break;
+        case SL_TOKEN_TYPE_CHAR_VAR:
+            err = runtime_handle_char_var(interpreter);
             if (err) {
                 return err;
             }
