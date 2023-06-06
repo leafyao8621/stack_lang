@@ -1,1 +1,3 @@
-1.0 2.0 + _println
+%a 3 =
+%a %a 2 + =
+%a _println

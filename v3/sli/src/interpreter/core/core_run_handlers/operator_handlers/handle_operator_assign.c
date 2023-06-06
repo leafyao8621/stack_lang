@@ -5,24 +5,18 @@
 
 #include "../../core.h"
 
-SLErrCode runtime_handle_command_println(SLInterpreter *interpreter) {
+SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
     DArraySLToken_pop_back(&interpreter->operation_stack);
-    int64_t op_int;
+    DArraySLToken_pop_back(&interpreter->operation_stack);
+    int64_t *op_a_int_var, op_b_int;
+    // double op_b_float;
+    // char op_b_char;
     Idx offset;
     switch (
         interpreter
             ->operation_stack
             .data[interpreter->operation_stack.size]
             .type) {
-    case SL_TOKEN_TYPE_INT_LITERAL:
-        op_int =
-            interpreter
-                ->operation_stack
-                .data[interpreter->operation_stack.size]
-                .data
-                .int_literal;
-        printf("%ld\n", op_int);
-        break;
     case SL_TOKEN_TYPE_INT_VAR:
         offset =
             interpreter
@@ -39,29 +33,28 @@ SLErrCode runtime_handle_command_println(SLInterpreter *interpreter) {
                 .int_var
                 .location) {
         case SL_VARIABLE_LOCATION_GLOBAL:
-            op_int = *(int64_t*)(interpreter->global.data + offset);
+            op_a_int_var = (int64_t*)(interpreter->global.data + offset);
             break;
         default:
             break;
         }
-        printf("%ld\n", op_int);
-        break;
-    case SL_TOKEN_TYPE_STR_LITERAL:
-        printf(
-            "%s\n",
+        switch (
             interpreter
-                ->parser
-                .str_literals
+                ->operation_stack
+                .data[interpreter->operation_stack.size + 1]
+                .type) {
+        case SL_TOKEN_TYPE_INT_LITERAL:
+            op_b_int =
+                interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size + 1]
                 .data
-                    [
-                        interpreter
-                            ->operation_stack
-                            .data[interpreter->operation_stack.size]
-                            .data
-                            .str_literal
-                    ]
-                .data
-        );
+                .int_literal;
+            break;
+        default:
+            break;
+        }
+        *op_a_int_var = op_b_int;
         break;
     default:
         break;
