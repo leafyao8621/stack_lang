@@ -9,7 +9,7 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
     DArraySLToken_pop_back(&interpreter->operation_stack);
     DArraySLToken_pop_back(&interpreter->operation_stack);
     int64_t *op_a_int_var, op_b_int;
-    // double op_b_float;
+    double *op_a_float_var, op_b_float;
     // char op_b_char;
     Idx offset;
     switch (
@@ -46,15 +46,72 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
         case SL_TOKEN_TYPE_INT_LITERAL:
             op_b_int =
                 interpreter
-                ->operation_stack
-                .data[interpreter->operation_stack.size + 1]
-                .data
-                .int_literal;
+                    ->operation_stack
+                    .data[interpreter->operation_stack.size + 1]
+                    .data
+                    .int_literal;
+            *op_a_int_var = op_b_int;
+            break;
+        case SL_TOKEN_TYPE_FLOAT_LITERAL:
+            op_b_float =
+                interpreter
+                    ->operation_stack
+                    .data[interpreter->operation_stack.size + 1]
+                    .data
+                    .float_literal;
+            *op_a_int_var = op_b_float;
             break;
         default:
             break;
         }
-        *op_a_int_var = op_b_int;
+        break;
+    case SL_TOKEN_TYPE_FLOAT_VAR:
+        offset =
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .float_var
+                .idx;
+        switch (
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .float_var
+                .location) {
+        case SL_VARIABLE_LOCATION_GLOBAL:
+            op_a_float_var = (double*)(interpreter->global.data + offset);
+            break;
+        default:
+            break;
+        }
+        switch (
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size + 1]
+                .type) {
+        case SL_TOKEN_TYPE_INT_LITERAL:
+            op_b_int =
+                interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size + 1]
+                .data
+                .int_literal;
+            *op_a_float_var = op_b_int;
+            break;
+        case SL_TOKEN_TYPE_FLOAT_LITERAL:
+            op_b_float =
+                interpreter
+                    ->operation_stack
+                    .data[interpreter->operation_stack.size + 1]
+                    .data
+                    .float_literal;
+            *op_a_float_var = op_b_float;
+            break;
+        default:
+            break;
+        }
         break;
     default:
         break;

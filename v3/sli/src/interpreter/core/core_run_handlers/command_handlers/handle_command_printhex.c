@@ -6,6 +6,8 @@
 #include "../../core.h"
 
 SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter) {
+    int64_t op_int;
+    Idx offset;
     DArraySLToken_pop_back(&interpreter->operation_stack);
     switch (
         interpreter
@@ -13,14 +15,36 @@ SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter) {
             .data[interpreter->operation_stack.size]
             .type) {
     case SL_TOKEN_TYPE_INT_LITERAL:
-        printf(
-            "%016lX",
+        op_int =
             interpreter
                 ->operation_stack
                 .data[interpreter->operation_stack.size]
                 .data
-                .int_literal
-        );
+                .int_literal;
+        printf("%016lX", op_int);
+        break;
+    case SL_TOKEN_TYPE_INT_VAR:
+        offset =
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .int_var
+                .idx;
+        switch (
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .int_var
+                .location) {
+        case SL_VARIABLE_LOCATION_GLOBAL:
+            op_int = *(int64_t*)(interpreter->global.data + offset);
+            break;
+        default:
+            break;
+        }
+        printf("%016lX", op_int);
         break;
     case SL_TOKEN_TYPE_STR_LITERAL:
         // printf(

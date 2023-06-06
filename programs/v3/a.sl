@@ -1,3 +1,3 @@
-%a 3 =
-%a %a 2 + =
-%a _println
+#a 123 =
+#a #a 123 + =
+#a _println
