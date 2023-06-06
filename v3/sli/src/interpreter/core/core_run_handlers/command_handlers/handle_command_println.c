@@ -22,6 +22,16 @@ SLErrCode runtime_handle_command_println(SLInterpreter *interpreter) {
                 .int_literal
         );
         break;
+    case SL_TOKEN_TYPE_FLOAT_LITERAL:
+        printf(
+            "%lf\n",
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .float_literal
+        );
+        break;
     case SL_TOKEN_TYPE_STR_LITERAL:
         printf(
             "%s\n",

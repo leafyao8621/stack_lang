@@ -5,19 +5,29 @@
 
 #include "../core.h"
 
-SLErrCode runtime_handle_command_print(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_println(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_printe(SLInterpreter *interpreter);
+SLErrCode runtime_handle_operator_add(SLInterpreter *interpreter);
 
 typedef SLErrCode (*Handler)(SLInterpreter*);
 
-SLErrCode runtime_handle_command(SLInterpreter *interpreter) {
-    Handler handlers[22] = {
-        runtime_handle_command_print,
-        runtime_handle_command_println,
-        runtime_handle_command_printhex,
-        runtime_handle_command_printe,
+SLErrCode runtime_handle_operator(SLInterpreter *interpreter) {
+    Handler handlers[35] = {
+        runtime_handle_operator_add,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
         NULL,
         NULL,
         NULL,

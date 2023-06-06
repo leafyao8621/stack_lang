@@ -171,9 +171,11 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "^=",
         "[]"
     };
-    static const char *command_lookup[20] = {
+    static const char *command_lookup[22] = {
         "print",
         "println",
+        "printhex",
+        "printe",
         "input",
         "srand",
         "rand",

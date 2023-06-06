@@ -10,6 +10,11 @@ SLErrCode handle_command_print(
     char **iter,
     SLToken *token);
 
+SLErrCode handle_command_printe(
+    struct SLParserBuffer *buffer,
+    char **iter,
+    SLToken *token);
+
 SLErrCode handle_command_halt(
     struct SLParserBuffer *buffer,
     char **iter,
@@ -24,9 +29,11 @@ SLErrCode handle_command(
     if (!parser || !buffer || !iter) {
         return SL_ERR_NULL_PTR;
     }
-    static const char *command_lookup[20] = {
+    static const char *command_lookup[22] = {
         "print",
         "println",
+        "printhex",
+        "printe",
         "input",
         "srand",
         "rand",
@@ -46,9 +53,11 @@ SLErrCode handle_command(
         "return",
         "halt"
     };
-    Handler handlers[20] = {
+    Handler handlers[22] = {
         handle_command_print,
         handle_command_print,
+        handle_command_print,
+        handle_command_printe,
         NULL,
         NULL,
         NULL,
