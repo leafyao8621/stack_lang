@@ -72,7 +72,7 @@ SLErrCode runtime_handle_command_print(SLInterpreter *interpreter) {
                 .float_var
                 .location) {
         case SL_VARIABLE_LOCATION_GLOBAL:
-            op_float = *(int64_t*)(interpreter->global.data + offset);
+            op_float = *(double*)(interpreter->global.data + offset);
             break;
         default:
             break;
