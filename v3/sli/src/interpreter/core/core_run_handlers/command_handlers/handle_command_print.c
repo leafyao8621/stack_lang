@@ -6,10 +6,10 @@
 #include "../../core.h"
 
 SLErrCode runtime_handle_command_print(SLInterpreter *interpreter) {
-    DArraySLToken_pop_back(&interpreter->operation_stack);
     int64_t op_int;
     double op_float;
     Idx offset;
+    DArraySLToken_pop_back(&interpreter->operation_stack);
     switch (
         interpreter
             ->operation_stack
