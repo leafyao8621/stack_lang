@@ -7,3 +7,10 @@ _else
         "c" _println
     _end
 _end
+
+1 1 + _if
+    %a 10 =
+_else
+    %a 20 =
+_end
+%a _println
