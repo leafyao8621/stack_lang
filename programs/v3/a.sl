@@ -1,6 +1,12 @@
-#a 123.456 =
-%b 456.123 =
-#a #a %b + =
-#a _println
-#a _printe
-"\n" _print
+&a 'A' =
+&b 'B' =
+&a _println
+&b _println
+&a &b =
+&a _println
+&b _println
+&a &a '\1' + =
+&a _println
+&b _println
+&a &b + _println
+

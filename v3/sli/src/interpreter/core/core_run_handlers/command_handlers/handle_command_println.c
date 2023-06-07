@@ -9,6 +9,7 @@ SLErrCode runtime_handle_command_println(SLInterpreter *interpreter) {
     DArraySLToken_pop_back(&interpreter->operation_stack);
     int64_t op_int;
     double op_float;
+    char op_char;
     Idx offset;
     switch (
         interpreter
@@ -78,6 +79,38 @@ SLErrCode runtime_handle_command_println(SLInterpreter *interpreter) {
             break;
         }
         printf("%lf\n", op_float);
+        break;
+    case SL_TOKEN_TYPE_CHAR_LITERAL:
+        op_char =
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .char_literal;
+        printf("%c\n", op_char);
+        break;
+    case SL_TOKEN_TYPE_CHAR_VAR:
+        offset =
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .char_var
+                .idx;
+        switch (
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .char_var
+                .location) {
+        case SL_VARIABLE_LOCATION_GLOBAL:
+            op_char = *(char*)(interpreter->global.data + offset);
+            break;
+        default:
+            break;
+        }
+        printf("%c\n", op_char);
         break;
     default:
         break;
