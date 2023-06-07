@@ -8,5 +8,7 @@
 &a &a '\1' + =
 &a _println
 &b _println
-&a &b + _println
-
+&a &b + _printhex
+'\n' _print
+"abcdefgABCDEFG" _printhex
+'\n' _print
