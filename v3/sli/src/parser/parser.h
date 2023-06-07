@@ -78,11 +78,14 @@ typedef enum SLCommandType {
     SL_COMMAND_TYPE_REALLOC,
     SL_COMMAND_TYPE_IF,
     SL_COMMAND_TYPE_ELSE,
-    SL_COMMAND_TYPE_END,
+    SL_COMMAND_TYPE_END_IF,
     SL_COMMAND_TYPE_WHILE,
-    SL_COMMAND_TYPE_DO,
+    SL_COMMAND_TYPE_DO_WHILE,
+    SL_COMMAND_TYPE_END_WHILE,
     SL_COMMAND_TYPE_FOR,
+    SL_COMMAND_TYPE_DO_FOR,
     SL_COMMAND_TYPE_STEP,
+    SL_COMMAND_TYPE_END_FOR,
     SL_COMMAND_TYPE_BREAK,
     SL_COMMAND_TYPE_CONTINUE,
     SL_COMMAND_TYPE_STRUCT,
@@ -123,7 +126,7 @@ struct SLToken {
         SLOperatorType operator_type;
         struct {
             SLCommandType type;
-            SLToken *tgt;
+            Idx tgt;
         } command;
         Idx function;
     } data;
@@ -173,6 +176,7 @@ struct SLParserBuffer {
     Idx cur_function, global_offset;
     DArrayIdx parameter_offsets, local_offsets;
     DArraySLToken operation_stack;
+    DArrayIdx control_stack;
 };
 
 #endif

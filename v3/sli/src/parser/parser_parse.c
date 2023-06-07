@@ -39,6 +39,10 @@ SLErrCode SLParserBuffer_initialize(struct SLParserBuffer *buffer) {
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
+    ret = DArrayIdx_initialize(&buffer->control_stack, 10);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
     return SL_ERR_OK;
 }
 
@@ -48,6 +52,7 @@ void SLParserBuffer_finalize(struct SLParserBuffer *buffer) {
     DArrayIdx_finalize(&buffer->parameter_offsets);
     DArrayIdx_finalize(&buffer->local_offsets);
     DArraySLToken_finalize(&buffer->operation_stack);
+    DArrayIdx_finalize(&buffer->control_stack);
 }
 
 SLErrCode handle_number_literal(

@@ -1,14 +1,9 @@
-&a 'B' =
-&b 'A' =
-&a _println
-&b _println
-&a &b =
-&a _println
-&b _println
-&a &a '\1' + =
-&a _println
-&b _println
-&a &b - _printhex
-'\n' _print
-"abcdefgABCDEFG" _printhex
-'\n' _print
+1 1 - _if
+    "a" _println
+_else
+    1 1 - _if
+        "b" _println
+    _else
+        "c" _println
+    _end
+_end

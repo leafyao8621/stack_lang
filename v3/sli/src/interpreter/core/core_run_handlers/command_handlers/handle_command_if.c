@@ -5,10 +5,10 @@
 
 #include "../../core.h"
 
-SLErrCode runtime_handle_command_print(SLInterpreter *interpreter) {
+SLErrCode runtime_handle_command_if(SLInterpreter *interpreter) {
     int64_t op_int;
     double op_float;
-    char op_char, *op_str;
+    char op_char;
     Idx offset;
     DArraySLToken_pop_back(&interpreter->operation_stack);
     switch (
@@ -23,7 +23,17 @@ SLErrCode runtime_handle_command_print(SLInterpreter *interpreter) {
                 .data[interpreter->operation_stack.size]
                 .data
                 .int_literal;
-        printf("%ld", op_int);
+        if (!op_int) {
+            interpreter->current =
+                interpreter
+                    ->cur_token_buf
+                    ->data +
+                interpreter
+                    ->current
+                    ->data
+                    .command
+                    .tgt;
+        }
         break;
     case SL_TOKEN_TYPE_INT_VAR:
         offset =
@@ -46,7 +56,17 @@ SLErrCode runtime_handle_command_print(SLInterpreter *interpreter) {
         default:
             break;
         }
-        printf("%ld", op_int);
+        if (!op_int) {
+            interpreter->current =
+                interpreter
+                    ->cur_token_buf
+                    ->data +
+                interpreter
+                    ->current
+                    ->data
+                    .command
+                    .tgt;
+        }
         break;
     case SL_TOKEN_TYPE_FLOAT_LITERAL:
         op_float =
@@ -55,7 +75,17 @@ SLErrCode runtime_handle_command_print(SLInterpreter *interpreter) {
                 .data[interpreter->operation_stack.size]
                 .data
                 .float_literal;
-        printf("%lf", op_float);
+        if (!op_float) {
+            interpreter->current =
+                interpreter
+                    ->cur_token_buf
+                    ->data +
+                interpreter
+                    ->current
+                    ->data
+                    .command
+                    .tgt;
+        }
         break;
     case SL_TOKEN_TYPE_FLOAT_VAR:
         offset =
@@ -78,7 +108,17 @@ SLErrCode runtime_handle_command_print(SLInterpreter *interpreter) {
         default:
             break;
         }
-        printf("%lf", op_float);
+        if (!op_float) {
+            interpreter->current =
+                interpreter
+                    ->cur_token_buf
+                    ->data +
+                interpreter
+                    ->current
+                    ->data
+                    .command
+                    .tgt;
+        }
         break;
     case SL_TOKEN_TYPE_CHAR_LITERAL:
         op_char =
@@ -87,7 +127,17 @@ SLErrCode runtime_handle_command_print(SLInterpreter *interpreter) {
                 .data[interpreter->operation_stack.size]
                 .data
                 .char_literal;
-        printf("%c", op_char);
+        if (!op_char) {
+            interpreter->current =
+                interpreter
+                    ->cur_token_buf
+                    ->data +
+                interpreter
+                    ->current
+                    ->data
+                    .command
+                    .tgt;
+        }
         break;
     case SL_TOKEN_TYPE_CHAR_VAR:
         offset =
@@ -110,23 +160,17 @@ SLErrCode runtime_handle_command_print(SLInterpreter *interpreter) {
         default:
             break;
         }
-        printf("%c", op_char);
-        break;
-    case SL_TOKEN_TYPE_STR_LITERAL:
-        op_str =
-            interpreter
-                ->parser
-                .str_literals
-                .data
-                    [
-                        interpreter
-                            ->operation_stack
-                            .data[interpreter->operation_stack.size]
-                            .data
-                            .str_literal
-                    ]
-                .data;
-        printf("%s", op_str);
+        if (!op_char) {
+            interpreter->current =
+                interpreter
+                    ->cur_token_buf
+                    ->data +
+                interpreter
+                    ->current
+                    ->data
+                    .command
+                    .tgt;
+        }
         break;
     default:
         break;

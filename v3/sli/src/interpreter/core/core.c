@@ -30,6 +30,7 @@ SLErrCode SLInterpreter_parse(SLInterpreter *interpreter, char *str) {
     }
     interpreter->initialized = true;
     interpreter->current = interpreter->parser.code.data;
+    interpreter->cur_token_buf = &interpreter->parser.code;
     return SL_ERR_OK;
 }
 

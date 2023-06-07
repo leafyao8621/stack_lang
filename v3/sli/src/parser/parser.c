@@ -171,7 +171,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "^=",
         "[]"
     };
-    static const char *command_lookup[22] = {
+    static const char *command_lookup[25] = {
         "print",
         "println",
         "printhex",
@@ -186,8 +186,11 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "end",
         "while",
         "do",
+        "end",
         "for",
+        "do",
         "step",
+        "end",
         "break",
         "continue",
         "struct",
@@ -330,6 +333,18 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
                 "Command: %s\n",
                 command_lookup[iter->data.command.type]
             );
+            switch (iter->data.command.type) {
+            case SL_COMMAND_TYPE_IF:
+            case SL_COMMAND_TYPE_ELSE:
+                fprintf(
+                    fout,
+                    "Tgt: %lu\n",
+                    iter->data.command.tgt
+                );
+                break;
+            default:
+                break;
+            }
             break;
         default:
             break;

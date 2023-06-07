@@ -8,7 +8,8 @@
 SLErrCode handle_command_printe(
     struct SLParserBuffer *buffer,
     char **iter,
-    SLToken *token) {
+    SLToken *token,
+    bool *push_control) {
     if (!buffer || !iter || !token) {
         return SL_ERR_NULL_PTR;
     }
@@ -25,7 +26,8 @@ SLErrCode handle_command_printe(
     case SL_TOKEN_TYPE_FLOAT_VAR:
         break;
     default:
-        return SL_ERR_INVALID_OPERATOR;
+        return SL_ERR_INVALID_COMMAND;
     }
+    *push_control = false;
     return SL_ERR_OK;
 }

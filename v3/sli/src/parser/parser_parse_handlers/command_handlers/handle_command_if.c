@@ -5,7 +5,7 @@
 
 #include "../../parser.h"
 
-SLErrCode handle_command_print(
+SLErrCode handle_command_if(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
@@ -28,12 +28,10 @@ SLErrCode handle_command_print(
     case SL_TOKEN_TYPE_FLOAT_VAR:
     case SL_TOKEN_TYPE_CHAR_LITERAL:
     case SL_TOKEN_TYPE_CHAR_VAR:
-    case SL_TOKEN_TYPE_STR_LITERAL:
-    case SL_TOKEN_TYPE_STR_VAR:
         break;
     default:
         return SL_ERR_INVALID_COMMAND;
     }
-    *push_control = false;
+    *push_control = true;
     return SL_ERR_OK;
 }
