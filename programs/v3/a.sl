@@ -1,5 +1,5 @@
-&a 'A' =
-&b 'B' =
+&a 'B' =
+&b 'A' =
 &a _println
 &b _println
 &a &b =
@@ -8,7 +8,7 @@
 &a &a '\1' + =
 &a _println
 &b _println
-&a &b + _printhex
+&a &b - _printhex
 '\n' _print
 "abcdefgABCDEFG" _printhex
 '\n' _print

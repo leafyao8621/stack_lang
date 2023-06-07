@@ -6,6 +6,7 @@
 #include "../core.h"
 
 SLErrCode runtime_handle_operator_add(SLInterpreter *interpreter);
+SLErrCode runtime_handle_operator_subtract(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter);
 
 typedef SLErrCode (*Handler)(SLInterpreter*);
@@ -13,7 +14,7 @@ typedef SLErrCode (*Handler)(SLInterpreter*);
 SLErrCode runtime_handle_operator(SLInterpreter *interpreter) {
     Handler handlers[35] = {
         runtime_handle_operator_add,
-        NULL,
+        runtime_handle_operator_subtract,
         NULL,
         NULL,
         NULL,
