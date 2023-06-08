@@ -130,6 +130,31 @@ SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter) {
             printf("%02hhX", *i);
         }
         break;
+    case SL_TOKEN_TYPE_STR_VAR:
+        offset =
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .str_var
+                .idx;
+        switch (
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .str_var
+                .location) {
+        case SL_VARIABLE_LOCATION_GLOBAL:
+            op_str = (*(String**)(interpreter->global.data + offset))->data;
+            break;
+        default:
+            break;
+        }
+        for (char *i = op_str; *i; ++i) {
+            printf("%02hhX", *i);
+        }
+        break;
     default:
         break;
     }

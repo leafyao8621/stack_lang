@@ -128,6 +128,29 @@ SLErrCode runtime_handle_command_println(SLInterpreter *interpreter) {
                 .data;
         printf("%s\n", op_str);
         break;
+    case SL_TOKEN_TYPE_STR_VAR:
+        offset =
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .str_var
+                .idx;
+        switch (
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .str_var
+                .location) {
+        case SL_VARIABLE_LOCATION_GLOBAL:
+            op_str = (*(String**)(interpreter->global.data + offset))->data;
+            break;
+        default:
+            break;
+        }
+        printf("%s\n", op_str);
+        break;
     default:
         break;
     }

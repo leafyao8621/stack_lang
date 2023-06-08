@@ -9,8 +9,13 @@ _else
 _end
 
 1 1 + _if
-    %a 10 =
+    $a "aa" =
 _else
-    %a 20 =
+    $a "bb" =
 _end
-%a _println
+$a _println
+$b $a =
+$b _println
+$a _println
+$a _printhex
+'\n' _print

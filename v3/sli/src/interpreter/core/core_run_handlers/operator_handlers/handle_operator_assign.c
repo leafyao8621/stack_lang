@@ -11,6 +11,7 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
     int64_t *op_a_int_var, op_b_int;
     double *op_a_float_var, op_b_float;
     char *op_a_char_var, op_b_char;
+    String **op_a_str_var;
     Idx offset;
     switch (
         interpreter
@@ -262,6 +263,70 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
                 break;
             }
             *op_a_char_var = op_b_char;
+            break;
+        default:
+            break;
+        }
+        break;
+    case SL_TOKEN_TYPE_STR_VAR:
+        offset =
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .str_var
+                .idx;
+        switch (
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .str_var
+                .location) {
+        case SL_VARIABLE_LOCATION_GLOBAL:
+            op_a_str_var = (String**)(interpreter->global.data + offset);
+            break;
+        default:
+            break;
+        }
+        switch (
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size + 1]
+                .type) {
+        case SL_TOKEN_TYPE_STR_LITERAL:
+            *op_a_str_var =
+                interpreter
+                    ->parser
+                    .str_literals
+                    .data +
+                interpreter
+                    ->operation_stack
+                    .data[interpreter->operation_stack.size + 1]
+                    .data
+                    .str_literal;
+            break;
+        case SL_TOKEN_TYPE_STR_VAR:
+            switch (
+                interpreter
+                    ->operation_stack
+                    .data[interpreter->operation_stack.size + 1]
+                    .data
+                    .str_var
+                    .location) {
+            case SL_VARIABLE_LOCATION_GLOBAL:
+                offset =
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size + 1]
+                        .data
+                        .str_var
+                        .idx;
+                break;
+            default:
+                break;
+            }
+            *op_a_str_var = *(String**)(interpreter->global.data + offset);
             break;
         default:
             break;

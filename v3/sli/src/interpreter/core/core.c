@@ -49,6 +49,7 @@ SLErrCode runtime_handle_float_var(SLInterpreter *interpreter);
 SLErrCode runtime_handle_char_literal(SLInterpreter *interpreter);
 SLErrCode runtime_handle_char_var(SLInterpreter *interpreter);
 SLErrCode runtime_handle_str_literal(SLInterpreter *interpreter);
+SLErrCode runtime_handle_str_var(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command(SLInterpreter *interpreter);
 
@@ -104,6 +105,12 @@ SLErrCode SLInterpreter_run(SLInterpreter *interpreter) {
             break;
         case SL_TOKEN_TYPE_STR_LITERAL:
             err = runtime_handle_str_literal(interpreter);
+            if (err) {
+                return err;
+            }
+            break;
+        case SL_TOKEN_TYPE_STR_VAR:
+            err = runtime_handle_str_var(interpreter);
             if (err) {
                 return err;
             }
