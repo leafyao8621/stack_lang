@@ -19,3 +19,9 @@ $b _println
 $a _println
 $a _printhex
 '\n' _print
+2 3.0 * _println
+
+3 2 / _println
+3.0 2 / _println
+3.0 2.0 / _println
+3 2.0 / _println
