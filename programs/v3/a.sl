@@ -25,3 +25,10 @@ $a _printhex
 3.0 2 / _println
 3.0 2.0 / _println
 3 2.0 / _println
+
+3 2 % _println
+%a 3 =
+%b 2 =
+%a 2 % _println
+3 %b % _println
+%a %b % _println
