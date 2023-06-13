@@ -67,3 +67,38 @@ $a _printhex
 '\n' _print
 #a %b << _printhex
 '\n' _print
+
+0x8000000000000000 1 >> _printhex
+'\n' _print
+%a 0x8000000000000000 =
+%b 1 =
+%a 1 >> _printhex
+'\n' _print
+0x8000000000000000 %b >> _printhex
+'\n' _print
+%a %b >> _printhex
+'\n' _print
+
+'\x80' '\1' >> _printhex
+'\n' _print
+&a '\x80' =
+&b '\1' =
+&a '\1' >> _printhex
+'\n' _print
+'\x80' &b >> _printhex
+'\n' _print
+&a &b >> _printhex
+'\n' _print
+
+2.0 _printhex
+'\n' _print
+2.0 1 >> _printhex
+'\n' _print
+#a 2 =
+%b 1 =
+#a 1 >> _printhex
+'\n' _print
+2.0 %b >> _printhex
+'\n' _print
+#a %b >> _printhex
+'\n' _print
