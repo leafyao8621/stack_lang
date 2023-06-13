@@ -62,6 +62,8 @@ SLErrCode handle_operator_ampersand(
                 .type) {
         case SL_TOKEN_TYPE_INT_LITERAL:
         case SL_TOKEN_TYPE_INT_VAR:
+        case SL_TOKEN_TYPE_FLOAT_LITERAL:
+        case SL_TOKEN_TYPE_FLOAT_VAR:
             switch (
                 buffer
                     ->operation_stack

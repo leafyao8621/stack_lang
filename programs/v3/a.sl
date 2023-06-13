@@ -157,3 +157,38 @@ $a _printhex
 &a '\xF0' =
 &a ~ _printhex
 '\n' _print
+
+0xA00AA00AA00AA00A 0xC00CC00CC00CC00C & _printhex
+'\n' _print
+%a 0xA00AA00AA00AA00A =
+%b 0xC00CC00CC00CC00C =
+%a 0xC00CC00CC00CC00C & _printhex
+'\n' _print
+0xA00AA00AA00AA00A %b & _printhex
+'\n' _print
+%a %b & _printhex
+'\n' _print
+
+'\xA0' '\xC0' & _printhex
+'\n' _print
+&a '\xA0' =
+&b '\xC0' =
+&a '\xC0' & _printhex
+'\n' _print
+'\xA0' &b & _printhex
+'\n' _print
+&a &b & _printhex
+'\n' _print
+
+5.0 _printhex
+'\n' _print
+5.0 0xfff0000000000000 & _printhex
+'\n' _print
+#a 5 =
+%b 0xfff0000000000000 =
+#a 0xfff0000000000000 & _printhex
+'\n' _print
+5.0 %b & _printhex
+'\n' _print
+#a %b & _printhex
+'\n' _print

@@ -14,6 +14,7 @@ SLErrCode runtime_handle_operator_lshift(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_rlshift(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_bnot(SLInterpreter *interpreter);
+SLErrCode runtime_handle_operator_band(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter);
 
 typedef SLErrCode (*Handler)(SLInterpreter*);
@@ -29,7 +30,7 @@ SLErrCode runtime_handle_operator(SLInterpreter *interpreter) {
         runtime_handle_operator_rshift,
         runtime_handle_operator_rlshift,
         runtime_handle_operator_bnot,
-        NULL,
+        runtime_handle_operator_band,
         NULL,
         NULL,
         NULL,
