@@ -12,6 +12,7 @@ SLErrCode runtime_handle_operator_divide(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_modulo(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_lshift(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter);
+SLErrCode runtime_handle_operator_rlshift(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter);
 
 typedef SLErrCode (*Handler)(SLInterpreter*);
@@ -25,7 +26,7 @@ SLErrCode runtime_handle_operator(SLInterpreter *interpreter) {
         runtime_handle_operator_modulo,
         runtime_handle_operator_lshift,
         runtime_handle_operator_rshift,
-        NULL,
+        runtime_handle_operator_rlshift,
         NULL,
         NULL,
         NULL,

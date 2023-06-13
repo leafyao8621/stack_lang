@@ -5,7 +5,7 @@
 
 #include "../../core.h"
 
-SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
+SLErrCode runtime_handle_operator_rlshift(SLInterpreter *interpreter) {
     DArraySLToken_pop_back(&interpreter->operation_stack);
     DArraySLToken_pop_back(&interpreter->operation_stack);
     SLToken res;
@@ -39,7 +39,7 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
                     .data
                     .int_literal;
             res.type = SL_TOKEN_TYPE_INT_LITERAL;
-            res.data.int_literal = op_a_int >> op_b_int;
+            res.data.int_literal = (uint64_t)op_a_int >> op_b_int;
             break;
         case SL_TOKEN_TYPE_INT_VAR:
             offset =
@@ -63,7 +63,7 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
                 break;
             }
             res.type = SL_TOKEN_TYPE_INT_LITERAL;
-            res.data.int_literal = op_a_int >> op_b_int;
+            res.data.int_literal = (uint64_t)op_a_int >> op_b_int;
             break;
         default:
             break;
@@ -103,7 +103,7 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
                     .data
                     .int_literal;
             res.type = SL_TOKEN_TYPE_INT_LITERAL;
-            res.data.int_literal = op_a_int >> op_b_int;
+            res.data.int_literal = (uint64_t)op_a_int >> op_b_int;
             break;
         case SL_TOKEN_TYPE_INT_VAR:
             offset =
@@ -127,7 +127,7 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
                 break;
             }
             res.type = SL_TOKEN_TYPE_INT_LITERAL;
-            res.data.int_literal = op_a_int >> op_b_int;
+            res.data.int_literal = (uint64_t)op_a_int >> op_b_int;
             break;
         default:
             break;
@@ -297,7 +297,7 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
             break;
         }
         res.type = SL_TOKEN_TYPE_CHAR_LITERAL;
-        res.data.char_literal = op_a_char >> op_b_char;
+        res.data.char_literal = (uint8_t)op_a_char >> op_b_char;
         break;
     case SL_TOKEN_TYPE_CHAR_VAR:
         offset =
@@ -359,7 +359,7 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
             break;
         }
         res.type = SL_TOKEN_TYPE_CHAR_LITERAL;
-        res.data.char_literal = op_a_char >> op_b_char;
+        res.data.char_literal = (uint8_t)op_a_char >> op_b_char;
         break;
     default:
         break;
