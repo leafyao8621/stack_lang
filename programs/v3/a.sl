@@ -262,3 +262,37 @@ $a _printhex
 '\n' _print
 #a %b ^ _printhex
 '\n' _print
+
+0xF00FF00FF00FF00F ! _printhex
+'\n' _print
+%a 0xF00FF00FF00FF00F =
+%a ! _printhex
+'\n' _print
+
+0x0 ! _printhex
+'\n' _print
+%a 0x0 =
+%a ! _printhex
+'\n' _print
+
+2.0 _printhex
+'\n' _print
+2.0 ! _printhex
+'\n' _print
+#a 2 =
+#a ! _printhex
+'\n' _print
+
+0.0 _printhex
+'\n' _print
+0.0 ! _printhex
+'\n' _print
+#a 0 =
+#a ! _printhex
+'\n' _print
+
+'\0' ! _printhex
+'\n' _print
+&a '\0' =
+&a ! _printhex
+'\n' _print
