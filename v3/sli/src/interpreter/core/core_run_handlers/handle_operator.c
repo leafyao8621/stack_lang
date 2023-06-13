@@ -10,6 +10,7 @@ SLErrCode runtime_handle_operator_subtract(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_multiply(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_divide(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_modulo(SLInterpreter *interpreter);
+SLErrCode runtime_handle_operator_lshift(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter);
 
 typedef SLErrCode (*Handler)(SLInterpreter*);
@@ -21,7 +22,7 @@ SLErrCode runtime_handle_operator(SLInterpreter *interpreter) {
         runtime_handle_operator_multiply,
         runtime_handle_operator_divide,
         runtime_handle_operator_modulo,
-        NULL,
+        runtime_handle_operator_lshift,
         NULL,
         NULL,
         NULL,
