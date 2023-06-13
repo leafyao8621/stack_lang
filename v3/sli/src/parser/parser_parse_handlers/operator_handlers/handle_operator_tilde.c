@@ -45,6 +45,18 @@ SLErrCode handle_operator_tilde(
                 return SL_ERR_OUT_OF_MEMORY;
             }
             break;
+        case SL_TOKEN_TYPE_FLOAT_LITERAL:
+        case SL_TOKEN_TYPE_FLOAT_VAR:
+            token_res.type = SL_TOKEN_TYPE_FLOAT_LITERAL;
+            ret =
+                DArraySLToken_push_back(
+                    &buffer->operation_stack,
+                    &token_res
+                );
+            if (ret) {
+                return SL_ERR_OUT_OF_MEMORY;
+            }
+            break;
         case SL_TOKEN_TYPE_CHAR_LITERAL:
         case SL_TOKEN_TYPE_CHAR_VAR:
             token_res.type = SL_TOKEN_TYPE_CHAR_LITERAL;
