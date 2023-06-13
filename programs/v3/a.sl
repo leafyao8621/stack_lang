@@ -192,3 +192,73 @@ $a _printhex
 '\n' _print
 #a %b & _printhex
 '\n' _print
+
+0xA00AA00AA00AA00A 0x4880488048804880 | _printhex
+'\n' _print
+%a 0xA00AA00AA00AA00A =
+%b 0x4880488048804880 =
+%a 0x4880488048804880 | _printhex
+'\n' _print
+0xA00AA00AA00AA00A %b | _printhex
+'\n' _print
+%a %b | _printhex
+'\n' _print
+
+'\xA0' '\x48' | _printhex
+'\n' _print
+&a '\xA0' =
+&b '\x48' =
+&a '\x48' | _printhex
+'\n' _print
+'\xA0' &b | _printhex
+'\n' _print
+&a &b | _printhex
+'\n' _print
+
+5.0 _printhex
+'\n' _print
+5.0 0x000000000000000F | _printhex
+'\n' _print
+#a 5 =
+%b 0x000000000000000F =
+#a 0x000000000000000F | _printhex
+'\n' _print
+5.0 %b | _printhex
+'\n' _print
+#a %b | _printhex
+'\n' _print
+
+0xA00AA00AA00AA00A 0xFFFFFFFFFFFFFFFF ^ _printhex
+'\n' _print
+%a 0xA00AA00AA00AA00A =
+%b 0xFFFFFFFFFFFFFFFF =
+%a 0xFFFFFFFFFFFFFFFF ^ _printhex
+'\n' _print
+0xA00AA00AA00AA00A %b ^ _printhex
+'\n' _print
+%a %b ^ _printhex
+'\n' _print
+
+'\xA0' '\xFF' ^ _printhex
+'\n' _print
+&a '\xA0' =
+&b '\xFF' =
+&a '\xFF' ^ _printhex
+'\n' _print
+'\xA0' &b ^ _printhex
+'\n' _print
+&a &b ^ _printhex
+'\n' _print
+
+5.0 _printhex
+'\n' _print
+5.0 0xFFFFFFFFFFFFFFFF ^ _printhex
+'\n' _print
+#a 5 =
+%b 0xFFFFFFFFFFFFFFFF =
+#a 0xFFFFFFFFFFFFFFFF ^ _printhex
+'\n' _print
+5.0 %b ^ _printhex
+'\n' _print
+#a %b ^ _printhex
+'\n' _print
