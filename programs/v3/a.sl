@@ -506,3 +506,47 @@ _end
 _else
     "EQ" _println
 _end
+
+%a 11 =
+%a 10 > _if
+    "TEN" _println
+_else %a 9 > _if
+    "NINE" _println
+_else %a 8 > _if
+    "EIGHT" _println
+_end
+_end
+_end
+
+%a 10 =
+%a 10 > _if
+    "TEN" _println
+_else %a 9 > _if
+    "NINE" _println
+_else %a 8 > _if
+    "EIGHT" _println
+_end
+_end
+_end
+
+#a 9 =
+#a 10 > _if
+    "TEN" _println
+_else #a 9 > _if
+    "NINE" _println
+_else #a 8 > _if
+    "EIGHT" _println
+_end
+_end
+_end
+
+&a '\9' =
+&a '\x0A' > _if
+    "TEN" _println
+_else &a '\9' > _if
+    "NINE" _println
+_else &a '\8' > _if
+    "EIGHT" _println
+_end
+_end
+_end
