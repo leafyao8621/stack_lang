@@ -27,6 +27,7 @@ SLErrCode runtime_handle_operator_gt(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_leq(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_geq(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter);
+SLErrCode runtime_handle_operator_inc(SLInterpreter *interpreter);
 
 typedef SLErrCode (*Handler)(SLInterpreter*);
 
@@ -54,7 +55,7 @@ SLErrCode runtime_handle_operator(SLInterpreter *interpreter) {
         runtime_handle_operator_leq,
         runtime_handle_operator_geq,
         runtime_handle_operator_assign,
-        NULL,
+        runtime_handle_operator_inc,
         NULL,
         NULL,
         NULL,

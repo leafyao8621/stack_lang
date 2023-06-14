@@ -682,3 +682,12 @@ _else &a '\8' >= _if
 _end
 _end
 _end
+
+%a 1 =
+%a ++
+%a _println
+
+&a '\1' =
+&a ++
+&a _printhex
+'\n' _print
