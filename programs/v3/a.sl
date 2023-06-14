@@ -691,3 +691,12 @@ _end
 &a ++
 &a _printhex
 '\n' _print
+
+%a 1 =
+%a --
+%a _println
+
+&a '\1' =
+&a --
+&a _printhex
+'\n' _print
