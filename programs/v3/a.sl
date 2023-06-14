@@ -754,3 +754,21 @@ _end
 &a &b -=
 &a _printhex
 '\n' _print
+
+%a 1 =
+%a 2 *=
+%a _println
+#b 2 =
+%a #b *=
+%a _println
+%a 2.0 *=
+%a _println
+
+#a 1 =
+#a 2 *=
+#a _println
+%b 2 =
+#a %b *=
+#a _println
+#a 2.0 *=
+#a _println
