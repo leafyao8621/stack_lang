@@ -296,3 +296,80 @@ $a _printhex
 &a '\0' =
 &a ! _printhex
 '\n' _print
+
+2 0 && _printhex
+'\n' _print
+%a 2 =
+%b 0 =
+%a 0 && _printhex
+'\n' _print
+2 %b && _printhex
+'\n' _print
+%a %b && _printhex
+'\n' _print
+
+2 1 && _printhex
+'\n' _print
+%a 2 =
+%b 1 =
+%a 1 && _printhex
+'\n' _print
+2 %b && _printhex
+'\n' _print
+%a %b && _printhex
+'\n' _print
+
+2.0 1 && _printhex
+'\n' _print
+#a 2 =
+%b 1 =
+#a 1 && _printhex
+'\n' _print
+2.0 %b && _printhex
+'\n' _print
+#a %b && _printhex
+'\n' _print
+
+0.0 1 && _printhex
+'\n' _print
+#a 0 =
+%b 1 =
+#a 1 && _printhex
+'\n' _print
+0.0 %b && _printhex
+'\n' _print
+#a %b && _printhex
+'\n' _print
+
+2.0 1.0 && _printhex
+'\n' _print
+#a 2 =
+#b 1.0 =
+#a 1.0 && _printhex
+'\n' _print
+2.0 #b && _printhex
+'\n' _print
+#a #b && _printhex
+'\n' _print
+
+'\2' '\1' && _printhex
+'\n' _print
+&a '\2' =
+&b '\1' =
+&a '\1' && _printhex
+'\n' _print
+'\2' &b && _printhex
+'\n' _print
+&a &b && _printhex
+'\n' _print
+
+'\2' '\0' && _printhex
+'\n' _print
+&a '\2' =
+&b '\0' =
+&a '\0' && _printhex
+'\n' _print
+'\2' &b && _printhex
+'\n' _print
+&a &b && _printhex
+'\n' _print

@@ -18,6 +18,7 @@ SLErrCode runtime_handle_operator_band(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_bor(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_bxor(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_lnot(SLInterpreter *interpreter);
+SLErrCode runtime_handle_operator_land(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter);
 
 typedef SLErrCode (*Handler)(SLInterpreter*);
@@ -37,7 +38,7 @@ SLErrCode runtime_handle_operator(SLInterpreter *interpreter) {
         runtime_handle_operator_bor,
         runtime_handle_operator_bxor,
         runtime_handle_operator_lnot,
-        NULL,
+        runtime_handle_operator_land,
         NULL,
         NULL,
         NULL,
