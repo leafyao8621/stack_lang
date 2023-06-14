@@ -550,3 +550,47 @@ _else &a '\8' > _if
 _end
 _end
 _end
+
+%a 7 =
+%a 8 < _if
+    "TEN" _println
+_else %a 9 < _if
+    "NINE" _println
+_else %a 10 < _if
+    "EIGHT" _println
+_end
+_end
+_end
+
+%a 8 =
+%a 8 < _if
+    "TEN" _println
+_else %a 9 < _if
+    "NINE" _println
+_else %a 10 < _if
+    "EIGHT" _println
+_end
+_end
+_end
+
+#a 9 =
+#a 8 < _if
+    "TEN" _println
+_else #a 9 < _if
+    "NINE" _println
+_else #a 10 < _if
+    "EIGHT" _println
+_end
+_end
+_end
+
+&a '\9' =
+&a '\8' < _if
+    "TEN" _println
+_else &a '\9' < _if
+    "NINE" _println
+_else &a '\x0A' < _if
+    "EIGHT" _println
+_end
+_end
+_end

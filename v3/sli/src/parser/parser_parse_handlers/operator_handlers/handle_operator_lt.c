@@ -126,6 +126,8 @@ SLErrCode handle_operator_lt(
                 .type) {
         case SL_TOKEN_TYPE_INT_LITERAL:
         case SL_TOKEN_TYPE_INT_VAR:
+        case SL_TOKEN_TYPE_FLOAT_LITERAL:
+        case SL_TOKEN_TYPE_FLOAT_VAR:
             switch (
                 buffer
                     ->operation_stack
@@ -133,6 +135,8 @@ SLErrCode handle_operator_lt(
                     .type) {
             case SL_TOKEN_TYPE_INT_LITERAL:
             case SL_TOKEN_TYPE_INT_VAR:
+            case SL_TOKEN_TYPE_FLOAT_LITERAL:
+            case SL_TOKEN_TYPE_FLOAT_VAR:
                 token_res.type = SL_TOKEN_TYPE_CHAR_LITERAL;
                 ret =
                     DArraySLToken_push_back(
