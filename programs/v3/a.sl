@@ -450,3 +450,47 @@ $a _printhex
 '\n' _print
 &a &b || _printhex
 '\n' _print
+
+%a 10 =
+%a 10 == _if
+    "TEN" _println
+_else %a 9 == _if
+    "NINE" _println
+_else %a 8 == _if
+    "EIGHT" _println
+_end
+_end
+_end
+
+%a 9 =
+%a 10 == _if
+    "TEN" _println
+_else %a 9 == _if
+    "NINE" _println
+_else %a 8 == _if
+    "EIGHT" _println
+_end
+_end
+_end
+
+#a 8 =
+#a 10 == _if
+    "TEN" _println
+_else #a 9 == _if
+    "NINE" _println
+_else #a 8 == _if
+    "EIGHT" _println
+_end
+_end
+_end
+
+&a '\8' =
+&a '\x0A' == _if
+    "TEN" _println
+_else &a '\9' == _if
+    "NINE" _println
+_else &a '\8' == _if
+    "EIGHT" _println
+_end
+_end
+_end
