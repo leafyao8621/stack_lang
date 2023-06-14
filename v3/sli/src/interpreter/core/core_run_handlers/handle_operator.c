@@ -21,6 +21,7 @@ SLErrCode runtime_handle_operator_lnot(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_land(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_lor(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_eq(SLInterpreter *interpreter);
+SLErrCode runtime_handle_operator_neq(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter);
 
 typedef SLErrCode (*Handler)(SLInterpreter*);
@@ -43,7 +44,7 @@ SLErrCode runtime_handle_operator(SLInterpreter *interpreter) {
         runtime_handle_operator_land,
         runtime_handle_operator_lor,
         runtime_handle_operator_eq,
-        NULL,
+        runtime_handle_operator_neq,
         NULL,
         NULL,
         NULL,

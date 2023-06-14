@@ -494,3 +494,15 @@ _else &a '\8' == _if
 _end
 _end
 _end
+
+1 2 != _if
+    "NEQ" _println
+_else
+    "EQ" _println
+_end
+
+1 1 != _if
+    "NEQ" _println
+_else
+    "EQ" _println
+_end
