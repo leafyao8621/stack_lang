@@ -193,6 +193,7 @@ SLErrCode handle_operator_lt(
                 .data[buffer->operation_stack.size]
                 .type) {
         case SL_TOKEN_TYPE_INT_VAR:
+        case SL_TOKEN_TYPE_FLOAT_VAR:
             switch (
                 buffer
                     ->operation_stack

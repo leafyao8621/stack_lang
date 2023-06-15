@@ -790,3 +790,32 @@ _end
 #a _println
 #a 2.0 /=
 #a _println
+
+%a 0x80 =
+%b 1 =
+%a 1 <<=
+%a _printhex
+'\n' _print
+%a %b <<=
+%a _printhex
+'\n' _print
+
+&a '\x20' =
+&b '\1' =
+&a '\1' <<=
+&a _printhex
+'\n' _print
+&a &b <<=
+&a _printhex
+'\n' _print
+
+1.0 _printhex
+'\n' _print
+#a 1 =
+%b 1 =
+#a 1 <<=
+#a _printhex
+'\n' _print
+#a %b <<=
+#a _printhex
+'\n' _print
