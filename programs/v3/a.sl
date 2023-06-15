@@ -772,3 +772,21 @@ _end
 #a _println
 #a 2.0 *=
 #a _println
+
+%a 1024 =
+%a 2 /=
+%a _println
+#b 2 =
+%a #b /=
+%a _println
+%a 2.0 /=
+%a _println
+
+#a 1 =
+#a 2 /=
+#a _println
+%b 2 =
+#a %b /=
+#a _println
+#a 2.0 /=
+#a _println
