@@ -909,3 +909,35 @@ _end
 #a %b &=
 #a _printhex
 '\n' _print
+
+%a 0xA00AA00AA00AA00A =
+%b 0x4880488048804880 =
+%a 0x4880488048804880 |=
+%a _printhex
+'\n' _print
+%a 0xA00AA00AA00AA00A =
+%a %b |=
+%a _printhex
+'\n' _print
+
+&a '\xA0' =
+&b '\x48' =
+&a '\x48' |=
+&a _printhex
+'\n' _print
+&a '\xA0' =
+&a &b |=
+&a _printhex
+'\n' _print
+
+5.0 _printhex
+'\n' _print
+#a 5 =
+%b 0x000000000000000F =
+#a 0x000000000000000F |=
+#a _printhex
+'\n' _print
+#a 5 =
+#a %b |=
+#a _printhex
+'\n' _print
