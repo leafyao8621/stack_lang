@@ -46,10 +46,12 @@ SLErrCode handle_operator_ampersand(
     }
     ret = DArraySLToken_pop_back(&buffer->operation_stack);
     if (ret) {
+        puts("ONE");
         return SL_ERR_MISSING_OPERAND;
     }
     ret = DArraySLToken_pop_back(&buffer->operation_stack);
     if (ret) {
+        puts("TWO");
         return SL_ERR_MISSING_OPERAND;
     }
     switch (token->data.operator_type) {
@@ -172,20 +174,13 @@ SLErrCode handle_operator_ampersand(
         }
         break;
     case SL_OPERATOR_TYPE_BAND_ASSIGN:
-        ret = DArraySLToken_pop_back(&buffer->operation_stack);
-        if (ret) {
-            return SL_ERR_MISSING_OPERAND;
-        }
-        ret = DArraySLToken_pop_back(&buffer->operation_stack);
-        if (ret) {
-            return SL_ERR_MISSING_OPERAND;
-        }
         switch (
             buffer
                 ->operation_stack
                 .data[buffer->operation_stack.size]
                 .type) {
         case SL_TOKEN_TYPE_INT_VAR:
+        case SL_TOKEN_TYPE_FLOAT_VAR:
             switch (
                 buffer
                     ->operation_stack

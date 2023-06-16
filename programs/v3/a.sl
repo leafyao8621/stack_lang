@@ -877,3 +877,35 @@ _end
 #a %b >>>=
 #a _printhex
 '\n' _print
+
+%a 0xA00AA00AA00AA00A =
+%b 0xC00CC00CC00CC00C =
+%a 0xC00CC00CC00CC00C &=
+%a _printhex
+'\n' _print
+%a 0xA00AA00AA00AA00A =
+%a %b &=
+%a _printhex
+'\n' _print
+
+&a '\xA0' =
+&b '\xC0' =
+&a '\xC0' &=
+&a _printhex
+'\n' _print
+&a '\xA0' =
+&a &b &=
+&a _printhex
+'\n' _print
+
+5.0 _printhex
+'\n' _print
+#a 5 =
+%b 0xfff0000000000000 =
+#a 0xfff0000000000000 &=
+#a _printhex
+'\n' _print
+#a 5 =
+#a %b &=
+#a _printhex
+'\n' _print
