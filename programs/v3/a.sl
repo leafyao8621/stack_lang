@@ -941,3 +941,32 @@ _end
 #a %b |=
 #a _printhex
 '\n' _print
+
+%a 0xA00AA00AA00AA00A =
+%b 0xFFFFFFFFFFFFFFFF =
+%a 0xFFFFFFFFFFFFFFFF ^=
+%a _printhex
+'\n' _print
+%a %b ^=
+%a _printhex
+'\n' _print
+
+&a '\xA0' =
+&b '\xFF' =
+&a '\xFF' ^=
+&a _printhex
+'\n' _print
+&a &b ^=
+&a _printhex
+'\n' _print
+
+5.0 _printhex
+'\n' _print
+#a 5 =
+%b 0xFFFFFFFFFFFFFFFF =
+#a 0xFFFFFFFFFFFFFFFF ^=
+#a _printhex
+'\n' _print
+#a %b ^=
+#a _printhex
+'\n' _print

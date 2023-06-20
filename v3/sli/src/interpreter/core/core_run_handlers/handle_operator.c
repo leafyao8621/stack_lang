@@ -38,6 +38,7 @@ SLErrCode runtime_handle_operator_rshift_assign(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_rlshift_assign(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_band_assign(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator_bor_assign(SLInterpreter *interpreter);
+SLErrCode runtime_handle_operator_bxor_assign(SLInterpreter *interpreter);
 
 typedef SLErrCode (*Handler)(SLInterpreter*);
 
@@ -76,7 +77,7 @@ SLErrCode runtime_handle_operator(SLInterpreter *interpreter) {
         runtime_handle_operator_rlshift_assign,
         runtime_handle_operator_band_assign,
         runtime_handle_operator_bor_assign,
-        NULL,
+        runtime_handle_operator_bxor_assign,
         NULL
     };
     SLErrCode err =

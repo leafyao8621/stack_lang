@@ -93,20 +93,13 @@ SLErrCode handle_operator_caret(
         }
         break;
     case SL_OPERATOR_TYPE_BXOR_ASSIGN:
-        ret = DArraySLToken_pop_back(&buffer->operation_stack);
-        if (ret) {
-            return SL_ERR_MISSING_OPERAND;
-        }
-        ret = DArraySLToken_pop_back(&buffer->operation_stack);
-        if (ret) {
-            return SL_ERR_MISSING_OPERAND;
-        }
         switch (
             buffer
                 ->operation_stack
                 .data[buffer->operation_stack.size]
                 .type) {
         case SL_TOKEN_TYPE_INT_VAR:
+        case SL_TOKEN_TYPE_FLOAT_VAR:
             switch (
                 buffer
                     ->operation_stack
@@ -114,6 +107,8 @@ SLErrCode handle_operator_caret(
                     .type) {
             case SL_TOKEN_TYPE_INT_LITERAL:
             case SL_TOKEN_TYPE_INT_VAR:
+            case SL_TOKEN_TYPE_FLOAT_LITERAL:
+            case SL_TOKEN_TYPE_FLOAT_VAR:
                 break;
             default:
                 return SL_ERR_TYPE_MISMATCH;
