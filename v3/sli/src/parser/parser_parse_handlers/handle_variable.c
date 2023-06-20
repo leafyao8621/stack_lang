@@ -70,6 +70,13 @@ SLErrCode handle_variable(
             if (ret) {
                 return SL_ERR_OUT_OF_MEMORY;
             }
+        } else if (
+            idx &&
+            (**iter >= '0' && **iter <= '9')) {
+            ret = DArrayChar_push_back(&buffer->token_buf, *iter);
+            if (ret) {
+                return SL_ERR_OUT_OF_MEMORY;
+            }
         } else if (**iter == '_') {
             if (!idx) {
                 return SL_ERR_INVALID_VARIABLE_NAME;
