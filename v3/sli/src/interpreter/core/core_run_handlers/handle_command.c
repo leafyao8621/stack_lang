@@ -12,6 +12,9 @@ SLErrCode runtime_handle_command_printe(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_if(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_else(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_end_if(SLInterpreter *interpreter);
+SLErrCode runtime_handle_command_while(SLInterpreter *interpreter);
+SLErrCode runtime_handle_command_do_while(SLInterpreter *interpreter);
+SLErrCode runtime_handle_command_end_while(SLInterpreter *interpreter);
 
 typedef SLErrCode (*Handler)(SLInterpreter*);
 
@@ -29,9 +32,9 @@ SLErrCode runtime_handle_command(SLInterpreter *interpreter) {
         runtime_handle_command_if,
         runtime_handle_command_else,
         runtime_handle_command_end_if,
-        NULL,
-        NULL,
-        NULL,
+        runtime_handle_command_while,
+        runtime_handle_command_do_while,
+        runtime_handle_command_end_while,
         NULL,
         NULL,
         NULL,
