@@ -5,7 +5,7 @@
 
 #include "../../parser.h"
 
-SLErrCode handle_command_halt(
+SLErrCode handle_command_while(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
@@ -14,7 +14,7 @@ SLErrCode handle_command_halt(
     if (!buffer || !iter || !token) {
         return SL_ERR_NULL_PTR;
     }
-    *push_control = false;
+    *push_control = true;
     *push_control_extra = false;
     return SL_ERR_OK;
 }

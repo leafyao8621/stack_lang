@@ -9,39 +9,64 @@ SLErrCode handle_command_print(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
-    bool *push_control);
+    bool *push_control,
+    bool *push_control_extra);
 
 SLErrCode handle_command_printe(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
-    bool *push_control);
+    bool *push_control,
+    bool *push_control_extra);
 
 SLErrCode handle_command_if(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
-    bool *push_control);
+    bool *push_control,
+    bool *push_control_extra);
 
 SLErrCode handle_command_else(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
-    bool *push_control);
+    bool *push_control,
+    bool *push_control_extra);
 
 SLErrCode handle_command_end(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
-    bool *push_control);
+    bool *push_control,
+    bool *push_control_extra);
+
+SLErrCode handle_command_while(
+    struct SLParserBuffer *buffer,
+    char **iter,
+    SLToken *token,
+    bool *push_control,
+    bool *push_control_extra);
+
+SLErrCode handle_command_do(
+    struct SLParserBuffer *buffer,
+    char **iter,
+    SLToken *token,
+    bool *push_control,
+    bool *push_control_extra);
 
 SLErrCode handle_command_halt(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
-    bool *push_control);
+    bool *push_control,
+    bool *push_control_extra);
 
-typedef SLErrCode (*Handler)(struct SLParserBuffer*, char**, SLToken*, bool*);
+typedef SLErrCode (*Handler)(
+    struct SLParserBuffer*,
+    char**,
+    SLToken*,
+    bool*,
+    bool*);
 
 SLErrCode handle_command(
     SLParser *parser,
@@ -90,8 +115,8 @@ SLErrCode handle_command(
         handle_command_if,
         handle_command_else,
         handle_command_end,
-        NULL,
-        NULL,
+        handle_command_while,
+        handle_command_do,
         NULL,
         NULL,
         NULL,
@@ -129,7 +154,15 @@ SLErrCode handle_command(
     token.type = SL_TOKEN_TYPE_COMMAND;
     token.data.command.type = idx;
     bool push_control = false;
-    SLErrCode err = handlers[idx](buffer, iter, &token, &push_control);
+    bool push_control_extra = false;
+    SLErrCode err =
+        handlers[idx](
+            buffer,
+            iter,
+            &token,
+            &push_control,
+            &push_control_extra
+        );
     if (err) {
         return err;
     }

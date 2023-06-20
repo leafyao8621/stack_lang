@@ -336,6 +336,8 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
             switch (iter->data.command.type) {
             case SL_COMMAND_TYPE_IF:
             case SL_COMMAND_TYPE_ELSE:
+            case SL_COMMAND_TYPE_DO_WHILE:
+            case SL_COMMAND_TYPE_END_WHILE:
                 fprintf(
                     fout,
                     "Tgt: %lu\n",

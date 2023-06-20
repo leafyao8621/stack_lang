@@ -5,7 +5,7 @@
 
 #include "../../parser.h"
 
-SLErrCode handle_command_else(
+SLErrCode handle_command_do(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
@@ -14,10 +14,7 @@ SLErrCode handle_command_else(
     if (!buffer || !iter || !token) {
         return SL_ERR_NULL_PTR;
     }
-    int ret = DArrayIdx_pop_back(&buffer->control_stack);
-    if (ret) {
-        return SL_ERR_MISSING_OPERAND;
-    }
+    int ret = 0;
     switch (
         buffer
             ->cur_token_buf
@@ -25,7 +22,7 @@ SLErrCode handle_command_else(
             [
                 buffer
                     ->control_stack
-                    .data[buffer->control_stack.size]
+                    .data[buffer->control_stack.size - 1]
             ]
             .type) {
     case SL_TOKEN_TYPE_COMMAND:
@@ -36,23 +33,31 @@ SLErrCode handle_command_else(
                 [
                     buffer
                         ->control_stack
-                        .data[buffer->control_stack.size]
+                        .data[buffer->control_stack.size - 1]
                 ]
                 .data
                 .command
                 .type) {
-        case SL_COMMAND_TYPE_IF:
-            buffer
-                ->cur_token_buf
-                ->data
-                [
-                    buffer
-                        ->control_stack
-                        .data[buffer->control_stack.size]
-                ]
-                .data
-                .command
-                .tgt = buffer->cur_token_buf->size;
+        case SL_COMMAND_TYPE_WHILE:
+            ret = DArraySLToken_pop_back(&buffer->operation_stack);
+            if (ret) {
+                return SL_ERR_MISSING_OPERAND;
+            }
+            switch (
+                buffer
+                    ->operation_stack
+                    .data[buffer->operation_stack.size]
+                    .type) {
+            case SL_TOKEN_TYPE_INT_LITERAL:
+            case SL_TOKEN_TYPE_INT_VAR:
+            case SL_TOKEN_TYPE_FLOAT_LITERAL:
+            case SL_TOKEN_TYPE_FLOAT_VAR:
+            case SL_TOKEN_TYPE_CHAR_LITERAL:
+            case SL_TOKEN_TYPE_CHAR_VAR:
+                break;
+            default:
+                return SL_ERR_INVALID_COMMAND;
+            }
             break;
         default:
             return SL_ERR_INVALID_COMMAND;

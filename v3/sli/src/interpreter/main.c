@@ -18,13 +18,13 @@ void read_file(char *fn, String *buf) {
 int main(void) {
     String buf;
     DArrayChar_initialize(&buf, 1000);
-    read_file("../../programs/v3/a.sl", &buf);
+    read_file("../../programs/v3/b.sl", &buf);
     SLInterpreter interpreter;
     SLInterpreter_initialize(&interpreter);
     SLErrCode ret = SLInterpreter_parse(&interpreter, buf.data);
     printf("RET: %d\nMSG: %s\n", ret, sl_errcode_lookup[ret]);
     SLParser_log(&interpreter.parser, stdout);
-    SLInterpreter_run(&interpreter);
+    // SLInterpreter_run(&interpreter);
     SLInterpreter_finalize(&interpreter);
     DArrayChar_finalize(&buf);
     return 0;

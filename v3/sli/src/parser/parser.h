@@ -177,6 +177,7 @@ struct SLParserBuffer {
     DArrayIdx parameter_offsets, local_offsets;
     DArraySLToken operation_stack;
     DArrayIdx control_stack;
+    DArrayIdx control_extra_stack;
 };
 
 #endif

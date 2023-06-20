@@ -9,7 +9,8 @@ SLErrCode handle_command_printe(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
-    bool *push_control) {
+    bool *push_control,
+    bool *push_control_extra) {
     if (!buffer || !iter || !token) {
         return SL_ERR_NULL_PTR;
     }
@@ -29,5 +30,6 @@ SLErrCode handle_command_printe(
         return SL_ERR_INVALID_COMMAND;
     }
     *push_control = false;
+    *push_control_extra = false;
     return SL_ERR_OK;
 }

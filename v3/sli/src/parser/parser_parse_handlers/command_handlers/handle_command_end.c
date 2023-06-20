@@ -9,7 +9,8 @@ SLErrCode handle_command_end(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
-    bool *push_control) {
+    bool *push_control,
+    bool *push_control_extra) {
     if (!buffer || !iter || !token) {
         return SL_ERR_NULL_PTR;
     }
@@ -54,6 +55,45 @@ SLErrCode handle_command_end(
                 .command
                 .tgt = buffer->cur_token_buf->size;
             break;
+        case SL_COMMAND_TYPE_DO_WHILE:
+            ret = DArrayIdx_pop_back(&buffer->control_stack);
+            if (ret) {
+                return SL_ERR_INVALID_COMMAND;
+            }
+            switch (
+                buffer
+                    ->cur_token_buf
+                    ->data
+                    [
+                        buffer
+                            ->control_stack
+                            .data[buffer->control_stack.size]
+                    ]
+                    .data
+                    .command
+                    .type) {
+            case SL_COMMAND_TYPE_WHILE:
+                token->data.command.type = SL_COMMAND_TYPE_END_WHILE;
+                token->data.command.tgt =
+                    buffer
+                        ->control_stack
+                        .data[buffer->control_stack.size];
+                buffer
+                    ->cur_token_buf
+                    ->data
+                    [
+                        buffer
+                            ->control_stack
+                            .data[buffer->control_stack.size + 1]
+                    ]
+                    .data
+                    .command
+                    .tgt = buffer->cur_token_buf->size;
+                break;
+            default:
+                return SL_ERR_INVALID_COMMAND;
+            }
+            break;
         default:
             return SL_ERR_INVALID_COMMAND;
         }
@@ -62,5 +102,6 @@ SLErrCode handle_command_end(
         return SL_ERR_INVALID_COMMAND;
     }
     *push_control = false;
+    *push_control_extra = false;
     return SL_ERR_OK;
 }
