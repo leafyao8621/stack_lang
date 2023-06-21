@@ -15,6 +15,9 @@ SLErrCode runtime_handle_command_end_if(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_while(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_do_while(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_end_while(SLInterpreter *interpreter);
+SLErrCode runtime_handle_command_for(SLInterpreter *interpreter);
+SLErrCode runtime_handle_command_do_for(SLInterpreter *interpreter);
+SLErrCode runtime_handle_command_end_for(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_break(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_continue(SLInterpreter *interpreter);
 
@@ -37,10 +40,10 @@ SLErrCode runtime_handle_command(SLInterpreter *interpreter) {
         runtime_handle_command_while,
         runtime_handle_command_do_while,
         runtime_handle_command_end_while,
+        runtime_handle_command_for,
+        runtime_handle_command_do_for,
         NULL,
-        NULL,
-        NULL,
-        NULL,
+        runtime_handle_command_end_for,
         runtime_handle_command_break,
         runtime_handle_command_continue,
         NULL,

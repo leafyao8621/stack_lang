@@ -3,6 +3,10 @@
 
 #include <sliv3/parser.h>
 
+typedef SLToken *SLTokenPtr;
+
+DEF_DARRAY(SLTokenPtr)
+
 typedef struct SLInterpreter {
     bool initialized;
     SLParser parser;
@@ -10,6 +14,7 @@ typedef struct SLInterpreter {
     SLToken *current;
     DArraySLToken *cur_token_buf;
     DArraySLToken operation_stack;
+    DArraySLTokenPtr control_stack;
 } SLInterpreter;
 
 SLErrCode SLInterpreter_initialize(SLInterpreter *interpreter);

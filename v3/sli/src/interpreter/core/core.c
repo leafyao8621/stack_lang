@@ -1,5 +1,7 @@
 #include "core.h"
 
+DEF_DARRAY_FUNCTIONS(SLTokenPtr)
+
 SLErrCode SLInterpreter_initialize(SLInterpreter *interpreter) {
     if (!interpreter) {
         return SL_ERR_NULL_PTR;

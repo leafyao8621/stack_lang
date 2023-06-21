@@ -1,4 +1,4 @@
-_for %a 0 10 _do
+_for %a 0 9 _do
     %a 1 & _if
         _continue
     _end
