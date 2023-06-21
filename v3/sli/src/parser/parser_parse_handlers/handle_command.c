@@ -54,6 +54,13 @@ SLErrCode handle_command_do(
     bool *push_control,
     bool *push_control_extra);
 
+SLErrCode handle_command_for(
+    struct SLParserBuffer *buffer,
+    char **iter,
+    SLToken *token,
+    bool *push_control,
+    bool *push_control_extra);
+
 SLErrCode handle_command_break(
     struct SLParserBuffer *buffer,
     char **iter,
@@ -134,10 +141,10 @@ SLErrCode handle_command(
         handle_command_while,
         handle_command_do,
         handle_command_end,
+        handle_command_for,
+        handle_command_do,
         NULL,
-        NULL,
-        NULL,
-        NULL,
+        handle_command_end,
         handle_command_break,
         handle_command_continue,
         NULL,

@@ -132,6 +132,82 @@ SLErrCode handle_command_end(
                 return SL_ERR_INVALID_COMMAND;
             }
             break;
+        case SL_COMMAND_TYPE_DO_FOR:
+            ret = DArrayIdx_pop_back(&buffer->control_stack);
+            if (ret) {
+                return SL_ERR_INVALID_COMMAND;
+            }
+            switch (
+                buffer
+                    ->cur_token_buf
+                    ->data
+                    [
+                        buffer
+                            ->control_stack
+                            .data[buffer->control_stack.size]
+                    ]
+                    .data
+                    .command
+                    .type) {
+            case SL_COMMAND_TYPE_FOR:
+                token->data.command.type = SL_COMMAND_TYPE_END_FOR;
+                token->data.command.tgt =
+                    buffer
+                        ->control_stack
+                        .data[buffer->control_stack.size];
+                buffer
+                    ->cur_token_buf
+                    ->data
+                    [
+                        buffer
+                            ->control_stack
+                            .data[buffer->control_stack.size + 1]
+                    ]
+                    .data
+                    .command
+                    .tgt = buffer->cur_token_buf->size;
+                iter_control_extra =
+                    buffer->control_extra_stack.data;
+                for (
+                    size_t i = 0;
+                    i < buffer->control_extra_stack.size;
+                    ++i, ++iter_control_extra) {
+                    switch (
+                        buffer
+                            ->cur_token_buf
+                            ->data[*iter_control_extra]
+                            .data
+                            .command
+                            .type) {
+                    case SL_COMMAND_TYPE_BREAK:
+                        buffer
+                            ->cur_token_buf
+                            ->data[*iter_control_extra]
+                            .data
+                            .command
+                            .tgt = buffer->cur_token_buf->size;
+                        break;
+                    case SL_COMMAND_TYPE_CONTINUE:
+                        buffer
+                            ->cur_token_buf
+                            ->data[*iter_control_extra]
+                            .data
+                            .command
+                            .tgt =
+                                buffer
+                                    ->control_stack
+                                    .data[buffer->control_stack.size];
+                        break;
+                    default:
+                        return SL_ERR_INVALID_COMMAND;
+                    }
+                }
+                DArrayIdx_clear(&buffer->control_extra_stack);
+                break;
+            default:
+                return SL_ERR_INVALID_COMMAND;
+            }
+            break;
         default:
             return SL_ERR_INVALID_COMMAND;
         }

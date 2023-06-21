@@ -59,6 +59,77 @@ SLErrCode handle_command_do(
                 return SL_ERR_INVALID_COMMAND;
             }
             break;
+        case SL_COMMAND_TYPE_FOR:
+            ret = DArraySLToken_pop_back(&buffer->operation_stack);
+            if (ret) {
+                return SL_ERR_MISSING_OPERAND;
+            }
+            ret = DArraySLToken_pop_back(&buffer->operation_stack);
+            if (ret) {
+                return SL_ERR_MISSING_OPERAND;
+            }
+            ret = DArraySLToken_pop_back(&buffer->operation_stack);
+            if (ret) {
+                return SL_ERR_MISSING_OPERAND;
+            }
+            token->data.command.type = SL_COMMAND_TYPE_DO_FOR;
+            switch (
+                buffer
+                    ->operation_stack
+                    .data[buffer->operation_stack.size]
+                    .type) {
+            case SL_TOKEN_TYPE_INT_VAR:
+                switch (
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size + 1]
+                        .type) {
+                case SL_TOKEN_TYPE_INT_LITERAL:
+                case SL_TOKEN_TYPE_INT_VAR:
+                    switch (
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size + 1]
+                        .type) {
+                    case SL_TOKEN_TYPE_INT_LITERAL:
+                    case SL_TOKEN_TYPE_INT_VAR:
+                        break;
+                    default:
+                        return SL_ERR_INVALID_COMMAND;
+                    }
+                    break;
+                default:
+                    return SL_ERR_INVALID_COMMAND;
+                }
+                break;
+            case SL_TOKEN_TYPE_CHAR_VAR:
+                switch (
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size + 1]
+                        .type) {
+                case SL_TOKEN_TYPE_CHAR_LITERAL:
+                case SL_TOKEN_TYPE_CHAR_VAR:
+                    switch (
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size + 1]
+                        .type) {
+                    case SL_TOKEN_TYPE_CHAR_LITERAL:
+                    case SL_TOKEN_TYPE_CHAR_VAR:
+                        break;
+                    default:
+                        return SL_ERR_INVALID_COMMAND;
+                    }
+                    break;
+                default:
+                    return SL_ERR_INVALID_COMMAND;
+                }
+                break;
+            default:
+                return SL_ERR_INVALID_COMMAND;
+            }
+            break;
         default:
             return SL_ERR_INVALID_COMMAND;
         }

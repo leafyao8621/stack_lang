@@ -340,6 +340,8 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
             case SL_COMMAND_TYPE_ELSE:
             case SL_COMMAND_TYPE_DO_WHILE:
             case SL_COMMAND_TYPE_END_WHILE:
+            case SL_COMMAND_TYPE_DO_FOR:
+            case SL_COMMAND_TYPE_END_FOR:
             case SL_COMMAND_TYPE_BREAK:
             case SL_COMMAND_TYPE_CONTINUE:
                 fprintf(
