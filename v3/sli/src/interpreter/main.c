@@ -2,23 +2,45 @@
 
 #include <containers/dstring.h>
 
-void read_file(char *fn, String *buf) {
+int read_file(char *fn, String *buf) {
     char in_buf[1000];
     FILE *fin = fopen(fn, "rb");
+    if (!fin) {
+        return 1;
+    }
+    int ret;
     size_t sz = 0;
     for (; (sz = fread(in_buf, 1, 1000, fin)) == 1000;) {
-        DArrayChar_push_back_batch(buf, in_buf, sz);
+        ret = DArrayChar_push_back_batch(buf, in_buf, sz);
+        if (ret) {
+            return 1;
+        }
     }
-    DArrayChar_push_back_batch(buf, in_buf, sz);
+    ret = DArrayChar_push_back_batch(buf, in_buf, sz);
+    if (ret) {
+        return 1;
+    }
     char zero = 0;
-    DArrayChar_push_back(buf, &zero);
+    ret = DArrayChar_push_back(buf, &zero);
+    if (ret) {
+        return 1;
+    }
     fclose(fin);
+    return 0;
 }
 
-int main(void) {
+int main(int argc, const char **argv) {
     String buf;
-    DArrayChar_initialize(&buf, 1000);
-    read_file("../../programs/v3/b.sl", &buf);
+    int ret_int = DArrayChar_initialize(&buf, 1000);
+    if (ret_int) {
+        puts("Out of Memory");
+        return 0;
+    }
+    ret_int = read_file((char*)argv[1], &buf);
+    if (ret_int) {
+        puts("File IO");
+        return 0;
+    }
     SLInterpreter interpreter;
     SLInterpreter_initialize(&interpreter);
     SLErrCode ret = SLInterpreter_parse(&interpreter, buf.data);
