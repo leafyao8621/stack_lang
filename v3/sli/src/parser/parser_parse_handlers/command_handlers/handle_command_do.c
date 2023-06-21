@@ -102,30 +102,6 @@ SLErrCode handle_command_do(
                     return SL_ERR_INVALID_COMMAND;
                 }
                 break;
-            case SL_TOKEN_TYPE_CHAR_VAR:
-                switch (
-                    buffer
-                        ->operation_stack
-                        .data[buffer->operation_stack.size + 1]
-                        .type) {
-                case SL_TOKEN_TYPE_CHAR_LITERAL:
-                case SL_TOKEN_TYPE_CHAR_VAR:
-                    switch (
-                    buffer
-                        ->operation_stack
-                        .data[buffer->operation_stack.size + 1]
-                        .type) {
-                    case SL_TOKEN_TYPE_CHAR_LITERAL:
-                    case SL_TOKEN_TYPE_CHAR_VAR:
-                        break;
-                    default:
-                        return SL_ERR_INVALID_COMMAND;
-                    }
-                    break;
-                default:
-                    return SL_ERR_INVALID_COMMAND;
-                }
-                break;
             default:
                 return SL_ERR_INVALID_COMMAND;
             }
