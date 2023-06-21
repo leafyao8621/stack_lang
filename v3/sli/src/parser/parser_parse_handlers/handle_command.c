@@ -54,6 +54,20 @@ SLErrCode handle_command_do(
     bool *push_control,
     bool *push_control_extra);
 
+SLErrCode handle_command_break(
+    struct SLParserBuffer *buffer,
+    char **iter,
+    SLToken *token,
+    bool *push_control,
+    bool *push_control_extra);
+
+SLErrCode handle_command_continue(
+    struct SLParserBuffer *buffer,
+    char **iter,
+    SLToken *token,
+    bool *push_control,
+    bool *push_control_extra);
+
 SLErrCode handle_command_halt(
     struct SLParserBuffer *buffer,
     char **iter,
@@ -119,13 +133,13 @@ SLErrCode handle_command(
         handle_command_end,
         handle_command_while,
         handle_command_do,
+        handle_command_end,
         NULL,
         NULL,
         NULL,
         NULL,
-        NULL,
-        NULL,
-        NULL,
+        handle_command_break,
+        handle_command_continue,
         NULL,
         NULL,
         NULL,
@@ -177,6 +191,19 @@ SLErrCode handle_command(
                 &buffer->control_stack,
                 &buffer->cur_token_buf->size
             );
+        if (ret) {
+            return SL_ERR_OUT_OF_MEMORY;
+        }
+    }
+    if (push_control_extra) {
+        ret =
+            DArrayIdx_push_back(
+                &buffer->control_extra_stack,
+                &buffer->cur_token_buf->size
+            );
+        if (ret) {
+            return SL_ERR_OUT_OF_MEMORY;
+        }
     }
     ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
     if (ret) {

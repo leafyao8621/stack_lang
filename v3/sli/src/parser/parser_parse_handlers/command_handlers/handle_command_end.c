@@ -18,6 +18,7 @@ SLErrCode handle_command_end(
     if (ret) {
         return SL_ERR_MISSING_OPERAND;
     }
+    Idx *iter_control_extra;
     switch (
         buffer
             ->cur_token_buf
@@ -89,6 +90,43 @@ SLErrCode handle_command_end(
                     .data
                     .command
                     .tgt = buffer->cur_token_buf->size;
+                iter_control_extra =
+                    buffer->control_extra_stack.data;
+                for (
+                    size_t i = 0;
+                    i < buffer->control_extra_stack.size;
+                    ++i, ++iter_control_extra) {
+                    switch (
+                        buffer
+                            ->cur_token_buf
+                            ->data[*iter_control_extra]
+                            .data
+                            .command
+                            .type) {
+                    case SL_COMMAND_TYPE_BREAK:
+                        buffer
+                            ->cur_token_buf
+                            ->data[*iter_control_extra]
+                            .data
+                            .command
+                            .tgt = buffer->cur_token_buf->size;
+                        break;
+                    case SL_COMMAND_TYPE_CONTINUE:
+                        buffer
+                            ->cur_token_buf
+                            ->data[*iter_control_extra]
+                            .data
+                            .command
+                            .tgt =
+                                buffer
+                                    ->control_stack
+                                    .data[buffer->control_stack.size];
+                        break;
+                    default:
+                        return SL_ERR_INVALID_COMMAND;
+                    }
+                }
+                DArrayIdx_clear(&buffer->control_extra_stack);
                 break;
             default:
                 return SL_ERR_INVALID_COMMAND;
