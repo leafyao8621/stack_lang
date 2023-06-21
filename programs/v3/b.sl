@@ -1,5 +1,6 @@
 %a 0 =
-_while %a 2 < _do
+%b 2 =
+_while %a %b < _do
     "iteration " _print
     %a _print
     ':' _println

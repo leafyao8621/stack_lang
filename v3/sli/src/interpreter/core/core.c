@@ -11,6 +11,10 @@ SLErrCode SLInterpreter_initialize(SLInterpreter *interpreter) {
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
+    ret = DArraySLTokenPtr_initialize(&interpreter->control_stack, 10);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
     return SLParser_initialize(&interpreter->parser);
 }
 
@@ -38,6 +42,7 @@ SLErrCode SLInterpreter_parse(SLInterpreter *interpreter, char *str) {
 
 void SLInterpreter_finalize(SLInterpreter *interpreter) {
     DArraySLToken_finalize(&interpreter->operation_stack);
+    DArraySLTokenPtr_finalize(&interpreter->control_stack);
     SLParser_finalize(&interpreter->parser);
     if (interpreter->initialized) {
         DArrayChar_finalize(&interpreter->global);
