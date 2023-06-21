@@ -102,7 +102,7 @@ SLErrCode handle_command(
         "return",
         "halt"
     };
-    Handler handlers[25] = {
+    Handler handlers[27] = {
         handle_command_print,
         handle_command_print,
         handle_command_print,
@@ -117,6 +117,8 @@ SLErrCode handle_command(
         handle_command_end,
         handle_command_while,
         handle_command_do,
+        NULL,
+        NULL,
         NULL,
         NULL,
         NULL,
@@ -142,12 +144,12 @@ SLErrCode handle_command(
         return SL_ERR_OUT_OF_MEMORY;
     }
     size_t idx = 0;
-    for (const char **i = command_lookup; idx < 25; ++idx, ++i) {
+    for (const char **i = command_lookup; idx < 27; ++idx, ++i) {
         if (!strcmp(*i, buffer->token_buf.data)) {
             break;
         }
     }
-    if (idx == 25) {
+    if (idx == 27) {
         return SL_ERR_INVALID_COMMAND;
     }
     SLToken token;

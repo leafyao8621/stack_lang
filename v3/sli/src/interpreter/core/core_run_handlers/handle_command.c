@@ -19,7 +19,7 @@ SLErrCode runtime_handle_command_end_while(SLInterpreter *interpreter);
 typedef SLErrCode (*Handler)(SLInterpreter*);
 
 SLErrCode runtime_handle_command(SLInterpreter *interpreter) {
-    Handler handlers[25] = {
+    Handler handlers[27] = {
         runtime_handle_command_print,
         runtime_handle_command_println,
         runtime_handle_command_printhex,
@@ -35,6 +35,8 @@ SLErrCode runtime_handle_command(SLInterpreter *interpreter) {
         runtime_handle_command_while,
         runtime_handle_command_do_while,
         runtime_handle_command_end_while,
+        NULL,
+        NULL,
         NULL,
         NULL,
         NULL,
