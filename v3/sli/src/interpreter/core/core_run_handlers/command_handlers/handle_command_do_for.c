@@ -91,7 +91,7 @@ SLErrCode runtime_handle_command_do_for(SLInterpreter *interpreter) {
             default:
                 break;
             }
-            if (*op_int_var > op_int_end) {
+            if (*op_int_var >= op_int_end) {
                 interpreter->current =
                     interpreter
                         ->cur_token_buf
