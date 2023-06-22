@@ -34,6 +34,7 @@ SLErrCode SLInterpreter_parse(SLInterpreter *interpreter, char *str) {
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
+    memset(&interpreter->global.data, 0, interpreter->parser.global_size);
     interpreter->initialized = true;
     interpreter->current = interpreter->parser.code.data;
     interpreter->cur_token_buf = &interpreter->parser.code;
