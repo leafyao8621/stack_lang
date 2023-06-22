@@ -236,6 +236,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
     }
     fputs("Code:\n", fout);
     SLToken *iter = parser->code.data;
+    uint64_t *float_int_ptr = 0;
     for (size_t i = 0; i < parser->code.size; ++i, ++iter) {
         fprintf(
             fout,
@@ -253,11 +254,12 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
             );
             break;
         case SL_TOKEN_TYPE_FLOAT_LITERAL:
+            float_int_ptr = (uint64_t*)&iter->data.float_literal;
             fprintf(
                 fout,
                 "DEC: %lE\nHEX: 0x%016lX\n",
                 iter->data.float_literal,
-                *(uint64_t*)&iter->data.float_literal
+                *float_int_ptr
             );
             break;
         case SL_TOKEN_TYPE_INT_VAR:

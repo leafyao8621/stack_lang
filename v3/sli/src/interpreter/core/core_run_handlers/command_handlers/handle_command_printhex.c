@@ -10,6 +10,9 @@ SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter) {
     double op_float;
     char op_char, *op_str;
     Idx offset;
+    uint64_t *float_int_ptr;
+    op_str = NULL;
+    op_int = op_float = op_char = 0;
     DArraySLToken_pop_back(&interpreter->operation_stack);
     switch (
         interpreter
@@ -55,7 +58,8 @@ SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter) {
                 .data[interpreter->operation_stack.size]
                 .data
                 .float_literal;
-        printf("%016lX", *(uint64_t*)&op_float);
+        float_int_ptr = (uint64_t*)&op_float;
+        printf("%016lX", *float_int_ptr);
         break;
     case SL_TOKEN_TYPE_FLOAT_VAR:
         offset =
@@ -78,7 +82,9 @@ SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter) {
         default:
             break;
         }
-        printf("%016lX", *(uint64_t*)&op_float);
+        float_int_ptr = (uint64_t*)&op_float;
+        printf("%016lX", *float_int_ptr);
+        printf("%016lX", *float_int_ptr);
         break;
     case SL_TOKEN_TYPE_CHAR_LITERAL:
         op_char =

@@ -11,6 +11,8 @@ SLErrCode runtime_handle_command_println(SLInterpreter *interpreter) {
     double op_float;
     char op_char, *op_str;
     Idx offset;
+    op_int = op_float = op_char = 0;
+    op_str = NULL;
     switch (
         interpreter
             ->operation_stack

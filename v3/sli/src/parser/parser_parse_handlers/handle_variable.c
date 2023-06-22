@@ -10,8 +10,8 @@ SLErrCode handle_variable(
     struct SLParserBuffer *buffer,
     char **iter) {
     SLVariableTypeName vtn;
-    Idx dim;
-    SLTokenType array_type;
+    Idx dim = 0;
+    SLTokenType array_type = SL_TOKEN_TYPE_INT_LITERAL;
     if (!parser || !buffer || !iter) {
         return SL_ERR_NULL_PTR;
     }

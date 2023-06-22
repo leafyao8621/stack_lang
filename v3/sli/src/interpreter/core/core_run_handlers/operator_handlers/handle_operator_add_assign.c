@@ -11,6 +11,10 @@ SLErrCode runtime_handle_operator_add_assign(SLInterpreter *interpreter) {
     int64_t *op_a_int_var, op_b_int;
     double *op_a_float_var, op_b_float;
     char *op_a_char_var, op_b_char;
+    op_b_char = op_b_float = op_b_int = 0;
+    op_a_int_var = NULL;
+    op_a_float_var = NULL;
+    op_a_char_var = NULL;
     Idx offset;
     switch (
         interpreter
@@ -223,6 +227,15 @@ SLErrCode runtime_handle_operator_add_assign(SLInterpreter *interpreter) {
         case SL_VARIABLE_LOCATION_GLOBAL:
             op_a_char_var = (char*)(interpreter->global.data + offset);
             break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_a_char_var =
+                (char*)
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size]
+                        .data
+                        .char_var
+                        .direct;
         default:
             break;
         }
@@ -258,6 +271,15 @@ SLErrCode runtime_handle_operator_add_assign(SLInterpreter *interpreter) {
             case SL_VARIABLE_LOCATION_GLOBAL:
                 op_b_char = *(char*)(interpreter->global.data + offset);
                 break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_b_char =
+                    *(char*)
+                        interpreter
+                            ->operation_stack
+                            .data[interpreter->operation_stack.size + 1]
+                            .data
+                            .char_var
+                            .direct;
             default:
                 break;
             }

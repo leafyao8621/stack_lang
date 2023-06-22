@@ -7,6 +7,8 @@
 
 SLErrCode runtime_handle_command_do_for(SLInterpreter *interpreter) {
     int64_t *op_int_var, op_int_init, op_int_end;
+    op_int_var = NULL;
+    op_int_init = op_int_end = 0;
     Idx offset;
     DArraySLToken_pop_back(&interpreter->operation_stack);
     DArraySLToken_pop_back(&interpreter->operation_stack);

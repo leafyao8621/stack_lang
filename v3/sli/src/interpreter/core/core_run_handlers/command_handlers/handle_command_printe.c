@@ -8,6 +8,7 @@
 SLErrCode runtime_handle_command_printe(SLInterpreter *interpreter) {
     double op_float;
     Idx offset;
+    op_float = 0;
     DArraySLToken_pop_back(&interpreter->operation_stack);
     switch (
         interpreter

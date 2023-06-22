@@ -10,6 +10,7 @@ SLErrCode runtime_handle_command_if(SLInterpreter *interpreter) {
     double op_float;
     char op_char;
     Idx offset;
+    op_int = op_float = op_char = 0;
     DArraySLToken_pop_back(&interpreter->operation_stack);
     switch (
         interpreter
