@@ -109,6 +109,8 @@ typedef struct SLVariableData {
 
 typedef struct SLToken SLToken;
 
+DEF_DARRAY(Idx)
+
 struct SLToken {
     SLTokenType type;
     union {
@@ -123,6 +125,7 @@ struct SLToken {
         struct {
             SLVariableData var_data;
             Idx dim;
+            DArrayIdx size;
             SLTokenType type;
         } arr;
         SLOperatorType operator_type;
@@ -165,8 +168,6 @@ SLErrCode SLParser_parse(SLParser *parser, char *str);
 SLErrCode SLParser_clear_code(SLParser *parser);
 SLErrCode SLParser_finalize(SLParser *parser);
 SLErrCode SLParser_log(SLParser *parser, FILE *fout);
-
-DEF_DARRAY(Idx)
 
 DEF_HASHMAP(String, Idx)
 
