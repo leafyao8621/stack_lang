@@ -107,6 +107,15 @@ SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter) {
         case SL_VARIABLE_LOCATION_GLOBAL:
             op_char = *(char*)(interpreter->global.data + offset);
             break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_char =
+                *(char*)
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size]
+                        .data
+                        .char_var
+                        .direct;
         default:
             break;
         }

@@ -224,6 +224,15 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
         case SL_VARIABLE_LOCATION_GLOBAL:
             op_a_char_var = (char*)(interpreter->global.data + offset);
             break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_a_char_var =
+                (char*)
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size]
+                        .data
+                        .char_var
+                        .direct;
         default:
             break;
         }

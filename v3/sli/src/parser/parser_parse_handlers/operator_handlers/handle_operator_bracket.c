@@ -46,7 +46,7 @@ SLErrCode handle_operator_bracket(
             case SL_TOKEN_TYPE_INT_VAR:
             case SL_TOKEN_TYPE_CHAR_LITERAL:
             case SL_TOKEN_TYPE_CHAR_VAR:
-                token_res.type = SL_TOKEN_TYPE_CHAR_LITERAL;
+                token_res.type = SL_TOKEN_TYPE_CHAR_VAR;
                 ret =
                     DArraySLToken_push_back(
                         &buffer->operation_stack,

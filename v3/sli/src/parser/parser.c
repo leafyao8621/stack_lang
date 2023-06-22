@@ -115,10 +115,11 @@ void str_repr_log(char *str, FILE *fout) {
 }
 
 SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
-    static const char *location_lookup[3] = {
+    static const char *location_lookup[4] = {
         "SL_VARIABLE_LOCATION_LOCAL",
         "SL_VARIABLE_LOCATION_PARAMETER",
-        "SL_VARIABLE_LOCATION_GLOBAL"
+        "SL_VARIABLE_LOCATION_GLOBAL",
+        "SL_VARIABLE_LOCATION_DIRECT"
     };
     static const char *type_lookup[12] = {
         "SL_TOKEN_TYPE_INT_LITERAL",

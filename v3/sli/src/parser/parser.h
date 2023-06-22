@@ -99,12 +99,14 @@ typedef enum SLCommandType {
 typedef enum SLVariableLocation {
     SL_VARIABLE_LOCATION_LOCAL,
     SL_VARIABLE_LOCATION_PARAMETER,
-    SL_VARIABLE_LOCATION_GLOBAL
+    SL_VARIABLE_LOCATION_GLOBAL,
+    SL_VARIABLE_LOCATION_DIRECT
 } SLVariableLocation;
 
 typedef struct SLVariableData {
     SLVariableLocation location;
     Idx idx;
+    void *direct;
 } SLVariableData;
 
 typedef struct SLToken SLToken;
