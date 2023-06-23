@@ -7,10 +7,15 @@ typedef SLToken *SLTokenPtr;
 
 DEF_DARRAY(SLTokenPtr)
 
+typedef char **BufferPtr;
+
+DEF_HASHMAP(BufferPtr, DArrayIdx)
+
 typedef struct SLInterpreter {
     bool initialized;
     SLParser parser;
     String global;
+    HashMapBufferPtrDArrayIdx global_array;
     SLToken *current;
     DArraySLToken *cur_token_buf;
     DArraySLToken operation_stack;

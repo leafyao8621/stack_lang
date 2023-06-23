@@ -19,6 +19,13 @@ SLErrCode handle_command_printe(
     bool *push_control,
     bool *push_control_extra);
 
+SLErrCode handle_command_alloc(
+    struct SLParserBuffer *buffer,
+    char **iter,
+    SLToken *token,
+    bool *push_control,
+    bool *push_control_extra);
+
 SLErrCode handle_command_if(
     struct SLParserBuffer *buffer,
     char **iter,
@@ -133,7 +140,7 @@ SLErrCode handle_command(
         NULL,
         NULL,
         NULL,
-        NULL,
+        handle_command_alloc,
         NULL,
         handle_command_if,
         handle_command_else,

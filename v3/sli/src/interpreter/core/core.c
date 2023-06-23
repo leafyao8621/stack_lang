@@ -2,6 +2,11 @@
 
 DEF_DARRAY_FUNCTIONS(SLTokenPtr)
 
+DEF_HASHMAP_FUNCTIONS(BufferPtr, DArrayIdx)
+
+bool eq_buffer_ptr(BufferPtr *a, BufferPtr *b);
+size_t hash_buffer_ptr(BufferPtr *a);
+
 SLErrCode SLInterpreter_initialize(SLInterpreter *interpreter) {
     if (!interpreter) {
         return SL_ERR_NULL_PTR;
@@ -12,6 +17,16 @@ SLErrCode SLInterpreter_initialize(SLInterpreter *interpreter) {
         return SL_ERR_OUT_OF_MEMORY;
     }
     ret = DArraySLTokenPtr_initialize(&interpreter->control_stack, 10);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
+    ret =
+        HashMapBufferPtrDArrayIdx_initialize(
+            &interpreter->global_array,
+            10,
+            eq_buffer_ptr,
+            hash_buffer_ptr
+        );
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
@@ -35,6 +50,43 @@ SLErrCode SLInterpreter_parse(SLInterpreter *interpreter, char *str) {
         return SL_ERR_OUT_OF_MEMORY;
     }
     memset(interpreter->global.data, 0, interpreter->parser.global_size);
+    HashMapSLVariableTypeNameIdxNode *iter_global_lookup =
+        interpreter->parser.global_lookup.data;
+    BufferPtr buffer_ptr = NULL;
+    DArrayIdx *value = NULL;
+    for (
+        size_t i = 0;
+        i < interpreter->parser.global_lookup.size;
+        ++i,
+        ++iter_global_lookup) {
+        if (iter_global_lookup->in_use) {
+            switch (iter_global_lookup->key.type) {
+            case SL_TOKEN_TYPE_ARR:
+                buffer_ptr =
+                    (BufferPtr)
+                        (
+                            interpreter->global.data +
+                            iter_global_lookup->value
+                        );
+                ret =
+                    HashMapBufferPtrDArrayIdx_fetch(
+                        &interpreter->global_array,
+                        &buffer_ptr,
+                        &value
+                    );
+                if (ret) {
+                    return SL_ERR_OUT_OF_MEMORY;
+                }
+                ret = DArrayIdx_initialize(value, 10);
+                if (ret) {
+                    return SL_ERR_OUT_OF_MEMORY;
+                }
+                break;
+            default:
+                break;
+            }
+        }
+    }
     interpreter->initialized = true;
     interpreter->current = interpreter->parser.code.data;
     interpreter->cur_token_buf = &interpreter->parser.code;
@@ -44,6 +96,17 @@ SLErrCode SLInterpreter_parse(SLInterpreter *interpreter, char *str) {
 void SLInterpreter_finalize(SLInterpreter *interpreter) {
     DArraySLToken_finalize(&interpreter->operation_stack);
     DArraySLTokenPtr_finalize(&interpreter->control_stack);
+    HashMapBufferPtrDArrayIdxNode *iter_global_array =
+        interpreter->global_array.data;
+    for (
+        size_t i = 0;
+        i < interpreter->global_array.size;
+        ++i, ++iter_global_array) {
+        if (iter_global_array->in_use) {
+            DArrayIdx_finalize(&iter_global_array->value);
+        }
+    }
+    HashMapBufferPtrDArrayIdx_finalize(&interpreter->global_array);
     SLParser_finalize(&interpreter->parser);
     if (interpreter->initialized) {
         DArrayChar_finalize(&interpreter->global);
