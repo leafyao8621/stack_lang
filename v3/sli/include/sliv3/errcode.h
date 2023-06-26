@@ -16,9 +16,10 @@ typedef enum SLErrCode {
     SL_ERR_INVALID_COMMAND,
     SL_ERR_INTERPRETER_NOT_INITIALIZED,
     SL_ERR_IDX_OUT_OF_BOUND,
-    SL_ERR_STR_NOT_INITIALIZED
+    SL_ERR_STR_NOT_INITIALIZED,
+    SL_ERR_DOUBLE_ALLOC
 } SLErrCode;
 
-extern const char *sl_errcode_lookup[15];
+extern const char *sl_errcode_lookup[16];
 
 #endif
