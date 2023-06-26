@@ -127,7 +127,6 @@ struct SLToken {
         struct {
             SLVariableData var_data;
             Idx dim;
-            DArrayIdx size;
             SLTokenType type;
         } arr;
         SLOperatorType operator_type;
