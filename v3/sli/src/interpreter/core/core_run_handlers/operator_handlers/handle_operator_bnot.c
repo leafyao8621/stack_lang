@@ -12,7 +12,9 @@ SLErrCode runtime_handle_operator_bnot(SLInterpreter *interpreter) {
     double op_a_float;
     char op_a_char;
     Idx offset;
-    uint64_t float_buf;
+    uint64_t *float_int;
+    op_a_int = op_a_float = op_a_char = offset = 0;
+    float_int = NULL;
     switch (
         interpreter
             ->operation_stack
@@ -60,8 +62,9 @@ SLErrCode runtime_handle_operator_bnot(SLInterpreter *interpreter) {
                 .data
                 .float_literal;
         res.type = SL_TOKEN_TYPE_FLOAT_LITERAL;
-        float_buf = ~(*(uint64_t*)&op_a_float);
-        res.data.float_literal = *(double*)&float_buf;
+        float_int = (uint64_t*)&op_a_float;
+        *float_int = ~(*float_int);
+        res.data.float_literal = *(double*)float_int;
         break;
     case SL_TOKEN_TYPE_FLOAT_VAR:
         offset =
@@ -85,8 +88,9 @@ SLErrCode runtime_handle_operator_bnot(SLInterpreter *interpreter) {
             break;
         }
         res.type = SL_TOKEN_TYPE_FLOAT_LITERAL;
-        float_buf = ~(*(uint64_t*)&op_a_float);
-        res.data.float_literal = *(double*)&float_buf;
+        float_int = (uint64_t*)&op_a_float;
+        *float_int = ~(*float_int);
+        res.data.float_literal = *(double*)float_int;
         break;
     case SL_TOKEN_TYPE_CHAR_LITERAL:
         op_a_char =

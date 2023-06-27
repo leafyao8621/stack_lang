@@ -12,6 +12,9 @@ SLErrCode runtime_handle_operator_index(SLInterpreter *interpreter) {
     String *op_a_str_lit, **op_a_str_var;
     int64_t op_b_int;
     Idx offset;
+    op_a_str_lit = NULL;
+    op_a_str_var = NULL;
+    op_b_int = offset = 0;
     switch (
         interpreter
             ->operation_stack

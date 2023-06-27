@@ -12,6 +12,7 @@ SLErrCode runtime_handle_operator_lnot(SLInterpreter *interpreter) {
     double op_a_float;
     char op_a_char;
     Idx offset;
+    op_a_int = op_a_float = op_a_char = offset = 0;
     switch (
         interpreter
             ->operation_stack

@@ -13,6 +13,13 @@ SLErrCode runtime_handle_operator_lor(SLInterpreter *interpreter) {
     double op_a_float, op_b_float;
     char op_a_char, op_b_char;
     Idx offset;
+    op_a_int =
+        op_b_int =
+        op_a_float =
+        op_b_float =
+        op_a_char =
+        op_b_char =
+        offset = 0;
     switch (
         interpreter
             ->operation_stack

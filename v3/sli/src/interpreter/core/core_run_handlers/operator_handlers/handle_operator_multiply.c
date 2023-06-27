@@ -12,6 +12,7 @@ SLErrCode runtime_handle_operator_multiply(SLInterpreter *interpreter) {
     int64_t op_a_int, op_b_int;
     double op_a_float, op_b_float;
     Idx offset;
+    op_a_int = op_b_int = op_a_float = op_b_float = offset = 0;
     switch (
         interpreter
             ->operation_stack

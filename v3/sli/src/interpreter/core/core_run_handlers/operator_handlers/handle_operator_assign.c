@@ -13,6 +13,12 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
     char *op_a_char_var, op_b_char;
     String **op_a_str_var, *op_b_str;
     Idx offset;
+    op_b_int = op_b_float = op_b_char = 0;
+    op_a_int_var = NULL;
+    op_a_float_var = NULL;
+    op_a_char_var = NULL;
+    op_a_str_var = NULL;
+    op_b_str = NULL;
     switch (
         interpreter
             ->operation_stack

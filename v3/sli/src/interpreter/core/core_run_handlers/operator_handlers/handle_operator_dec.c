@@ -10,6 +10,9 @@ SLErrCode runtime_handle_operator_dec(SLInterpreter *interpreter) {
     int64_t *op_a_int;
     char *op_a_char;
     Idx offset;
+    offset = 0;
+    op_a_int = NULL;
+    op_a_char = NULL;
     switch (
         interpreter
             ->operation_stack

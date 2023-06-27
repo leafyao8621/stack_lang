@@ -10,9 +10,14 @@ SLErrCode runtime_handle_operator_rshift_assign(SLInterpreter *interpreter) {
     DArraySLToken_pop_back(&interpreter->operation_stack);
     int64_t *op_a_int_var, op_b_int;
     double *op_a_float_var;
-    uint64_t float_buf;
+    uint64_t *float_int;
     char *op_a_char_var, op_b_char;
     Idx offset;
+    op_b_int = op_b_char = offset = 0;
+    op_a_int_var = NULL;
+    op_a_float_var = NULL;
+    float_int = NULL;
+    op_a_char_var = NULL;
     switch (
         interpreter
             ->operation_stack
@@ -101,7 +106,7 @@ SLErrCode runtime_handle_operator_rshift_assign(SLInterpreter *interpreter) {
         default:
             break;
         }
-        float_buf = *(uint64_t*)op_a_float_var;
+        float_int = (uint64_t*)op_a_float_var;
         switch (
             interpreter
                 ->operation_stack
@@ -114,8 +119,8 @@ SLErrCode runtime_handle_operator_rshift_assign(SLInterpreter *interpreter) {
                 .data[interpreter->operation_stack.size + 1]
                 .data
                 .int_literal;
-            float_buf >>= op_b_int;
-            *op_a_float_var = *(double*)&float_buf;
+            *float_int >>= op_b_int;
+            *op_a_float_var = *(double*)float_int;
             break;
         case SL_TOKEN_TYPE_INT_VAR:
             offset =
@@ -138,8 +143,8 @@ SLErrCode runtime_handle_operator_rshift_assign(SLInterpreter *interpreter) {
             default:
                 break;
             }
-            float_buf >>= op_b_int;
-            *op_a_float_var = *(double*)&float_buf;
+            *float_int >>= op_b_int;
+            *op_a_float_var = *(double*)float_int;
             break;
         default:
             break;

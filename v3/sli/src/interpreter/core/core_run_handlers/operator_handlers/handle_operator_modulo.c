@@ -11,6 +11,7 @@ SLErrCode runtime_handle_operator_modulo(SLInterpreter *interpreter) {
     SLToken res;
     int64_t op_a_int, op_b_int;
     Idx offset;
+    op_a_int = op_b_int = offset = 0;
     switch (
         interpreter
             ->operation_stack

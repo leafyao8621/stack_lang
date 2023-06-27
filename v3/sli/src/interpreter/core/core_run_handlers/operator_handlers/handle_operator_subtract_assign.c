@@ -12,6 +12,10 @@ SLErrCode runtime_handle_operator_subtract_assign(SLInterpreter *interpreter) {
     double *op_a_float_var, op_b_float;
     char *op_a_char_var, op_b_char;
     Idx offset;
+    op_b_int = op_b_float = op_b_char = offset = 0;
+    op_a_int_var = NULL;
+    op_a_float_var = NULL;
+    op_a_char_var = NULL;
     switch (
         interpreter
             ->operation_stack
