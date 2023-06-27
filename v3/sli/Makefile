@@ -7,7 +7,7 @@ BIN = sli
 
 %.o: %.c
 	@cp src/util/errcode.h src/interpreter/core/core.h src/parser/parser.h include/sliv3
-	$(CC) $(CFLAGS) -g -c $< -o $@ -Iinclude
+	$(CC) $(CFLAGS) -O3 -c $< -o $@ -Iinclude
 
 $(LIB): $(OBJ)
 	$(CC) $(OBJ) -o $(LIB) -lcontainers -shared
