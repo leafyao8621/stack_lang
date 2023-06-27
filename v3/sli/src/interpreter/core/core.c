@@ -106,7 +106,7 @@ void SLInterpreter_finalize(SLInterpreter *interpreter) {
         if (iter_global_array->in_use) {
             DArrayIdx_finalize(&iter_global_array->value.size);
             if (iter_global_array->value.dynamic) {
-                free(iter_global_array->key);
+                free(*iter_global_array->key);
             }
         }
     }
