@@ -121,7 +121,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "SL_VARIABLE_LOCATION_GLOBAL",
         "SL_VARIABLE_LOCATION_DIRECT"
     };
-    static const char *type_lookup[12] = {
+    static const char *type_lookup[13] = {
         "SL_TOKEN_TYPE_INT_LITERAL",
         "SL_TOKEN_TYPE_INT_VAR",
         "SL_TOKEN_TYPE_FLOAT_LITERAL",
@@ -131,6 +131,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "SL_TOKEN_TYPE_STR_LITERAL",
         "SL_TOKEN_TYPE_STR_VAR",
         "SL_TOKEN_TYPE_ARR",
+        "SL_TOKEN_TYPE_ARR_IMMEDIATE",
         "SL_TOKEN_TYPE_OPERATOR",
         "SL_TOKEN_TYPE_COMMAND",
         "SL_TOKEN_TYPE_FUNCTION"

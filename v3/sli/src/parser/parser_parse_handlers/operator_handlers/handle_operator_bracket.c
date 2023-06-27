@@ -61,6 +61,7 @@ SLErrCode handle_operator_bracket(
             }
             break;
         case SL_TOKEN_TYPE_ARR:
+        case SL_TOKEN_TYPE_ARR_IMMEDIATE:
             switch (
                 buffer
                     ->operation_stack
@@ -78,7 +79,7 @@ SLErrCode handle_operator_bracket(
                         .arr
                         .dim;
                 if (prev_dim > 1) {
-                    token_res.type = SL_TOKEN_TYPE_ARR;
+                    token_res.type = SL_TOKEN_TYPE_ARR_IMMEDIATE;
                     token_res.data.arr.dim = prev_dim - 1;
                     token_res.data.arr.type =
                         buffer
