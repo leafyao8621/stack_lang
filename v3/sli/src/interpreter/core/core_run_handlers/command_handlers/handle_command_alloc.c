@@ -88,5 +88,79 @@ SLErrCode runtime_handle_command_alloc(SLInterpreter *interpreter) {
             return SL_ERR_OUT_OF_MEMORY;
         }
     }
+    SLToken *iter_stack =
+        interpreter->operation_stack.data +
+        interpreter->operation_stack.size + 1;
+    size_t dim =
+        interpreter
+            ->operation_stack
+            .data[interpreter->operation_stack.size]
+            .data
+            .arr
+            .dim;
+    size_t nmemb = 1;
+    int64_t op_int = 0;
+    for (size_t i = 0; i < dim; ++i, ++iter_stack) {
+        switch (iter_stack->type) {
+        case SL_TOKEN_TYPE_INT_LITERAL:
+            nmemb *= iter_stack->data.int_literal;
+            break;
+        case SL_TOKEN_TYPE_INT_VAR:
+            offset = iter_stack->data.int_var.idx;
+            switch (iter_stack->data.int_var.location) {
+            case SL_VARIABLE_LOCATION_GLOBAL:
+                op_int = *(int64_t*)(interpreter->global.data + offset);
+                break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_int = *(int64_t*)iter_stack->data.int_var.direct;
+                break;
+            default:
+                break;
+            }
+            nmemb *= op_int;
+            break;
+        case SL_TOKEN_TYPE_CHAR_LITERAL:
+            nmemb *= iter_stack->data.char_literal;
+            break;
+        case SL_TOKEN_TYPE_CHAR_VAR:
+            offset = iter_stack->data.char_var.idx;
+            switch (iter_stack->data.char_var.location) {
+            case SL_VARIABLE_LOCATION_GLOBAL:
+                op_int = *(char*)(interpreter->global.data + offset);
+                break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_int = *(char*)iter_stack->data.char_var.direct;
+                break;
+            default:
+                break;
+            }
+            nmemb *= op_int;
+            break;
+        default:
+            break;
+        }
+    }
+    switch (
+        interpreter
+            ->operation_stack
+            .data[interpreter->operation_stack.size]
+            .data
+            .arr
+            .type) {
+    case SL_TOKEN_TYPE_INT_VAR:
+        *arr = calloc(nmemb, 8);
+        break;
+    case SL_TOKEN_TYPE_FLOAT_VAR:
+        *arr = calloc(nmemb, 8);
+        break;
+    case SL_TOKEN_TYPE_CHAR_VAR:
+        *arr = calloc(nmemb, 1);
+        break;
+    case SL_TOKEN_TYPE_STR_VAR:
+        *arr = calloc(nmemb, 8);
+        break;
+    default:
+        break;
+    }
     return SL_ERR_OK;
 }

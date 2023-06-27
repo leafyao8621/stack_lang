@@ -9,6 +9,7 @@ SLErrCode runtime_handle_command_print(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_println(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_printe(SLInterpreter *interpreter);
+SLErrCode runtime_handle_command_alloc(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_if(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_else(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command_end_if(SLInterpreter *interpreter);
@@ -32,7 +33,7 @@ SLErrCode runtime_handle_command(SLInterpreter *interpreter) {
         NULL,
         NULL,
         NULL,
-        NULL,
+        runtime_handle_command_alloc,
         NULL,
         runtime_handle_command_if,
         runtime_handle_command_else,
