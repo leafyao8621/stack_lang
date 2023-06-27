@@ -48,6 +48,8 @@ int main(int argc, const char **argv) {
     SLParser_log(&interpreter.parser, stdout);
     ret = SLInterpreter_run(&interpreter);
     printf("RET: %d\nMSG: %s\n", ret, sl_errcode_lookup[ret]);
+    ret = SLInterpreter_run(&interpreter);
+    printf("RET: %d\nMSG: %s\n", ret, sl_errcode_lookup[ret]);
     SLInterpreter_finalize(&interpreter);
     DArrayChar_finalize(&buf);
     return 0;

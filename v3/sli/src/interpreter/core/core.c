@@ -30,6 +30,10 @@ SLErrCode SLInterpreter_initialize(SLInterpreter *interpreter) {
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
+    ret = DArrayIdx_initialize(&interpreter->size_stack, 10);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
     return SLParser_initialize(&interpreter->parser);
 }
 
@@ -49,7 +53,6 @@ SLErrCode SLInterpreter_parse(SLInterpreter *interpreter, char *str) {
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
-    memset(interpreter->global.data, 0, interpreter->parser.global_size);
     HashMapSLVariableTypeNameIdxNode *iter_global_lookup =
         interpreter->parser.global_lookup.data;
     BufferPtr buffer_ptr = NULL;
@@ -89,28 +92,14 @@ SLErrCode SLInterpreter_parse(SLInterpreter *interpreter, char *str) {
         }
     }
     interpreter->initialized = true;
-    interpreter->current = interpreter->parser.code.data;
-    interpreter->cur_token_buf = &interpreter->parser.code;
     return SL_ERR_OK;
 }
 
 void SLInterpreter_finalize(SLInterpreter *interpreter) {
     DArraySLToken_finalize(&interpreter->operation_stack);
     DArraySLTokenPtr_finalize(&interpreter->control_stack);
-    HashMapBufferPtrArrayMetaNode *iter_global_array =
-        interpreter->global_array.data;
-    for (
-        size_t i = 0;
-        i < interpreter->global_array.size;
-        ++i, ++iter_global_array) {
-        if (iter_global_array->in_use) {
-            DArrayIdx_finalize(&iter_global_array->value.size);
-            if (iter_global_array->value.dynamic) {
-                free(*iter_global_array->key);
-            }
-        }
-    }
     HashMapBufferPtrArrayMeta_finalize(&interpreter->global_array);
+    DArrayIdx_finalize(&interpreter->size_stack);
     SLParser_finalize(&interpreter->parser);
     if (interpreter->initialized) {
         DArrayChar_finalize(&interpreter->global);
@@ -136,6 +125,9 @@ SLErrCode SLInterpreter_run(SLInterpreter *interpreter) {
     if (!interpreter->initialized) {
         return SL_ERR_INTERPRETER_NOT_INITIALIZED;
     }
+    interpreter->current = interpreter->parser.code.data;
+    interpreter->cur_token_buf = &interpreter->parser.code;
+    memset(interpreter->global.data, 0, interpreter->parser.global_size);
     SLErrCode err;
     for (
         ;
@@ -213,5 +205,23 @@ SLErrCode SLInterpreter_run(SLInterpreter *interpreter) {
             break;
         }
     }
+    DArraySLToken_clear(&interpreter->operation_stack);
+    DArraySLTokenPtr_clear(&interpreter->control_stack);
+    HashMapBufferPtrArrayMetaNode *iter_global_array =
+        interpreter->global_array.data;
+    for (
+        size_t i = 0;
+        i < interpreter->global_array.capacity;
+        ++i, ++iter_global_array) {
+        if (iter_global_array->in_use) {
+            iter_global_array->in_use = false;
+            DArrayIdx_finalize(&iter_global_array->value.size);
+            if (iter_global_array->value.dynamic) {
+                free(*iter_global_array->key);
+            }
+            iter_global_array->value.dynamic = false;
+        }
+    }
+    DArrayIdx_clear(&interpreter->size_stack);
     return SL_ERR_OK;
 }
