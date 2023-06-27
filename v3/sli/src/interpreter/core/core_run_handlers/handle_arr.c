@@ -5,7 +5,7 @@
 
 #include "../core.h"
 
-SLErrCode runtime_handle_char_var(SLInterpreter *interpreter) {
+SLErrCode runtime_handle_arr(SLInterpreter *interpreter) {
     int ret =
         DArraySLToken_push_back(
             &interpreter->operation_stack,

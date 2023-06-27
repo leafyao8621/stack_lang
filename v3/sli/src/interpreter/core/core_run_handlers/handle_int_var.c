@@ -6,10 +6,11 @@
 #include "../core.h"
 
 SLErrCode runtime_handle_int_var(SLInterpreter *interpreter) {
-    SLToken token;
-    token.type = SL_TOKEN_TYPE_INT_VAR;
-    token.data.int_var = interpreter->current->data.int_var;
-    int ret = DArraySLToken_push_back(&interpreter->operation_stack, &token);
+    int ret =
+        DArraySLToken_push_back(
+            &interpreter->operation_stack,
+            interpreter->current
+        );
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
