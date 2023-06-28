@@ -42,6 +42,16 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
         case SL_VARIABLE_LOCATION_GLOBAL:
             op_a_int_var = (int64_t*)(interpreter->global.data + offset);
             break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_a_int_var =
+                (int64_t*)
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size]
+                        .data
+                        .int_var
+                        .direct;
+            break;
         default:
             break;
         }
@@ -77,6 +87,16 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
             case SL_VARIABLE_LOCATION_GLOBAL:
                 op_b_int = *(int64_t*)(interpreter->global.data + offset);
                 break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_b_int =
+                    *(int64_t*)
+                        interpreter
+                            ->operation_stack
+                            .data[interpreter->operation_stack.size + 1]
+                            .data
+                            .int_var
+                            .direct;
+                break;
             default:
                 break;
             }
@@ -109,6 +129,16 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
             case SL_VARIABLE_LOCATION_GLOBAL:
                 op_b_float = *(double*)(interpreter->global.data + offset);
                 break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_b_float =
+                    *(double*)
+                        interpreter
+                            ->operation_stack
+                            .data[interpreter->operation_stack.size + 1]
+                            .data
+                            .float_var
+                            .direct;
+                break;
             default:
                 break;
             }
@@ -135,6 +165,16 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
                 .location) {
         case SL_VARIABLE_LOCATION_GLOBAL:
             op_a_float_var = (double*)(interpreter->global.data + offset);
+            break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_a_float_var =
+                (double*)
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size]
+                        .data
+                        .float_var
+                        .direct;
             break;
         default:
             break;
@@ -171,6 +211,16 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
             case SL_VARIABLE_LOCATION_GLOBAL:
                 op_b_int = *(int64_t*)(interpreter->global.data + offset);
                 break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_b_int =
+                    *(int64_t*)
+                        interpreter
+                            ->operation_stack
+                            .data[interpreter->operation_stack.size + 1]
+                            .data
+                            .int_var
+                            .direct;
+                break;
             default:
                 break;
             }
@@ -202,6 +252,16 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
                     .location) {
             case SL_VARIABLE_LOCATION_GLOBAL:
                 op_b_float = *(double*)(interpreter->global.data + offset);
+                break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_b_float =
+                    *(double*)
+                        interpreter
+                            ->operation_stack
+                            .data[interpreter->operation_stack.size + 1]
+                            .data
+                            .float_var
+                            .direct;
                 break;
             default:
                 break;
@@ -310,6 +370,16 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
         case SL_VARIABLE_LOCATION_GLOBAL:
             op_a_str_var = (String**)(interpreter->global.data + offset);
             break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_a_str_var =
+                (String**)
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size]
+                        .data
+                        .str_var
+                        .direct;
+            break;
         default:
             break;
         }
@@ -347,6 +417,16 @@ SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
                     .location) {
             case SL_VARIABLE_LOCATION_GLOBAL:
                 op_b_str = *(String**)(interpreter->global.data + offset);
+                break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_b_str =
+                    *(String**)
+                        interpreter
+                            ->operation_stack
+                            .data[interpreter->operation_stack.size + 1]
+                            .data
+                            .str_var
+                            .direct;
                 break;
             default:
                 break;
