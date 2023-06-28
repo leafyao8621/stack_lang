@@ -66,6 +66,16 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
             case SL_VARIABLE_LOCATION_GLOBAL:
                 op_b_int = *(int64_t*)(interpreter->global.data + offset);
                 break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_b_int =
+                    *(int64_t*)
+                        interpreter
+                            ->operation_stack
+                            .data[interpreter->operation_stack.size + 1]
+                            .data
+                            .int_var
+                            .direct;
+                break;
             default:
                 break;
             }
@@ -93,6 +103,16 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
                 .location) {
         case SL_VARIABLE_LOCATION_GLOBAL:
             op_a_int = *(int64_t*)(interpreter->global.data + offset);
+            break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_a_int =
+                *(int64_t*)
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size]
+                        .data
+                        .int_var
+                        .direct;
             break;
         default:
             break;
@@ -129,6 +149,16 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
                     .location) {
             case SL_VARIABLE_LOCATION_GLOBAL:
                 op_b_int = *(int64_t*)(interpreter->global.data + offset);
+                break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_b_int =
+                    *(int64_t*)
+                        interpreter
+                            ->operation_stack
+                            .data[interpreter->operation_stack.size + 1]
+                            .data
+                            .int_var
+                            .direct;
                 break;
             default:
                 break;
@@ -182,6 +212,16 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
             case SL_VARIABLE_LOCATION_GLOBAL:
                 op_b_int = *(int64_t*)(interpreter->global.data + offset);
                 break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_b_int =
+                    *(int64_t*)
+                        interpreter
+                            ->operation_stack
+                            .data[interpreter->operation_stack.size + 1]
+                            .data
+                            .int_var
+                            .direct;
+                break;
             default:
                 break;
             }
@@ -211,6 +251,16 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
                 .location) {
         case SL_VARIABLE_LOCATION_GLOBAL:
             op_a_float = *(double*)(interpreter->global.data + offset);
+            break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_a_float =
+                *(double*)
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size]
+                        .data
+                        .float_var
+                        .direct;
             break;
         default:
             break;
@@ -249,6 +299,16 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
                     .location) {
             case SL_VARIABLE_LOCATION_GLOBAL:
                 op_b_int = *(int64_t*)(interpreter->global.data + offset);
+                break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_b_int =
+                    *(int64_t*)
+                        interpreter
+                            ->operation_stack
+                            .data[interpreter->operation_stack.size + 1]
+                            .data
+                            .int_var
+                            .direct;
                 break;
             default:
                 break;
@@ -300,6 +360,16 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
             case SL_VARIABLE_LOCATION_GLOBAL:
                 op_b_char = *(char*)(interpreter->global.data + offset);
                 break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_b_char =
+                    *(char*)
+                        interpreter
+                            ->operation_stack
+                            .data[interpreter->operation_stack.size + 1]
+                            .data
+                            .char_var
+                            .direct;
+                break;
             default:
                 break;
             }
@@ -328,6 +398,15 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
         case SL_VARIABLE_LOCATION_GLOBAL:
             op_a_char = *(char*)(interpreter->global.data + offset);
             break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_a_char =
+                *(char*)
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size]
+                        .data
+                        .char_var
+                        .direct;
         default:
             break;
         }
@@ -361,6 +440,16 @@ SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter) {
                     .location) {
             case SL_VARIABLE_LOCATION_GLOBAL:
                 op_b_char = *(char*)(interpreter->global.data + offset);
+                break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_b_char =
+                    *(char*)
+                        interpreter
+                            ->operation_stack
+                            .data[interpreter->operation_stack.size + 1]
+                            .data
+                            .char_var
+                            .direct;
                 break;
             default:
                 break;
