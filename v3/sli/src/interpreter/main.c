@@ -46,7 +46,7 @@ int main(int argc, const char **argv) {
     SLErrCode ret = SLInterpreter_parse(&interpreter, buf.data);
     printf("RET: %d\nMSG: %s\n", ret, sl_errcode_lookup[ret]);
     SLParser_log(&interpreter.parser, stdout);
-    ret = SLInterpreter_run(&interpreter, false);
+    ret = SLInterpreter_run(&interpreter, argc == 3 ? false : true);
     printf("RET: %d\nMSG: %s\n", ret, sl_errcode_lookup[ret]);
     SLInterpreter_finalize(&interpreter);
     DArrayChar_finalize(&buf);
