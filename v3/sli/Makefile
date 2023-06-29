@@ -13,7 +13,7 @@ $(LIB): $(OBJ)
 	$(CC) $(OBJ) -o $(LIB) -lcontainers -shared
 
 $(BIN): $(LIB)
-	$(CC) src/interpreter/main.c -o $(BIN) -lcontainers -Llib -lsliv3  -Iinclude -Wl,-rpath,lib
+	$(CC) -g -O3 src/interpreter/main.c -o $(BIN) -lcontainers -Llib -lsliv3  -Iinclude -Wl,-rpath,lib
 
 .PHONY: clean all
 all: $(BIN)
