@@ -5,20 +5,19 @@
 
 #include "../core.h"
 
-SLErrCode runtime_handle_command_print(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_println(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_printe(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_alloc(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_if(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_else(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_end_if(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_do_while(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_end_while(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_do_for(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_end_for(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_break(SLInterpreter *interpreter);
-SLErrCode runtime_handle_command_continue(SLInterpreter *interpreter);
+#include "command_handlers/handle_command_print.h"
+#include "command_handlers/handle_command_println.h"
+#include "command_handlers/handle_command_alloc.h"
+#include "command_handlers/handle_command_printhex.h"
+#include "command_handlers/handle_command_printe.h"
+#include "command_handlers/handle_command_if.h"
+#include "command_handlers/handle_command_else.h"
+#include "command_handlers/handle_command_do_while.h"
+#include "command_handlers/handle_command_end_while.h"
+#include "command_handlers/handle_command_do_for.h"
+#include "command_handlers/handle_command_end_for.h"
+#include "command_handlers/handle_command_break.h"
+#include "command_handlers/handle_command_continue.h"
 
 SLErrCode runtime_handle_command(SLInterpreter *interpreter) {
     SLErrCode err = SL_ERR_OK;
@@ -61,12 +60,6 @@ SLErrCode runtime_handle_command(SLInterpreter *interpreter) {
         break;
     case SL_COMMAND_TYPE_ELSE:
         err = runtime_handle_command_else(interpreter);
-        if (err) {
-            return err;
-        }
-        break;
-    case SL_COMMAND_TYPE_END_IF:
-        err = runtime_handle_command_end_if(interpreter);
         if (err) {
             return err;
         }

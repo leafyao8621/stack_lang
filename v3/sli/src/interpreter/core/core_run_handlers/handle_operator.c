@@ -5,41 +5,41 @@
 
 #include "../core.h"
 
-SLErrCode runtime_handle_operator_add(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_subtract(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_multiply(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_divide(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_modulo(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_lshift(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_rshift(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_rlshift(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_bnot(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_band(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_bor(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_bxor(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_lnot(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_land(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_lor(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_eq(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_neq(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_lt(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_gt(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_leq(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_geq(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_inc(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_dec(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_add_assign(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_subtract_assign(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_multiply_assign(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_divide_assign(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_lshift_assign(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_rshift_assign(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_rlshift_assign(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_band_assign(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_bor_assign(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_bxor_assign(SLInterpreter *interpreter);
-SLErrCode runtime_handle_operator_index(SLInterpreter *interpreter);
+#include "operator_handlers/handle_operator_add.h"
+#include "operator_handlers/handle_operator_subtract.h"
+#include "operator_handlers/handle_operator_multiply.h"
+#include "operator_handlers/handle_operator_divide.h"
+#include "operator_handlers/handle_operator_modulo.h"
+#include "operator_handlers/handle_operator_lshift.h"
+#include "operator_handlers/handle_operator_rshift.h"
+#include "operator_handlers/handle_operator_rlshift.h"
+#include "operator_handlers/handle_operator_bnot.h"
+#include "operator_handlers/handle_operator_band.h"
+#include "operator_handlers/handle_operator_bor.h"
+#include "operator_handlers/handle_operator_bxor.h"
+#include "operator_handlers/handle_operator_lnot.h"
+#include "operator_handlers/handle_operator_land.h"
+#include "operator_handlers/handle_operator_lor.h"
+#include "operator_handlers/handle_operator_eq.h"
+#include "operator_handlers/handle_operator_neq.h"
+#include "operator_handlers/handle_operator_lt.h"
+#include "operator_handlers/handle_operator_gt.h"
+#include "operator_handlers/handle_operator_leq.h"
+#include "operator_handlers/handle_operator_geq.h"
+#include "operator_handlers/handle_operator_assign.h"
+#include "operator_handlers/handle_operator_inc.h"
+#include "operator_handlers/handle_operator_dec.h"
+#include "operator_handlers/handle_operator_add_assign.h"
+#include "operator_handlers/handle_operator_subtract_assign.h"
+#include "operator_handlers/handle_operator_multiply_assign.h"
+#include "operator_handlers/handle_operator_divide_assign.h"
+#include "operator_handlers/handle_operator_lshift_assign.h"
+#include "operator_handlers/handle_operator_rshift_assign.h"
+#include "operator_handlers/handle_operator_rlshift_assign.h"
+#include "operator_handlers/handle_operator_band_assign.h"
+#include "operator_handlers/handle_operator_bor_assign.h"
+#include "operator_handlers/handle_operator_bxor_assign.h"
+#include "operator_handlers/handle_operator_index.h"
 
 SLErrCode runtime_handle_operator(SLInterpreter *interpreter) {
     SLErrCode err = SL_ERR_OK;
