@@ -120,7 +120,6 @@ SLErrCode runtime_handle_command_alloc(SLInterpreter *interpreter) {
             default:
                 break;
             }
-            nmemb *= op_int;
             break;
         case SL_TOKEN_TYPE_CHAR_LITERAL:
             op_int = iter_stack->data.char_literal;
@@ -142,7 +141,6 @@ SLErrCode runtime_handle_command_alloc(SLInterpreter *interpreter) {
             break;
         }
         nmemb *= op_int;
-        printf("capacity %lu\n", array_meta->size.capacity);
         ret = DArrayIdx_push_back(&array_meta->size, (Idx*)&op_int);
         if (ret) {
             return SL_ERR_OUT_OF_MEMORY;
