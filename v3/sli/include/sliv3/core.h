@@ -18,6 +18,7 @@ DEF_HASHMAP(BufferPtr, ArrayMeta)
 
 typedef struct SLInterpreter {
     bool initialized;
+    bool bound_check;
     SLParser parser;
     String global;
     HashMapBufferPtrArrayMeta global_array;
@@ -30,7 +31,7 @@ typedef struct SLInterpreter {
 
 SLErrCode SLInterpreter_initialize(SLInterpreter *interpreter);
 SLErrCode SLInterpreter_parse(SLInterpreter *interpreter, char *str);
-SLErrCode SLInterpreter_run(SLInterpreter *interpreter);
+SLErrCode SLInterpreter_run(SLInterpreter *interpreter, bool bound_check);
 void SLInterpreter_finalize(SLInterpreter *intepreter);
 
 #endif

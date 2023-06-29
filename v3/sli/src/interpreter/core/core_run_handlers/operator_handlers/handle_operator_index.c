@@ -115,8 +115,10 @@ SLErrCode runtime_handle_operator_index(SLInterpreter *interpreter) {
         default:
             break;
         }
-        if (op_b_int < 0 || (size_t)op_b_int >= op_a_str_lit->size - 1) {
-            return SL_ERR_IDX_OUT_OF_BOUND;
+        if (interpreter->bound_check) {
+            if (op_b_int < 0 || (size_t)op_b_int >= op_a_str_lit->size - 1) {
+                return SL_ERR_IDX_OUT_OF_BOUND;
+            }
         }
         res.data.char_var.location = SL_VARIABLE_LOCATION_DIRECT;
         res.data.char_var.direct = op_a_str_lit->data + op_b_int;
@@ -223,8 +225,10 @@ SLErrCode runtime_handle_operator_index(SLInterpreter *interpreter) {
         default:
             break;
         }
-        if (op_b_int < 0 || (size_t)op_b_int >= (*op_a_str_var)->size - 1) {
-            return SL_ERR_IDX_OUT_OF_BOUND;
+        if (interpreter->bound_check) {
+            if (op_b_int < 0 || (size_t)op_b_int >= (*op_a_str_var)->size - 1) {
+                return SL_ERR_IDX_OUT_OF_BOUND;
+            }
         }
         res.data.char_var.location = SL_VARIABLE_LOCATION_DIRECT;
         res.data.char_var.direct = (*op_a_str_var)->data + op_b_int;
@@ -267,19 +271,21 @@ SLErrCode runtime_handle_operator_index(SLInterpreter *interpreter) {
                     .arr
                     .type;
         }
-        HashMapBufferPtrArrayMeta_find(
-            &interpreter->global_array,
-            &op_a_arr,
-            &found
-        );
-        if (!found) {
-            return SL_ERR_ARR_NOT_INITIALIZED;
+        if (interpreter->bound_check) {
+            HashMapBufferPtrArrayMeta_find(
+                &interpreter->global_array,
+                &op_a_arr,
+                &found
+            );
+            if (!found) {
+                return SL_ERR_ARR_NOT_INITIALIZED;
+            }
+            HashMapBufferPtrArrayMeta_fetch(
+                &interpreter->global_array,
+                &op_a_arr,
+                &meta
+            );
         }
-        HashMapBufferPtrArrayMeta_fetch(
-            &interpreter->global_array,
-            &op_a_arr,
-            &meta
-        );
         switch (
             interpreter
                 ->operation_stack
@@ -357,8 +363,10 @@ SLErrCode runtime_handle_operator_index(SLInterpreter *interpreter) {
         default:
             break;
         }
-        if (op_b_int < 0 || (size_t)op_b_int >= meta->size.data[0]) {
-            return SL_ERR_IDX_OUT_OF_BOUND;
+        if (interpreter->bound_check) {
+            if (op_b_int < 0 || (size_t)op_b_int >= meta->size.data[0]) {
+                return SL_ERR_IDX_OUT_OF_BOUND;
+            }
         }
         switch (
             interpreter

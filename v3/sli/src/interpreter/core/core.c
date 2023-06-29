@@ -101,13 +101,14 @@ void runtime_cleanup(SLInterpreter *interpreter) {
     DArrayIdx_clear(&interpreter->size_stack);
 }
 
-SLErrCode SLInterpreter_run(SLInterpreter *interpreter) {
+SLErrCode SLInterpreter_run(SLInterpreter *interpreter, bool bound_check) {
     if (!interpreter) {
         return SL_ERR_NULL_PTR;
     }
     if (!interpreter->initialized) {
         return SL_ERR_INTERPRETER_NOT_INITIALIZED;
     }
+    interpreter->bound_check = bound_check;
     interpreter->current = interpreter->parser.code.data;
     interpreter->cur_token_buf = &interpreter->parser.code;
     memset(interpreter->global.data, 0, interpreter->parser.global_size);
