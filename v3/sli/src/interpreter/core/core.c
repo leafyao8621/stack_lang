@@ -53,44 +53,6 @@ SLErrCode SLInterpreter_parse(SLInterpreter *interpreter, char *str) {
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
-    HashMapSLVariableTypeNameIdxNode *iter_global_lookup =
-        interpreter->parser.global_lookup.data;
-    BufferPtr buffer_ptr = NULL;
-    ArrayMeta *value = NULL;
-    for (
-        size_t i = 0;
-        i < interpreter->parser.global_lookup.size;
-        ++i,
-        ++iter_global_lookup) {
-        if (iter_global_lookup->in_use) {
-            switch (iter_global_lookup->key.type) {
-            case SL_TOKEN_TYPE_ARR:
-                buffer_ptr =
-                    (BufferPtr)
-                        (
-                            interpreter->global.data +
-                            iter_global_lookup->value
-                        );
-                ret =
-                    HashMapBufferPtrArrayMeta_fetch(
-                        &interpreter->global_array,
-                        &buffer_ptr,
-                        &value
-                    );
-                if (ret) {
-                    return SL_ERR_OUT_OF_MEMORY;
-                }
-                value->dynamic = false;
-                ret = DArrayIdx_initialize(&value->size, 10);
-                if (ret) {
-                    return SL_ERR_OUT_OF_MEMORY;
-                }
-                break;
-            default:
-                break;
-            }
-        }
-    }
     interpreter->initialized = true;
     return SL_ERR_OK;
 }
@@ -118,6 +80,27 @@ SLErrCode runtime_handle_arr(SLInterpreter *interpreter);
 SLErrCode runtime_handle_operator(SLInterpreter *interpreter);
 SLErrCode runtime_handle_command(SLInterpreter *interpreter);
 
+void runtime_cleanup(SLInterpreter *interpreter) {
+    DArraySLToken_clear(&interpreter->operation_stack);
+    DArraySLTokenPtr_clear(&interpreter->control_stack);
+    HashMapBufferPtrArrayMetaNode *iter_global_array =
+        interpreter->global_array.data;
+    for (
+        size_t i = 0;
+        i < interpreter->global_array.capacity;
+        ++i, ++iter_global_array) {
+        if (iter_global_array->in_use) {
+            iter_global_array->in_use = false;
+            DArrayIdx_finalize(&iter_global_array->value.size);
+            if (iter_global_array->value.dynamic) {
+                free(*iter_global_array->key);
+            }
+            iter_global_array->value.dynamic = false;
+        }
+    }
+    DArrayIdx_clear(&interpreter->size_stack);
+}
+
 SLErrCode SLInterpreter_run(SLInterpreter *interpreter) {
     if (!interpreter) {
         return SL_ERR_NULL_PTR;
@@ -138,18 +121,21 @@ SLErrCode SLInterpreter_run(SLInterpreter *interpreter) {
         case SL_TOKEN_TYPE_INT_LITERAL:
             err = runtime_handle_int_literal(interpreter);
             if (err) {
+                runtime_cleanup(interpreter);
                 return err;
             }
             break;
         case SL_TOKEN_TYPE_INT_VAR:
             err = runtime_handle_int_var(interpreter);
             if (err) {
+                runtime_cleanup(interpreter);
                 return err;
             }
             break;
         case SL_TOKEN_TYPE_FLOAT_LITERAL:
             err = runtime_handle_float_literal(interpreter);
             if (err) {
+                runtime_cleanup(interpreter);
                 return err;
             }
             break;
@@ -162,42 +148,49 @@ SLErrCode SLInterpreter_run(SLInterpreter *interpreter) {
         case SL_TOKEN_TYPE_CHAR_LITERAL:
             err = runtime_handle_char_literal(interpreter);
             if (err) {
+                runtime_cleanup(interpreter);
                 return err;
             }
             break;
         case SL_TOKEN_TYPE_CHAR_VAR:
             err = runtime_handle_char_var(interpreter);
             if (err) {
+                runtime_cleanup(interpreter);
                 return err;
             }
             break;
         case SL_TOKEN_TYPE_STR_LITERAL:
             err = runtime_handle_str_literal(interpreter);
             if (err) {
+                runtime_cleanup(interpreter);
                 return err;
             }
             break;
         case SL_TOKEN_TYPE_STR_VAR:
             err = runtime_handle_str_var(interpreter);
             if (err) {
+                runtime_cleanup(interpreter);
                 return err;
             }
             break;
         case SL_TOKEN_TYPE_ARR:
             err = runtime_handle_arr(interpreter);
             if (err) {
+                runtime_cleanup(interpreter);
                 return err;
             }
             break;
         case SL_TOKEN_TYPE_OPERATOR:
             err = runtime_handle_operator(interpreter);
             if (err) {
+                runtime_cleanup(interpreter);
                 return err;
             }
             break;
         case SL_TOKEN_TYPE_COMMAND:
             err = runtime_handle_command(interpreter);
             if (err) {
+                runtime_cleanup(interpreter);
                 return err;
             }
             break;
@@ -205,23 +198,6 @@ SLErrCode SLInterpreter_run(SLInterpreter *interpreter) {
             break;
         }
     }
-    DArraySLToken_clear(&interpreter->operation_stack);
-    DArraySLTokenPtr_clear(&interpreter->control_stack);
-    HashMapBufferPtrArrayMetaNode *iter_global_array =
-        interpreter->global_array.data;
-    for (
-        size_t i = 0;
-        i < interpreter->global_array.capacity;
-        ++i, ++iter_global_array) {
-        if (iter_global_array->in_use) {
-            iter_global_array->in_use = false;
-            DArrayIdx_finalize(&iter_global_array->value.size);
-            if (iter_global_array->value.dynamic) {
-                free(*iter_global_array->key);
-            }
-            iter_global_array->value.dynamic = false;
-        }
-    }
-    DArrayIdx_clear(&interpreter->size_stack);
+    runtime_cleanup(interpreter);
     return SL_ERR_OK;
 }

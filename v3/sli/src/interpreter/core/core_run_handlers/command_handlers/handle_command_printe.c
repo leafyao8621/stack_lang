@@ -42,6 +42,16 @@ SLErrCode runtime_handle_command_printe(SLInterpreter *interpreter) {
         case SL_VARIABLE_LOCATION_GLOBAL:
             op_float = *(double*)(interpreter->global.data + offset);
             break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_float =
+                *(double*)
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size]
+                        .data
+                        .float_var
+                        .direct;
+            break;
         default:
             break;
         }

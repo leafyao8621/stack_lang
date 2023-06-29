@@ -46,6 +46,16 @@ SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter) {
         case SL_VARIABLE_LOCATION_GLOBAL:
             op_int = *(int64_t*)(interpreter->global.data + offset);
             break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_int =
+                *(int64_t*)
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size]
+                        .data
+                        .int_var
+                        .direct;
+            break;
         default:
             break;
         }
@@ -78,6 +88,16 @@ SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter) {
                 .location) {
         case SL_VARIABLE_LOCATION_GLOBAL:
             op_float = *(double*)(interpreter->global.data + offset);
+            break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_float =
+                *(double*)
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size]
+                        .data
+                        .float_var
+                        .direct;
             break;
         default:
             break;
@@ -122,6 +142,7 @@ SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter) {
                         .data
                         .char_var
                         .direct;
+            break;
         default:
             break;
         }
@@ -162,6 +183,20 @@ SLErrCode runtime_handle_command_printhex(SLInterpreter *interpreter) {
                 .location) {
         case SL_VARIABLE_LOCATION_GLOBAL:
             op_str = (*(String**)(interpreter->global.data + offset))->data;
+            break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_str =
+                (
+                    *(String**)
+                        (
+                            interpreter
+                                ->operation_stack
+                                .data[interpreter->operation_stack.size]
+                                .data
+                                .str_var
+                                .direct
+                        )
+                )->data;
             break;
         default:
             break;

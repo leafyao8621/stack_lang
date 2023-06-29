@@ -83,7 +83,6 @@ SLErrCode runtime_handle_command_alloc(SLInterpreter *interpreter) {
                 &arr,
                 &array_meta
             );
-        array_meta->dynamic = true;
         if (ret) {
             return SL_ERR_OUT_OF_MEMORY;
         }
@@ -100,10 +99,14 @@ SLErrCode runtime_handle_command_alloc(SLInterpreter *interpreter) {
             .dim;
     size_t nmemb = 1;
     int64_t op_int = 0;
+    ret = DArrayIdx_initialize(&array_meta->size, dim);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
     for (size_t i = 0; i < dim; ++i, ++iter_stack) {
         switch (iter_stack->type) {
         case SL_TOKEN_TYPE_INT_LITERAL:
-            nmemb *= iter_stack->data.int_literal;
+            op_int = iter_stack->data.int_literal;
             break;
         case SL_TOKEN_TYPE_INT_VAR:
             offset = iter_stack->data.int_var.idx;
@@ -120,7 +123,7 @@ SLErrCode runtime_handle_command_alloc(SLInterpreter *interpreter) {
             nmemb *= op_int;
             break;
         case SL_TOKEN_TYPE_CHAR_LITERAL:
-            nmemb *= iter_stack->data.char_literal;
+            op_int = iter_stack->data.char_literal;
             break;
         case SL_TOKEN_TYPE_CHAR_VAR:
             offset = iter_stack->data.char_var.idx;
@@ -134,10 +137,15 @@ SLErrCode runtime_handle_command_alloc(SLInterpreter *interpreter) {
             default:
                 break;
             }
-            nmemb *= op_int;
             break;
         default:
             break;
+        }
+        nmemb *= op_int;
+        printf("capacity %lu\n", array_meta->size.capacity);
+        ret = DArrayIdx_push_back(&array_meta->size, (Idx*)&op_int);
+        if (ret) {
+            return SL_ERR_OUT_OF_MEMORY;
         }
     }
     switch (
@@ -162,5 +170,9 @@ SLErrCode runtime_handle_command_alloc(SLInterpreter *interpreter) {
     default:
         break;
     }
+    if (!*arr) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
+    array_meta->dynamic = true;
     return SL_ERR_OK;
 }
