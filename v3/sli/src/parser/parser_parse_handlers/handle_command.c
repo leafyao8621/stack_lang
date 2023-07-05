@@ -9,6 +9,7 @@ SLErrCode handle_command_print(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
+    bool *push_token,
     bool *push_control,
     bool *push_control_extra);
 
@@ -16,6 +17,7 @@ SLErrCode handle_command_printe(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
+    bool *push_token,
     bool *push_control,
     bool *push_control_extra);
 
@@ -23,6 +25,7 @@ SLErrCode handle_command_alloc(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
+    bool *push_token,
     bool *push_control,
     bool *push_control_extra);
 
@@ -30,6 +33,7 @@ SLErrCode handle_command_if(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
+    bool *push_token,
     bool *push_control,
     bool *push_control_extra);
 
@@ -37,6 +41,7 @@ SLErrCode handle_command_else(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
+    bool *push_token,
     bool *push_control,
     bool *push_control_extra);
 
@@ -44,6 +49,7 @@ SLErrCode handle_command_end(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
+    bool *push_token,
     bool *push_control,
     bool *push_control_extra);
 
@@ -51,6 +57,7 @@ SLErrCode handle_command_while(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
+    bool *push_token,
     bool *push_control,
     bool *push_control_extra);
 
@@ -65,6 +72,7 @@ SLErrCode handle_command_for(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
+    bool *push_token,
     bool *push_control,
     bool *push_control_extra);
 
@@ -72,6 +80,7 @@ SLErrCode handle_command_break(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
+    bool *push_token,
     bool *push_control,
     bool *push_control_extra);
 
@@ -79,6 +88,7 @@ SLErrCode handle_command_continue(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
+    bool *push_token,
     bool *push_control,
     bool *push_control_extra);
 
@@ -86,6 +96,7 @@ SLErrCode handle_command_halt(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
+    bool *push_token,
     bool *push_control,
     bool *push_control_extra);
 
@@ -93,6 +104,7 @@ typedef SLErrCode (*Handler)(
     struct SLParserBuffer*,
     char**,
     SLToken*,
+    bool*,
     bool*,
     bool*);
 
@@ -185,6 +197,7 @@ SLErrCode handle_command(
     SLToken token;
     token.type = SL_TOKEN_TYPE_COMMAND;
     token.data.command.type = idx;
+    bool push_token = false;
     bool push_control = false;
     bool push_control_extra = false;
     SLErrCode err =
@@ -192,6 +205,7 @@ SLErrCode handle_command(
             buffer,
             iter,
             &token,
+            &push_token,
             &push_control,
             &push_control_extra
         );
@@ -219,9 +233,11 @@ SLErrCode handle_command(
             return SL_ERR_OUT_OF_MEMORY;
         }
     }
-    ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
-    if (ret) {
-        return SL_ERR_OUT_OF_MEMORY;
+    if (push_token) {
+        ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
+        if (ret) {
+            return SL_ERR_OUT_OF_MEMORY;
+        }
     }
     return SL_ERR_OK;
 }
