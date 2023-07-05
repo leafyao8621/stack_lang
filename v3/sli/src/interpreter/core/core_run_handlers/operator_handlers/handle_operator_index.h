@@ -275,21 +275,33 @@ inline SLErrCode runtime_handle_operator_index(SLInterpreter *interpreter) {
                     .data
                     .arr
                     .type;
+        } else {
+            res.type = SL_TOKEN_TYPE_ARR_IMMEDIATE;
         }
         if (interpreter->bound_check) {
-            HashMapBufferPtrArrayMeta_find(
-                &interpreter->global_array,
-                &op_a_arr,
-                &found
-            );
-            if (!found) {
-                return SL_ERR_ARR_NOT_INITIALIZED;
+            if (
+                interpreter
+                    ->operation_stack
+                    .data[interpreter->operation_stack.size]
+                    .data
+                    .arr
+                    .dim == 1) {
+                HashMapBufferPtrArrayMeta_find(
+                    &interpreter->global_array,
+                    &op_a_arr,
+                    &found
+                );
+                if (!found) {
+                    return SL_ERR_ARR_NOT_INITIALIZED;
+                }
+                HashMapBufferPtrArrayMeta_fetch(
+                    &interpreter->global_array,
+                    &op_a_arr,
+                    &meta
+                );
+            } else {
+
             }
-            HashMapBufferPtrArrayMeta_fetch(
-                &interpreter->global_array,
-                &op_a_arr,
-                &meta
-            );
         }
         switch (
             interpreter

@@ -104,9 +104,11 @@ inline SLErrCode runtime_handle_command_alloc(SLInterpreter *interpreter) {
             .dim;
     size_t nmemb = 1;
     int64_t op_int = 0;
-    ret = DArrayIdx_initialize(&array_meta->size, dim);
-    if (ret) {
-        return SL_ERR_OUT_OF_MEMORY;
+    if (interpreter->bound_check) {
+        ret = DArrayIdx_initialize(&array_meta->size, dim);
+        if (ret) {
+            return SL_ERR_OUT_OF_MEMORY;
+        }
     }
     for (size_t i = 0; i < dim; ++i, ++iter_stack) {
         switch (iter_stack->type) {
@@ -146,9 +148,11 @@ inline SLErrCode runtime_handle_command_alloc(SLInterpreter *interpreter) {
             break;
         }
         nmemb *= op_int;
-        ret = DArrayIdx_push_back(&array_meta->size, (Idx*)&op_int);
-        if (ret) {
-            return SL_ERR_OUT_OF_MEMORY;
+        if (interpreter->bound_check) {
+            ret = DArrayIdx_push_back(&array_meta->size, (Idx*)&op_int);
+            if (ret) {
+                return SL_ERR_OUT_OF_MEMORY;
+            }
         }
     }
     switch (
