@@ -19,7 +19,7 @@ $(BIN): $(LIB)
 all: $(BIN)
 	@echo "compiled"
 valgrind: $(BIN)
-	@valgrind -s --leak-check=full ./$(BIN) ../../programs/v3/e.sl
+	@valgrind -s --leak-check=full ./$(BIN) ../../programs/v3/f.sl
 clean:
 	@rm $(OBJ)
 	@rm $(LIB)
