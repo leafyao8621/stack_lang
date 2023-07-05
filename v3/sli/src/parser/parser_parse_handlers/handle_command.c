@@ -65,6 +65,7 @@ SLErrCode handle_command_do(
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
+    bool *push_token,
     bool *push_control,
     bool *push_control_extra);
 
