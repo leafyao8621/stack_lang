@@ -451,7 +451,8 @@ inline SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
                 ->operation_stack
                 .data[interpreter->operation_stack.size]
                 .data
-                .str_var
+                .arr
+                .var_data
                 .idx;
         switch (
             interpreter
@@ -484,6 +485,38 @@ inline SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
                 .type) {
         case SL_TOKEN_TYPE_ARR:
         case SL_TOKEN_TYPE_ARR_IMMEDIATE:
+            offset =
+                interpreter
+                    ->operation_stack
+                    .data[interpreter->operation_stack.size + 1]
+                    .data
+                    .arr
+                    .var_data
+                    .idx;
+            switch (
+                interpreter
+                    ->operation_stack
+                    .data[interpreter->operation_stack.size]
+                    .data
+                    .arr
+                    .var_data
+                    .location) {
+            case SL_VARIABLE_LOCATION_GLOBAL:
+                op_b_arr = (BufferPtr)(interpreter->global.data + offset);
+                break;
+            case SL_VARIABLE_LOCATION_DIRECT:
+                op_b_arr =
+                    (BufferPtr)
+                        interpreter
+                            ->operation_stack
+                            .data[interpreter->operation_stack.size]
+                            .data
+                            .str_var
+                            .direct;
+                break;
+            default:
+                break;
+            }
             break;
         default:
             break;
