@@ -25,6 +25,8 @@ inline SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
     op_a_char_var = NULL;
     op_a_str_var = NULL;
     op_b_str = NULL;
+    op_a_arr = NULL;
+    op_b_arr = NULL;
     switch (
         interpreter
             ->operation_stack
@@ -484,7 +486,10 @@ inline SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
             break;
         case SL_TOKEN_TYPE_ARR_IMMEDIATE:
             break;
+        default:
+            break;
         }
+        *op_a_arr = *op_b_arr;
         break;
     default:
         break;
