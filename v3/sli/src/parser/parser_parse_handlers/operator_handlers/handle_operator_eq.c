@@ -150,6 +150,19 @@ SLErrCode handle_operator_eq(
                 return SL_ERR_TYPE_MISMATCH;
             }
             break;
+        case SL_TOKEN_TYPE_ARR:
+            switch (
+                buffer
+                    ->operation_stack
+                    .data[buffer->operation_stack.size + 1]
+                    .type) {
+            case SL_TOKEN_TYPE_ARR:
+            case SL_TOKEN_TYPE_ARR_IMMEDIATE:
+                break;
+            default:
+                return SL_ERR_TYPE_MISMATCH;
+            }
+            break;
         default:
             return SL_ERR_TYPE_MISMATCH;
         }
