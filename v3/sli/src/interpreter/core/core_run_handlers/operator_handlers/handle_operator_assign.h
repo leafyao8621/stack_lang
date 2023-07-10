@@ -17,6 +17,7 @@ inline SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
     double *op_a_float_var, op_b_float;
     char *op_a_char_var, op_b_char;
     String **op_a_str_var, *op_b_str;
+    BufferPtr op_a_arr, op_b_arr;
     Idx offset;
     op_b_int = op_b_float = op_b_char = 0;
     op_a_int_var = NULL;
@@ -439,6 +440,49 @@ inline SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
             *op_a_str_var = op_b_str;
             break;
         default:
+            break;
+        }
+        break;
+    case SL_TOKEN_TYPE_ARR:
+        offset =
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .str_var
+                .idx;
+        switch (
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size]
+                .data
+                .arr
+                .var_data
+                .location) {
+        case SL_VARIABLE_LOCATION_GLOBAL:
+            op_a_arr = (BufferPtr)(interpreter->global.data + offset);
+            break;
+        case SL_VARIABLE_LOCATION_DIRECT:
+            op_a_arr =
+                (BufferPtr)
+                    interpreter
+                        ->operation_stack
+                        .data[interpreter->operation_stack.size]
+                        .data
+                        .str_var
+                        .direct;
+            break;
+        default:
+            break;
+        }
+        switch (
+            interpreter
+                ->operation_stack
+                .data[interpreter->operation_stack.size + 1]
+                .type) {
+        case SL_TOKEN_TYPE_ARR:
+            break;
+        case SL_TOKEN_TYPE_ARR_IMMEDIATE:
             break;
         }
         break;
