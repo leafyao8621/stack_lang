@@ -483,7 +483,6 @@ inline SLErrCode runtime_handle_operator_assign(SLInterpreter *interpreter) {
                 .data[interpreter->operation_stack.size + 1]
                 .type) {
         case SL_TOKEN_TYPE_ARR:
-            break;
         case SL_TOKEN_TYPE_ARR_IMMEDIATE:
             break;
         default:
