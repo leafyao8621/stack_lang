@@ -158,6 +158,33 @@ SLErrCode handle_operator_eq(
                     .type) {
             case SL_TOKEN_TYPE_ARR:
             case SL_TOKEN_TYPE_ARR_IMMEDIATE:
+                if (
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size]
+                        .data
+                        .arr
+                        .dim !=
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size + 1]
+                        .data
+                        .arr
+                        .dim ||
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size]
+                        .data
+                        .arr
+                        .type !=
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size + 1]
+                        .data
+                        .arr
+                        .type) {
+                    return SL_ERR_TYPE_MISMATCH;
+                }
                 break;
             default:
                 return SL_ERR_TYPE_MISMATCH;

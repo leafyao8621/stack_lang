@@ -6,8 +6,9 @@ _for %i 0 9 _do
 _end
 
 _for %i 0 9 _do
+    @%row_vct @@%matrix %i [] =
     _for %j 0 9 _do
-        @@%matrix %i [] %j [] _print
+        @%row_vct %j [] _print
         ' ' _print
     _end
     '\n' _print

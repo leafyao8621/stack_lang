@@ -312,24 +312,19 @@ inline SLErrCode runtime_handle_operator_index(SLInterpreter *interpreter) {
                     .arr
                     .dim > 1) {
                 iter_size = meta->size.data + 1;
-                for (
-                    size_t i = 0;
-                    i <
+                ret =
+                    DArrayIdx_push_back_batch(
+                        &interpreter->size_stack,
+                        iter_size,
                         interpreter
                             ->operation_stack
                             .data[interpreter->operation_stack.size]
                             .data
                             .arr
-                            .dim - 1;
-                    ++i) {
-                    ret =
-                        DArrayIdx_push_back(
-                            &interpreter->size_stack,
-                            iter_size
-                        );
-                    if (ret) {
-                        return SL_ERR_OUT_OF_MEMORY;
-                    }
+                            .dim - 1
+                    );
+                if (ret) {
+                    return SL_ERR_OUT_OF_MEMORY;
                 }
             }
         }
@@ -556,24 +551,19 @@ inline SLErrCode runtime_handle_operator_index(SLInterpreter *interpreter) {
                     interpreter->size_stack.data +
                     interpreter->size_stack.size +
                     1;
-                for (
-                    size_t i = 0;
-                    i <
+                ret =
+                    DArrayIdx_push_back_batch(
+                        &interpreter->size_stack,
+                        iter_size,
                         interpreter
                             ->operation_stack
                             .data[interpreter->operation_stack.size]
                             .data
                             .arr
-                            .dim - 1;
-                    ++i) {
-                    ret =
-                        DArrayIdx_push_back(
-                            &interpreter->size_stack,
-                            iter_size
-                        );
-                    if (ret) {
-                        return SL_ERR_OUT_OF_MEMORY;
-                    }
+                            .dim - 1
+                    );
+                if (ret) {
+                    return SL_ERR_OUT_OF_MEMORY;
                 }
             }
         }
