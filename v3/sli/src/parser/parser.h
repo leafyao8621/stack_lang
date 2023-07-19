@@ -177,7 +177,7 @@ struct SLParserBuffer {
     String token_buf;
     HashMapStringIdx str_literal_lookup;
     DArraySLToken *cur_token_buf;
-    bool global;
+    bool global, par;
     Idx cur_function, global_offset;
     DArrayIdx parameter_offsets, local_offsets;
     DArraySLToken operation_stack;
