@@ -25,6 +25,7 @@ SLErrCode SLParserBuffer_initialize(struct SLParserBuffer *buffer) {
         return SL_ERR_OUT_OF_MEMORY;
     }
     buffer->global = true;
+    buffer->name = false;
     buffer->par = false;
     buffer->cur_function = 0;
     buffer->global_offset = 0;

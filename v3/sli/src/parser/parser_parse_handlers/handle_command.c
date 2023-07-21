@@ -93,6 +93,14 @@ SLErrCode handle_command_continue(
     bool *push_control,
     bool *push_control_extra);
 
+SLErrCode handle_command_def(
+    struct SLParserBuffer *buffer,
+    char **iter,
+    SLToken *token,
+    bool *push_token,
+    bool *push_control,
+    bool *push_control_extra);
+
 SLErrCode handle_command_halt(
     struct SLParserBuffer *buffer,
     char **iter,
@@ -169,7 +177,7 @@ SLErrCode handle_command(
         handle_command_continue,
         NULL,
         NULL,
-        NULL,
+        handle_command_def,
         NULL,
         NULL,
         handle_command_halt
