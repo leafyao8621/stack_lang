@@ -53,6 +53,12 @@ SLErrCode handle_variable(
         }
         ++(*iter);
         break;
+    case '?':
+        vtn.type = SL_TOKEN_TYPE_FUNCTION;
+        ++(*iter);
+        break;
+    default:
+        break;
     }
     int ret = 0;
     for (
@@ -177,6 +183,17 @@ SLErrCode handle_variable(
             break;
         default:
             break;
+        }
+    } else {
+        if (!buffer->par) {
+            HashMapSLVariableTypeNameIdx_find(
+                &parser->global_lookup,
+                &vtn,
+                &found
+            );
+            if (found) {
+                return SL_ERR_FUNCTION_DOUBLE_DEF;
+            }
         }
     }
     ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
