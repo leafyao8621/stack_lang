@@ -118,6 +118,7 @@ SLErrCode handle_variable(
     token.type = vtn.type;
     bool found = false;
     Idx *offset = 0;
+    bool no_push = false;
     if (buffer->global) {
         HashMapSLVariableTypeNameIdx_find(&parser->global_lookup, &vtn, &found);
         if (found) {
@@ -185,7 +186,8 @@ SLErrCode handle_variable(
             break;
         }
     } else {
-        if (!buffer->par) {
+        if (!buffer->name) {
+            no_push = true;
             HashMapSLVariableTypeNameIdx_find(
                 &parser->global_lookup,
                 &vtn,
@@ -194,7 +196,23 @@ SLErrCode handle_variable(
             if (found) {
                 return SL_ERR_FUNCTION_DOUBLE_DEF;
             }
+            ret = HashMapSLVariableTypeNameIdx_fetch(
+                &parser->global_lookup,
+                &vtn,
+                &offset
+            );
+            if (ret) {
+                DArrayChar_finalize(&vtn.name);
+                return SL_ERR_OUT_OF_MEMORY;
+            }
+            *offset = buffer->cur_function;
+            ++(buffer->cur_function);
+            buffer->name = true;
+            buffer->par = true;
         }
+    }
+    if (no_push) {
+        return SL_ERR_OK;
     }
     ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
     if (ret) {

@@ -173,7 +173,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "^=",
         "[]"
     };
-    static const char *command_lookup[27] = {
+    static const char *command_lookup[28] = {
         "print",
         "println",
         "printhex",
@@ -198,6 +198,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         "struct",
         "end",
         "def",
+        "begin",
         "end",
         "return",
         "halt"

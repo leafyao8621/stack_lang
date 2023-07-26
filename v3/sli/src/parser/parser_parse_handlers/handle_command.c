@@ -124,7 +124,7 @@ SLErrCode handle_command(
     if (!parser || !buffer || !iter) {
         return SL_ERR_NULL_PTR;
     }
-    static const char *command_lookup[27] = {
+    static const char *command_lookup[28] = {
         "print",
         "println",
         "printhex",
@@ -149,11 +149,12 @@ SLErrCode handle_command(
         "struct",
         "end",
         "def",
+        "begin",
         "end",
         "return",
         "halt"
     };
-    Handler handlers[27] = {
+    Handler handlers[28] = {
         handle_command_print,
         handle_command_print,
         handle_command_print,
@@ -178,6 +179,7 @@ SLErrCode handle_command(
         NULL,
         NULL,
         handle_command_def,
+        NULL,
         NULL,
         NULL,
         handle_command_halt
