@@ -205,8 +205,26 @@ SLErrCode handle_variable(
                 DArrayChar_finalize(&vtn.name);
                 return SL_ERR_OUT_OF_MEMORY;
             }
+            buffer->cur_function = buffer->parameter_offsets.size;
             *offset = buffer->cur_function;
-            ++(buffer->cur_function);
+            Idx par_offset = 0;
+            Idx local_offset = 0;
+            ret =
+                DArrayIdx_push_back(
+                    &buffer->parameter_offsets,
+                    &par_offset
+                );
+            if (ret) {
+                return SL_ERR_OUT_OF_MEMORY;
+            }
+            ret =
+                DArrayIdx_push_back(
+                    &buffer->local_offsets,
+                    &local_offset
+                );
+            if (ret) {
+                return SL_ERR_OUT_OF_MEMORY;
+            }
             buffer->name = true;
             buffer->par = true;
         }
