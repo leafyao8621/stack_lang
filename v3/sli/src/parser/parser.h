@@ -152,7 +152,8 @@ DEF_HASHMAP(SLVariableTypeName, Idx)
 typedef struct SLFunction {
     HashMapSLVariableTypeNameIdx par_lookup, local_lookup;
     DArraySLToken code;
-    DArraySLToken ret;
+    bool ret;
+    SLTokenType ret_type;
 } SLFunction;
 
 DEF_DARRAY(String)
