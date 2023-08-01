@@ -12,6 +12,8 @@ SLErrCode handle_variable(
     SLVariableTypeName vtn;
     Idx dim = 0;
     SLTokenType array_type = SL_TOKEN_TYPE_INT_LITERAL;
+    bool ret_flg = false;
+    SLTokenType ret_type = SL_TOKEN_TYPE_INT_LITERAL;
     if (!parser || !buffer || !iter) {
         return SL_ERR_NULL_PTR;
     }
@@ -56,6 +58,28 @@ SLErrCode handle_variable(
     case '?':
         vtn.type = SL_TOKEN_TYPE_FUNCTION;
         ++(*iter);
+        switch (**iter) {
+        case '%':
+            ret_flg = true;
+            ret_type = SL_TOKEN_TYPE_INT_LITERAL;
+            ++(*iter);
+            break;
+        case '#':
+            ret_flg = true;
+            ret_type = SL_TOKEN_TYPE_FLOAT_LITERAL;
+            ++(*iter);
+            break;
+        case '&':
+            ret_flg = true;
+            ret_type = SL_TOKEN_TYPE_CHAR_LITERAL;
+            ++(*iter);
+            break;
+        case '$':
+            ret_flg = true;
+            ret_type = SL_TOKEN_TYPE_STR_LITERAL;
+            ++(*iter);
+            break;
+        }
         break;
     default:
         break;
