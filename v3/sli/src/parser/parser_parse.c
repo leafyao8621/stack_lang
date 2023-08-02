@@ -9,7 +9,7 @@ DEF_DARRAY_FUNCTIONS(Idx)
 
 DEF_HASHMAP_FUNCTIONS(String, Idx)
 
-SLErrCode SLParserBuffer_initialize(struct SLParserBuffer *buffer) {
+inline SLErrCode SLParserBuffer_initialize(struct SLParserBuffer *buffer) {
     int ret = DArrayChar_initialize(&buffer->token_buf, 100);
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
@@ -52,7 +52,7 @@ SLErrCode SLParserBuffer_initialize(struct SLParserBuffer *buffer) {
     return SL_ERR_OK;
 }
 
-void SLParserBuffer_finalize(struct SLParserBuffer *buffer) {
+inline void SLParserBuffer_finalize(struct SLParserBuffer *buffer) {
     DArrayChar_finalize(&buffer->token_buf);
     HashMapStringIdx_finalize(&buffer->str_literal_lookup);
     DArrayIdx_finalize(&buffer->parameter_offsets);

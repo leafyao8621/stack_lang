@@ -59,6 +59,34 @@ SLErrCode SLParser_clear_code(SLParser *parser) {
     return SL_ERR_OK;
 }
 
+inline void SLFunction_finalize(SLFunction *function) {
+    HashMapSLVariableTypeNameIdxNode *iter_par_lookup =
+        function->par_lookup.data;
+    for (
+        size_t i = 0;
+        i < function->par_lookup.capacity;
+        ++i,
+        ++iter_par_lookup) {
+        if (iter_par_lookup->in_use) {
+            DArrayChar_finalize(&iter_par_lookup->key.name);
+        }
+    }
+    HashMapSLVariableTypeNameIdx_finalize(&function->par_lookup);
+    HashMapSLVariableTypeNameIdxNode *iter_local_lookup =
+        function->local_lookup.data;
+    for (
+        size_t i = 0;
+        i < function->local_lookup.capacity;
+        ++i,
+        ++iter_local_lookup) {
+        if (iter_local_lookup->in_use) {
+            DArrayChar_finalize(&iter_local_lookup->key.name);
+        }
+    }
+    HashMapSLVariableTypeNameIdx_finalize(&function->local_lookup);
+    DArraySLToken_finalize(&function->code);
+}
+
 SLErrCode SLParser_finalize(SLParser *parser) {
     if (!parser) {
         return SL_ERR_NULL_PTR;
