@@ -253,6 +253,7 @@ SLErrCode handle_variable(
                 &found
             );
             if (found) {
+                DArrayChar_finalize(&vtn.name);
                 return SL_ERR_FUNCTION_DOUBLE_DEF;
             }
             ret = HashMapSLVariableTypeNameIdx_fetch(
