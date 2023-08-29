@@ -8,7 +8,7 @@
 bool eq_sl_variable_type_name(SLVariableTypeName *a, SLVariableTypeName *b);
 size_t hash_sl_variable_type_name(SLVariableTypeName *a);
 
-inline int SLFunction_initialize(SLFunction *function) {
+extern inline int SLFunction_initialize(SLFunction *function) {
     int ret =
         HashMapSLVariableTypeNameIdx_initialize(
             &function->par_lookup,
@@ -252,7 +252,7 @@ SLErrCode handle_variable(
                 return SL_ERR_FUNCTION_DEF_NO_NAME;
             }
             HashMapSLVariableTypeNameIdx_find(
-                &parser->global_lookup,
+                &parser->function_lookup,
                 &vtn,
                 &found
             );
@@ -261,7 +261,7 @@ SLErrCode handle_variable(
                 return SL_ERR_FUNCTION_DOUBLE_DEF;
             }
             ret = HashMapSLVariableTypeNameIdx_fetch(
-                &parser->global_lookup,
+                &parser->function_lookup,
                 &vtn,
                 &offset
             );
@@ -294,6 +294,11 @@ SLErrCode handle_variable(
             SLFunction function;
             function.ret = ret_flg;
             function.ret_type = ret_type;
+            ret = SLFunction_initialize(&function);
+            if (ret) {
+                DArrayChar_finalize(&vtn.name);
+                return ret;
+            }
             ret =
                 DArraySLFunction_push_back(
                     &parser->functions,
