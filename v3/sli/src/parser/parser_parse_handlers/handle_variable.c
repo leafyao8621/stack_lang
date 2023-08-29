@@ -247,12 +247,17 @@ SLErrCode handle_variable(
     } else {
         if (!buffer->name) {
             no_push = true;
+            if (vtn.type != SL_TOKEN_TYPE_FUNCTION) {
+                DArrayChar_finalize(&vtn.name);
+                return SL_ERR_FUNCTION_DEF_NO_NAME;
+            }
             HashMapSLVariableTypeNameIdx_find(
                 &parser->global_lookup,
                 &vtn,
                 &found
             );
             if (found) {
+                DArrayChar_finalize(&vtn.name);
                 return SL_ERR_FUNCTION_DOUBLE_DEF;
             }
             ret = HashMapSLVariableTypeNameIdx_fetch(
@@ -274,6 +279,7 @@ SLErrCode handle_variable(
                     &par_offset
                 );
             if (ret) {
+                DArrayChar_finalize(&vtn.name);
                 return SL_ERR_OUT_OF_MEMORY;
             }
             ret =
@@ -282,6 +288,7 @@ SLErrCode handle_variable(
                     &local_offset
                 );
             if (ret) {
+                DArrayChar_finalize(&vtn.name);
                 return SL_ERR_OUT_OF_MEMORY;
             }
             SLFunction function;
@@ -293,6 +300,7 @@ SLErrCode handle_variable(
                     &function
                 );
             if (ret) {
+                DArrayChar_finalize(&vtn.name);
                 return SL_ERR_OUT_OF_MEMORY;
             }
             buffer->name = true;
@@ -305,15 +313,11 @@ SLErrCode handle_variable(
                 &found
             );
             if (found) {
-                HashMapSLVariableTypeNameIdx_fetch(
-                    &parser->functions.data[buffer->cur_function].par_lookup,
-                    &vtn,
-                    &offset
-                );
                 DArrayChar_finalize(&vtn.name);
+                return SL_ERR_FUNCTION_DUPLICATE_PAR;
             } else {
                 ret = HashMapSLVariableTypeNameIdx_fetch(
-                    &parser->global_lookup,
+                    &parser->functions.data[buffer->cur_function].par_lookup,
                     &vtn,
                     &offset
                 );
@@ -321,22 +325,23 @@ SLErrCode handle_variable(
                     DArrayChar_finalize(&vtn.name);
                     return SL_ERR_OUT_OF_MEMORY;
                 }
-                *offset = buffer->global_offset;
+                *offset =
+                    buffer->local_offsets.data[buffer->cur_function];
                 switch (token.type) {
                 case SL_TOKEN_TYPE_INT_VAR:
-                    buffer->global_offset += 8;
+                    buffer->local_offsets.data[buffer->cur_function] += 8;
                     break;
                 case SL_TOKEN_TYPE_FLOAT_VAR:
-                    buffer->global_offset += 8;
+                    buffer->local_offsets.data[buffer->cur_function] += 8;
                     break;
                 case SL_TOKEN_TYPE_CHAR_VAR:
-                    buffer->global_offset++;
+                    buffer->local_offsets.data[buffer->cur_function]++;
                     break;
                 case SL_TOKEN_TYPE_STR_VAR:
-                    buffer->global_offset += 8;
+                    buffer->local_offsets.data[buffer->cur_function] += 8;
                     break;
                 case SL_TOKEN_TYPE_ARR:
-                    buffer->global_offset += 8;
+                    buffer->local_offsets.data[buffer->cur_function] += 8;
                     break;
                 default:
                     break;

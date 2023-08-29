@@ -20,9 +20,11 @@ typedef enum SLErrCode {
     SL_ERR_ARR_NOT_INITIALIZED,
     SL_ERR_DOUBLE_ALLOC,
     SL_ERR_MULTI_DIM_ARR,
-    SL_ERR_FUNCTION_DOUBLE_DEF
+    SL_ERR_FUNCTION_DOUBLE_DEF,
+    SL_ERR_FUNCTION_DUPLICATE_PAR,
+    SL_ERR_FUNCTION_DEF_NO_NAME
 } SLErrCode;
 
-extern const char *sl_errcode_lookup[19];
+extern const char *sl_errcode_lookup[21];
 
 #endif
