@@ -454,6 +454,24 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
                 );
             }
         }
+        fputs("Local Variables:\n", fout);
+        HashMapSLVariableTypeNameIdxNode *iter_local_lookup =
+            iter_functions->local_lookup.data;
+        for (
+            size_t i = 0;
+            i < iter_functions->local_lookup.capacity;
+            ++i,
+            ++iter_local_lookup) {
+            if (iter_local_lookup->in_use) {
+                fprintf(
+                    fout,
+                    "Name: %s\nType: %s\nOffset: %lu\n",
+                    iter_local_lookup->key.name.data,
+                    type_lookup[iter_local_lookup->key.type],
+                    iter_local_lookup->value
+                );
+            }
+        }
         fputs("Code:\n", fout);
         SLToken *iter = iter_functions->code.data;
         uint64_t *float_int_ptr = 0;

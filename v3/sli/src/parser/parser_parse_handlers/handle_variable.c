@@ -178,6 +178,7 @@ SLErrCode handle_variable(
     bool found = false;
     Idx *offset = 0;
     bool no_push = false;
+    SLVariableLocation location = SL_VARIABLE_LOCATION_GLOBAL;
     if (buffer->global) {
         HashMapSLVariableTypeNameIdx_find(&parser->global_lookup, &vtn, &found);
         if (found) {
@@ -188,11 +189,12 @@ SLErrCode handle_variable(
             );
             DArrayChar_finalize(&vtn.name);
         } else {
-            ret = HashMapSLVariableTypeNameIdx_fetch(
-                &parser->global_lookup,
-                &vtn,
-                &offset
-            );
+            ret =
+                HashMapSLVariableTypeNameIdx_fetch(
+                    &parser->global_lookup,
+                    &vtn,
+                    &offset
+                );
             if (ret) {
                 DArrayChar_finalize(&vtn.name);
                 return SL_ERR_OUT_OF_MEMORY;
@@ -308,7 +310,8 @@ SLErrCode handle_variable(
                 DArrayChar_finalize(&vtn.name);
                 return SL_ERR_OUT_OF_MEMORY;
             }
-            buffer->cur_token_buf = &function.code;
+            buffer->cur_token_buf =
+                &parser->functions.data[buffer->cur_function].code;
             buffer->name = true;
             buffer->par = true;
         } else if (buffer->par) {
@@ -332,26 +335,119 @@ SLErrCode handle_variable(
                     return SL_ERR_OUT_OF_MEMORY;
                 }
                 *offset =
-                    buffer->local_offsets.data[buffer->cur_function];
+                    buffer->parameter_offsets.data[buffer->cur_function];
                 switch (token.type) {
                 case SL_TOKEN_TYPE_INT_VAR:
-                    buffer->local_offsets.data[buffer->cur_function] += 8;
+                    buffer->parameter_offsets.data[buffer->cur_function] += 8;
                     break;
                 case SL_TOKEN_TYPE_FLOAT_VAR:
-                    buffer->local_offsets.data[buffer->cur_function] += 8;
+                    buffer->parameter_offsets.data[buffer->cur_function] += 8;
                     break;
                 case SL_TOKEN_TYPE_CHAR_VAR:
-                    buffer->local_offsets.data[buffer->cur_function]++;
+                    buffer->parameter_offsets.data[buffer->cur_function]++;
                     break;
                 case SL_TOKEN_TYPE_STR_VAR:
-                    buffer->local_offsets.data[buffer->cur_function] += 8;
+                    buffer->parameter_offsets.data[buffer->cur_function] += 8;
                     break;
                 case SL_TOKEN_TYPE_ARR:
-                    buffer->local_offsets.data[buffer->cur_function] += 8;
+                    buffer->parameter_offsets.data[buffer->cur_function] += 8;
                     break;
                 default:
                     break;
                 }
+            }
+        } else {
+            HashMapSLVariableTypeNameIdx_find(
+                &parser->functions.data[buffer->cur_function].par_lookup,
+                &vtn,
+                &found
+            );
+            if (found) {
+                HashMapSLVariableTypeNameIdx_fetch(
+                    &parser->functions.data[buffer->cur_function].par_lookup,
+                    &vtn,
+                    &offset
+                );
+                location = SL_VARIABLE_LOCATION_PARAMETER;
+                DArrayChar_finalize(&vtn.name);
+            } else {
+                location = SL_VARIABLE_LOCATION_LOCAL;
+                HashMapSLVariableTypeNameIdx_find(
+                    &parser->functions.data[buffer->cur_function].local_lookup,
+                    &vtn,
+                    &found
+                );
+                if (found) {
+                    HashMapSLVariableTypeNameIdx_fetch(
+                        &parser
+                            ->functions
+                            .data[buffer->cur_function]
+                            .local_lookup,
+                        &vtn,
+                        &offset
+                    );
+                    DArrayChar_finalize(&vtn.name);
+                } else {
+                    ret =
+                        HashMapSLVariableTypeNameIdx_fetch(
+                            &parser
+                                ->functions
+                                .data[buffer->cur_function]
+                                .local_lookup,
+                            &vtn,
+                            &offset
+                        );
+                    if (ret) {
+                        DArrayChar_finalize(&vtn.name);
+                        return SL_ERR_OUT_OF_MEMORY;
+                    }
+                    *offset = buffer->local_offsets.data[buffer->cur_function];
+                    switch (token.type) {
+                    case SL_TOKEN_TYPE_INT_VAR:
+                        buffer->local_offsets.data[buffer->cur_function] += 8;
+                        break;
+                    case SL_TOKEN_TYPE_FLOAT_VAR:
+                        buffer->local_offsets.data[buffer->cur_function] += 8;
+                        break;
+                    case SL_TOKEN_TYPE_CHAR_VAR:
+                        buffer->local_offsets.data[buffer->cur_function]++;
+                        break;
+                    case SL_TOKEN_TYPE_STR_VAR:
+                        buffer->local_offsets.data[buffer->cur_function] += 8;
+                        break;
+                    case SL_TOKEN_TYPE_ARR:
+                        buffer->local_offsets.data[buffer->cur_function] += 8;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+            switch (token.type) {
+            case SL_TOKEN_TYPE_INT_VAR:
+                token.data.int_var.location = location;
+                token.data.int_var.idx = *offset;
+                break;
+            case SL_TOKEN_TYPE_FLOAT_VAR:
+                token.data.float_var.location = location;
+                token.data.float_var.idx = *offset;
+                break;
+            case SL_TOKEN_TYPE_CHAR_VAR:
+                token.data.char_var.location = location;
+                token.data.char_var.idx = *offset;
+                break;
+            case SL_TOKEN_TYPE_STR_VAR:
+                token.data.str_var.location = location;
+                token.data.str_var.idx = *offset;
+                break;
+            case SL_TOKEN_TYPE_ARR:
+                token.data.arr.var_data.location = location;
+                token.data.arr.var_data.idx = *offset;
+                token.data.arr.dim = dim;
+                token.data.arr.type = array_type;
+                break;
+            default:
+                break;
             }
         }
     }

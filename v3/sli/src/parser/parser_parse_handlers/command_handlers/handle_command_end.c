@@ -19,15 +19,72 @@ SLErrCode handle_command_end(
     int ret = DArrayIdx_pop_back(&buffer->control_stack);
     if (ret) {
         if (!buffer->global && buffer->name && !buffer->par) {
+            if (parser->functions.data[buffer->cur_function].ret) {
+                if (buffer->operation_stack.size != 1) {
+                    return SL_ERR_FUNCTION_RET_MISMATCH;
+                }
+                switch (parser->functions.data[buffer->cur_function].ret_type) {
+                case SL_TOKEN_TYPE_INT_LITERAL:
+                    switch (buffer->operation_stack.data->type) {
+                    case SL_TOKEN_TYPE_INT_LITERAL:
+                    case SL_TOKEN_TYPE_INT_VAR:
+                        break;
+                    default:
+                        return SL_ERR_FUNCTION_RET_MISMATCH;
+                    }
+                    break;
+                case SL_TOKEN_TYPE_FLOAT_LITERAL:
+                    switch (buffer->operation_stack.data->type) {
+                    case SL_TOKEN_TYPE_FLOAT_LITERAL:
+                    case SL_TOKEN_TYPE_FLOAT_VAR:
+                        break;
+                    default:
+                        return SL_ERR_FUNCTION_RET_MISMATCH;
+                    }
+                    break;
+                case SL_TOKEN_TYPE_CHAR_LITERAL:
+                    switch (buffer->operation_stack.data->type) {
+                    case SL_TOKEN_TYPE_CHAR_LITERAL:
+                    case SL_TOKEN_TYPE_CHAR_VAR:
+                        break;
+                    default:
+                        return SL_ERR_FUNCTION_RET_MISMATCH;
+                    }
+                    break;
+                case SL_TOKEN_TYPE_STR_LITERAL:
+                    switch (buffer->operation_stack.data->type) {
+                    case SL_TOKEN_TYPE_STR_LITERAL:
+                    case SL_TOKEN_TYPE_STR_VAR:
+                        break;
+                    default:
+                        return SL_ERR_FUNCTION_RET_MISMATCH;
+                    }
+                    break;
+                default:
+                    return SL_ERR_INVALID_COMMAND;
+                }
+                DArraySLToken_clear(&buffer->operation_stack);
+            } else {
+                if (buffer->operation_stack.size) {
+                    return SL_ERR_FUNCTION_RET_MISMATCH;
+                }
+            }
             buffer->global = true;
             buffer->name = false;
-            buffer->cur_token_buf = &parser->code;
             *push_token = false;
             *push_control = false;
             *push_control_extra = false;
+            SLToken token;
+            token.type = SL_TOKEN_TYPE_COMMAND;
+            token.data.command.type = SL_COMMAND_TYPE_RETURN;
+            int ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
+            if (ret) {
+                return SL_ERR_OUT_OF_MEMORY;
+            }
+            buffer->cur_token_buf = &parser->code;
             return SL_ERR_OK;
         }
-        return SL_ERR_MISSING_OPERAND;
+        return SL_ERR_UNBALANCED;
     }
     Idx *iter_control_extra;
     switch (
@@ -134,19 +191,19 @@ SLErrCode handle_command_end(
                                     .data[buffer->control_stack.size];
                         break;
                     default:
-                        return SL_ERR_INVALID_COMMAND;
+                        return SL_ERR_UNBALANCED;
                     }
                 }
                 DArrayIdx_clear(&buffer->control_extra_stack);
                 break;
             default:
-                return SL_ERR_INVALID_COMMAND;
+                return SL_ERR_UNBALANCED;
             }
             break;
         case SL_COMMAND_TYPE_DO_FOR:
             ret = DArrayIdx_pop_back(&buffer->control_stack);
             if (ret) {
-                return SL_ERR_INVALID_COMMAND;
+                return SL_ERR_UNBALANCED;
             }
             switch (
                 buffer
@@ -210,17 +267,17 @@ SLErrCode handle_command_end(
                                     .data[buffer->control_stack.size];
                         break;
                     default:
-                        return SL_ERR_INVALID_COMMAND;
+                        return SL_ERR_UNBALANCED;
                     }
                 }
                 DArrayIdx_clear(&buffer->control_extra_stack);
                 break;
             default:
-                return SL_ERR_INVALID_COMMAND;
+                return SL_ERR_UNBALANCED;
             }
             break;
         default:
-            return SL_ERR_INVALID_COMMAND;
+            return SL_ERR_UNBALANCED;
         }
         break;
     default:

@@ -174,6 +174,10 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
     }
     parser->global_size = buffer.global_offset;
     if (buffer.global) {
+        if (buffer.control_stack.size) {
+            SLParserBuffer_finalize(&buffer);
+            return SL_ERR_UNBALANCED;
+        }
         SLToken token;
         token.type = SL_TOKEN_TYPE_COMMAND;
         token.data.command.type = SL_COMMAND_TYPE_HALT;
@@ -182,6 +186,9 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
             SLParserBuffer_finalize(&buffer);
             return SL_ERR_OUT_OF_MEMORY;
         }
+    } else {
+        SLParserBuffer_finalize(&buffer);
+        return SL_ERR_UNBALANCED;
     }
     SLParserBuffer_finalize(&buffer);
     return SL_ERR_OK;
