@@ -5,7 +5,7 @@
 
 #include "../../parser.h"
 
-SLErrCode handle_command_break(
+SLErrCode handle_command_begin(
     SLParser *parser,
     struct SLParserBuffer *buffer,
     char **iter,
@@ -16,8 +16,9 @@ SLErrCode handle_command_break(
     if (!buffer || !iter || !token || !parser) {
         return SL_ERR_NULL_PTR;
     }
-    *push_token = true;
+    buffer->par = false;
+    *push_token = false;
     *push_control = false;
-    *push_control_extra = true;
+    *push_control_extra = false;
     return SL_ERR_OK;
 }

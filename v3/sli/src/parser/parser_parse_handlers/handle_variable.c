@@ -308,6 +308,7 @@ SLErrCode handle_variable(
                 DArrayChar_finalize(&vtn.name);
                 return SL_ERR_OUT_OF_MEMORY;
             }
+            buffer->cur_token_buf = &function.code;
             buffer->name = true;
             buffer->par = true;
         } else if (buffer->par) {

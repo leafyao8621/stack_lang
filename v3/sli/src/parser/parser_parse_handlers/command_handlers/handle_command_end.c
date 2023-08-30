@@ -6,17 +6,27 @@
 #include "../../parser.h"
 
 SLErrCode handle_command_end(
+    SLParser *parser,
     struct SLParserBuffer *buffer,
     char **iter,
     SLToken *token,
     bool *push_token,
     bool *push_control,
     bool *push_control_extra) {
-    if (!buffer || !iter || !token) {
+    if (!buffer || !iter || !token || !parser) {
         return SL_ERR_NULL_PTR;
     }
     int ret = DArrayIdx_pop_back(&buffer->control_stack);
     if (ret) {
+        if (!buffer->global && buffer->name && !buffer->par) {
+            buffer->global = true;
+            buffer->name = false;
+            buffer->cur_token_buf = &parser->code;
+            *push_token = false;
+            *push_control = false;
+            *push_control_extra = false;
+            return SL_ERR_OK;
+        }
         return SL_ERR_MISSING_OPERAND;
     }
     Idx *iter_control_extra;

@@ -457,7 +457,7 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
         fputs("Code:\n", fout);
         SLToken *iter = iter_functions->code.data;
         uint64_t *float_int_ptr = 0;
-        for (size_t j = 0; j < parser->code.size; ++j, ++iter) {
+        for (size_t j = 0; j < iter_functions->code.size; ++j, ++iter) {
             fprintf(
                 fout,
                 "Idx: %lu\nType: %s\n",
