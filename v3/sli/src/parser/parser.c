@@ -6,6 +6,7 @@
 DEF_DARRAY_FUNCTIONS(SLToken)
 DEF_DARRAY_FUNCTIONS(String)
 DEF_DARRAY_FUNCTIONS(SLFunction)
+DEF_DARRAY_FUNCTIONS(SLTokenType)
 
 DEF_HASHMAP_FUNCTIONS(SLVariableTypeName, Idx)
 
@@ -83,6 +84,7 @@ extern inline void SLFunction_finalize(SLFunction *function) {
             DArrayChar_finalize(&iter_local_lookup->key.name);
         }
     }
+    DArraySLTokenType_finalize(&function->par_type);
     HashMapSLVariableTypeNameIdx_finalize(&function->local_lookup);
     DArraySLToken_finalize(&function->code);
 }

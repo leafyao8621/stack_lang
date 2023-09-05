@@ -230,6 +230,17 @@ SLErrCode handle_variable(
                 default:
                     break;
                 }
+                ret =
+                    DArraySLTokenType_push_back(
+                        &parser
+                            ->functions
+                            .data[buffer->cur_function]
+                            .par_type,
+                        &token.type
+                    );
+                if (ret) {
+                    return SL_ERR_OUT_OF_MEMORY;
+                }
             }
         } else {
             HashMapSLVariableTypeNameIdx_find(

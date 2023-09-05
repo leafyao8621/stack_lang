@@ -19,6 +19,10 @@ extern inline int SLFunction_initialize(SLFunction *function) {
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
+    ret = DArraySLTokenType_initialize(&function->par_type, 10);
+    if (ret) {
+        return SL_ERR_OUT_OF_MEMORY;
+    }
     ret =
         HashMapSLVariableTypeNameIdx_initialize(
             &function->local_lookup,
@@ -160,17 +164,76 @@ SLErrCode handle_function(
         for (size_t i = 0; i < function.par_lookup.size; ++i) {
             ret = DArraySLToken_pop_back(&buffer->operation_stack);
             if (ret) {
-                puts("shit");
                 return SL_ERR_FUNCTION_CALL_ARG_MISMATCH;
             }
         }
-        // if (function.ret) {
-        //     token.type = function.ret_type;
-        //     ret = DArraySLToken_push_back(&buffer->operation_stack, &token);
-        //     if (ret) {
-        //         return SL_ERR_OUT_OF_MEMORY;
-        //     }
-        // }
+        SLTokenType *iter = function.par_type.data;
+        for (size_t i = 0; i < function.par_type.size; ++i, ++iter) {
+            switch (*iter) {
+            case SL_TOKEN_TYPE_INT_VAR:
+                switch (
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size + i]
+                        .type) {
+                case SL_TOKEN_TYPE_INT_LITERAL:
+                case SL_TOKEN_TYPE_INT_VAR:
+                    break;
+                default:
+                    return SL_ERR_FUNCTION_CALL_ARG_MISMATCH;
+                }
+                break;
+            case SL_TOKEN_TYPE_FLOAT_VAR:
+                switch (
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size + i]
+                        .type) {
+                case SL_TOKEN_TYPE_FLOAT_LITERAL:
+                case SL_TOKEN_TYPE_FLOAT_VAR:
+                    break;
+                default:
+                    return SL_ERR_FUNCTION_CALL_ARG_MISMATCH;
+                }
+                break;
+            case SL_TOKEN_TYPE_CHAR_VAR:
+                switch (
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size + i]
+                        .type) {
+                case SL_TOKEN_TYPE_CHAR_LITERAL:
+                case SL_TOKEN_TYPE_CHAR_VAR:
+                    break;
+                default:
+                    return SL_ERR_FUNCTION_CALL_ARG_MISMATCH;
+                }
+                break;
+            case SL_TOKEN_TYPE_STR_VAR:
+                switch (
+                    buffer
+                        ->operation_stack
+                        .data[buffer->operation_stack.size + i]
+                        .type) {
+                case SL_TOKEN_TYPE_STR_LITERAL:
+                case SL_TOKEN_TYPE_STR_VAR:
+                    break;
+                default:
+                    return SL_ERR_FUNCTION_CALL_ARG_MISMATCH;
+                }
+                break;
+            default:
+                break;
+            }
+        }
+        if (function.ret) {
+            SLToken token;
+            token.type = function.ret_type;
+            ret = DArraySLToken_push_back(&buffer->operation_stack, &token);
+            if (ret) {
+                return SL_ERR_OUT_OF_MEMORY;
+            }
+        }
     } else {
         if (!buffer->name) {
             no_push = true;
@@ -240,47 +303,8 @@ SLErrCode handle_function(
             buffer->name = true;
             buffer->par = true;
         } else if (buffer->par) {
-            no_push = true;
-            HashMapSLVariableTypeNameIdx_find(
-                &parser->functions.data[buffer->cur_function].par_lookup,
-                &vtn,
-                &found
-            );
-            if (found) {
-                DArrayChar_finalize(&vtn.name);
-                return SL_ERR_FUNCTION_DUPLICATE_PAR;
-            } else {
-                ret = HashMapSLVariableTypeNameIdx_fetch(
-                    &parser->functions.data[buffer->cur_function].par_lookup,
-                    &vtn,
-                    &offset
-                );
-                if (ret) {
-                    DArrayChar_finalize(&vtn.name);
-                    return SL_ERR_OUT_OF_MEMORY;
-                }
-                *offset =
-                    buffer->parameter_offsets.data[buffer->cur_function];
-                switch (token.type) {
-                case SL_TOKEN_TYPE_INT_VAR:
-                    buffer->parameter_offsets.data[buffer->cur_function] += 8;
-                    break;
-                case SL_TOKEN_TYPE_FLOAT_VAR:
-                    buffer->parameter_offsets.data[buffer->cur_function] += 8;
-                    break;
-                case SL_TOKEN_TYPE_CHAR_VAR:
-                    buffer->parameter_offsets.data[buffer->cur_function]++;
-                    break;
-                case SL_TOKEN_TYPE_STR_VAR:
-                    buffer->parameter_offsets.data[buffer->cur_function] += 8;
-                    break;
-                case SL_TOKEN_TYPE_ARR:
-                    buffer->parameter_offsets.data[buffer->cur_function] += 8;
-                    break;
-                default:
-                    break;
-                }
-            }
+            DArrayChar_finalize(&vtn.name);
+            return SL_ERR_FUNCTION_INVALID_PAR;
         } else {
 
         }

@@ -11,5 +11,7 @@ _def ?#h #a _begin
 _end
 
 "abc" _println
-123 ?#h
+123.0 ?#h
 "bcd" ?g
+$a "aaaa" =
+123 123.0 $a '\xff' ?#f
