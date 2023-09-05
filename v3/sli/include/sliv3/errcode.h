@@ -26,9 +26,10 @@ typedef enum SLErrCode {
     SL_ERR_FUNCTION_DEF_DIRTY_STACK,
     SL_ERR_FUNCTION_RET_MISMATCH,
     SL_ERR_UNBALANCED,
-    SL_ERR_FUNCTION_CALL_NOT_DEFINED
+    SL_ERR_FUNCTION_CALL_NOT_DEFINED,
+    SL_ERR_FUNCTION_CALL_ARG_MISMATCH
 } SLErrCode;
 
-extern const char *sl_errcode_lookup[25];
+extern const char *sl_errcode_lookup[26];
 
 #endif

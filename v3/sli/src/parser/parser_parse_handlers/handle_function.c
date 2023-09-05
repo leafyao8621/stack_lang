@@ -156,6 +156,21 @@ SLErrCode handle_function(
         );
         DArrayChar_finalize(&vtn.name);
         token.data.function = *offset;
+        SLFunction function = parser->functions.data[*offset];
+        for (size_t i = 0; i < function.par_lookup.size; ++i) {
+            ret = DArraySLToken_pop_back(&buffer->operation_stack);
+            if (ret) {
+                puts("shit");
+                return SL_ERR_FUNCTION_CALL_ARG_MISMATCH;
+            }
+        }
+        // if (function.ret) {
+        //     token.type = function.ret_type;
+        //     ret = DArraySLToken_push_back(&buffer->operation_stack, &token);
+        //     if (ret) {
+        //         return SL_ERR_OUT_OF_MEMORY;
+        //     }
+        // }
     } else {
         if (!buffer->name) {
             no_push = true;
@@ -274,10 +289,6 @@ SLErrCode handle_function(
         return SL_ERR_OK;
     }
     ret = DArraySLToken_push_back(buffer->cur_token_buf, &token);
-    if (ret) {
-        return SL_ERR_OUT_OF_MEMORY;
-    }
-    ret = DArraySLToken_push_back(&buffer->operation_stack, &token);
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }

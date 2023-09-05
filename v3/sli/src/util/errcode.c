@@ -1,6 +1,6 @@
 #include "errcode.h"
 
-const char *sl_errcode_lookup[25] = {
+const char *sl_errcode_lookup[26] = {
     "SL_ERR_OK",
     "SL_ERR_NULL_PTR",
     "SL_ERR_OUT_OF_MEMORY",
@@ -25,5 +25,6 @@ const char *sl_errcode_lookup[25] = {
     "SL_ERR_FUNCTION_DEF_DIRTY_STACK",
     "SL_ERR_FUNCTION_RET_MISMATCH",
     "SL_ERR_UNBALANCED",
-    "SL_ERR_FUNCTION_CALL_NOT_DEFINED"
+    "SL_ERR_FUNCTION_CALL_NOT_DEFINED",
+    "SL_ERR_FUNCTION_CALL_ARG_MISMATCH"
 };

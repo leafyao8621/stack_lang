@@ -137,6 +137,7 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
             err = handle_function(parser, &buffer, &iter);
             if (err) {
                 SLParserBuffer_finalize(&buffer);
+                return err;
             }
             break;
         case '\'':
