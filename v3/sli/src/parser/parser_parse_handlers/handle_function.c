@@ -140,7 +140,22 @@ SLErrCode handle_function(
     Idx *offset = 0;
     bool no_push = false;
     if (buffer->global) {
-
+        HashMapSLVariableTypeNameIdx_find(
+            &parser->function_lookup,
+            &vtn,
+            &found
+        );
+        if (!found) {
+            DArrayChar_finalize(&vtn.name);
+            return SL_ERR_FUNCTION_CALL_NOT_DEFINED;
+        }
+        HashMapSLVariableTypeNameIdx_fetch(
+            &parser->function_lookup,
+            &vtn,
+            &offset
+        );
+        DArrayChar_finalize(&vtn.name);
+        token.data.function = *offset;
     } else {
         if (!buffer->name) {
             no_push = true;

@@ -397,13 +397,20 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
             case SL_COMMAND_TYPE_CONTINUE:
                 fprintf(
                     fout,
-                    "TGT: %lu\n",
+                    "Tgt: %lu\n",
                     iter->data.command.tgt
                 );
                 break;
             default:
                 break;
             }
+            break;
+        case SL_TOKEN_TYPE_FUNCTION:
+            fprintf(
+                fout,
+                "Offset: %lu\n",
+                iter->data.function
+            );
             break;
         default:
             break;
@@ -587,13 +594,20 @@ SLErrCode SLParser_log(SLParser *parser, FILE *fout) {
                 case SL_COMMAND_TYPE_CONTINUE:
                     fprintf(
                         fout,
-                        "TGT: %lu\n",
+                        "Tgt: %lu\n",
                         iter->data.command.tgt
                     );
                     break;
                 default:
                     break;
                 }
+                break;
+            case SL_TOKEN_TYPE_FUNCTION:
+                fprintf(
+                    fout,
+                    "Offset: %lu\n",
+                    iter->data.function
+                );
                 break;
             default:
                 break;
