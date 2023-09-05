@@ -34,7 +34,7 @@ SLErrCode SLInterpreter_initialize(SLInterpreter *interpreter) {
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
-    ret = DArraySLToken_initialize(&interpreter->call_stack, 10);
+    ret = DArrayChar_initialize(&interpreter->call_stack, 80);
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
     }
@@ -66,7 +66,7 @@ void SLInterpreter_finalize(SLInterpreter *interpreter) {
     DArraySLTokenPtr_finalize(&interpreter->control_stack);
     HashMapBufferPtrArrayMeta_finalize(&interpreter->global_array);
     DArrayIdx_finalize(&interpreter->size_stack);
-    DArraySLToken_finalize(&interpreter->call_stack);
+    DArrayChar_finalize(&interpreter->call_stack);
     SLParser_finalize(&interpreter->parser);
     if (interpreter->initialized) {
         DArrayChar_finalize(&interpreter->global);
