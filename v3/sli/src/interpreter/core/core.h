@@ -27,6 +27,7 @@ typedef struct SLInterpreter {
     DArraySLToken operation_stack;
     DArraySLTokenPtr control_stack;
     DArrayIdx size_stack;
+    DArraySLToken call_stack;
 } SLInterpreter;
 
 SLErrCode SLInterpreter_initialize(SLInterpreter *interpreter);

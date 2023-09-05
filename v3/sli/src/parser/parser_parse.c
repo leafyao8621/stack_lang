@@ -92,6 +92,11 @@ SLErrCode handle_command(
     struct SLParserBuffer *buffer,
     char **iter);
 
+SLErrCode handle_function(
+    SLParser *parser,
+    struct SLParserBuffer *buffer,
+    char **iter);
+
 SLErrCode SLParser_parse(SLParser *parser, char *str) {
     if (!parser || !str) {
         return SL_ERR_NULL_PTR;
@@ -122,11 +127,16 @@ SLErrCode SLParser_parse(SLParser *parser, char *str) {
         case '#':
         case '$':
         case '@':
-        case '?':
             err = handle_variable(parser, &buffer, &iter);
             if (err) {
                 SLParserBuffer_finalize(&buffer);
                 return err;
+            }
+            break;
+        case '?':
+            err = handle_function(parser, &buffer, &iter);
+            if (err) {
+                SLParserBuffer_finalize(&buffer);
             }
             break;
         case '\'':
