@@ -6,6 +6,8 @@
 #include <containers/dstring.h>
 #include <containers/hashmap.h>
 
+#include <sliv4/util/errcode.h>
+
 typedef size_t Offset;
 
 typedef enum SLParserState {
@@ -36,5 +38,10 @@ typedef struct SLModule {
     SLSymbolTable symbol_table;
     SLCode code;
 } SLModule;
+
+SLErr SLParser_parse_module_text(
+    String *code, SLParser *parser, SLModule *module);
+SLErr SLParse_load_module_byte(
+    String *code, SLParser *parser, SLModule *module);
 
 #endif
