@@ -2,4 +2,5 @@
 
 #include <sliv4/parser/parser.h>
 
-DEF_HASHMAP_FUNCTIONS(Offset, SLSymbolTableValue)
+DEF_DARRAY_FUNCTIONS(SLSymbolTableValue)
+DEF_DARRAY_FUNCTIONS(SLValue)
