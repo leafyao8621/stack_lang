@@ -7,6 +7,7 @@ SLErr SLParser_parse_module_text_handle_identifier(
     }
     int ret = 0;
     SLSymbolTableValue value, value_table;
+    SLValue value_stack;
     SLErr reterr = SL_ERR_OK;
     switch (parser->state) {
     case SL_PARSER_STATE_GLOBAL:
@@ -42,7 +43,18 @@ SLErr SLParser_parse_module_text_handle_identifier(
         if (reterr) {
             return reterr;
         }
-        printf("found offset: %lu\n", value_table.offset);
+        value_stack.is_literal = false;
+        value_stack.data.identifier.type = SL_VALUE_TYPE_INT64;
+        value_stack.data.identifier.data.variable.is_reference = false;
+        value_stack.data.identifier.data.variable.location =
+            value_table.location;
+        value_stack.data.identifier.data.variable.offset =
+            value_table.offset;
+        ret =
+            DArraySLValue_push_back(&parser->value_stack, &value_stack);
+        if (ret) {
+            return SL_ERR_OUT_OF_MEMORY;
+        }
         break;
     case SL_PARSER_STATE_DEFINITION_INT64:
         switch (parser->state) {

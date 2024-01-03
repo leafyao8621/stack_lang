@@ -10,6 +10,8 @@ typedef enum SLParserKeyword {
     SL_PARSER_KEYWORD_UINT32,
     SL_PARSER_KEYWORD_INT64,
     SL_PARSER_KEYWORD_UINT64,
+    SL_PARSER_KEYWORD_FLOAT32,
+    SL_PARSER_KEYWORD_FLOAT64,
     SL_PARSER_KEYWORD_INVALID
 } SLParserKeyword;
 
@@ -22,7 +24,7 @@ SLErr SLParser_parse_module_text_handle_keyword(
         return SL_ERR_NULL_PTR;
     }
     SLParserKeyword kwd = 0;
-    static const char *keywords[9] = {
+    static const char *keywords[11] = {
         "char",
         "int8",
         "uint8",
@@ -31,10 +33,12 @@ SLErr SLParser_parse_module_text_handle_keyword(
         "int32",
         "uint32",
         "int64",
-        "uint64"
+        "uint64",
+        "float32",
+        "float64"
     };
     const char **iter = keywords;
-    for (size_t i = 0; i < 9; ++i, ++kwd, ++iter) {
+    for (size_t i = 0; i < 11; ++i, ++kwd, ++iter) {
         if (!strcmp(parser->buf.data, *iter)) {
             break;
         }
@@ -44,7 +48,8 @@ SLErr SLParser_parse_module_text_handle_keyword(
     case SL_PARSER_KEYWORD_INVALID:
         return SL_ERR_INVALID_KEYWORD;
     case SL_PARSER_KEYWORD_INT64:
-        reterr = SLParser_parse_module_text_handle_keyword_int64(parser, module);
+        reterr =
+            SLParser_parse_module_text_handle_keyword_int64(parser, module);
         if (reterr) {
             return reterr;
         }

@@ -37,6 +37,9 @@ int main(int argc, char **argv) {
     retcode = SLParser_parse_module_text(&buf, &parser, &module);
     puts(slerr_lookup[retcode]);
     if (retcode) {
+        DArrayChar_finalize(&buf);
+        SLParser_finalize(&parser);
+        SLModule_finalize(&module);
         return 0;
     }
     SLModule_log(&module, stdout);

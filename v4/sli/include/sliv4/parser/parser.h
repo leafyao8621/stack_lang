@@ -25,12 +25,15 @@ typedef enum SLValueType {
     SL_VALUE_TYPE_INT32,
     SL_VALUE_TYPE_UINT32,
     SL_VALUE_TYPE_INT64,
-    SL_VALUE_TYPE_UINT64
+    SL_VALUE_TYPE_UINT64,
+    SL_VALUE_TYPE_FLOAT32,
+    SL_VALUE_TYPE_FLOAT64
 } SLValueType;
 
 typedef enum SLValueVariableLocation {
     SL_VALUE_VARIABLE_LOCATION_STR,
     SL_VALUE_VARIABLE_LOCATION_GLOBAL,
+    SL_VALUE_VARIABLE_LOCATION_TEMP,
     SL_VALUE_VARIABLE_LOCATION_LOCAL,
     SL_VALUE_VARIABLE_LOCATION_FUNCTION
 } SLValueVariableLocation;
@@ -38,19 +41,25 @@ typedef enum SLValueVariableLocation {
 typedef struct SLValue {
     bool is_literal;
     union {
-        union {
-            char chr;
-            int8_t int8;
-            uint8_t uint8;
-            int16_t int16;
-            uint16_t uint16;
-            int32_t int32;
-            uint32_t uint32;
-            int64_t int64;
-            uint64_t uint64;
-            size_t offset;
+        struct {
+            SLValueType type;
+            union {
+                char chr;
+                int8_t int8;
+                uint8_t uint8;
+                int16_t int16;
+                uint16_t uint16;
+                int32_t int32;
+                uint32_t uint32;
+                int64_t int64;
+                uint64_t uint64;
+                float float32;
+                double float64;
+                size_t offset;
+            } data;
         } literal;
         struct {
+            SLValueType type;
             union {
                 void *handle;
                 struct {
@@ -69,7 +78,7 @@ typedef struct SLParser {
     SLParserState state, prev_state;
     String buf;
     DArraySLValue value_stack;
-    size_t global_offset;
+    size_t global_offset, temp_offset, temp_offset_max;
 } SLParser;
 
 typedef struct SLSymbolTableValue {
@@ -98,6 +107,7 @@ typedef struct SLInstruction {
             SLValue operand1;
             SLValue operand2;
         } binary;
+        size_t par_list;
     } operand;
 } SLInstruction;
 
@@ -116,8 +126,6 @@ typedef struct SLModule {
 SLErr SLParser_initialize(SLParser *parser);
 SLErr SLParser_finalize(SLParser *parser);
 SLErr SLParser_parse_module_text(
-    String *code, SLParser *parser, SLModule *module);
-SLErr SLParser_load_module_byte(
     String *code, SLParser *parser, SLModule *module);
 
 SLErr SLModule_initialize(SLModule *module);

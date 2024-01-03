@@ -8,6 +8,8 @@ SLErr SLParser_initialize(SLParser *parser) {
     }
     parser->state = SL_PARSER_STATE_GLOBAL;
     parser->global_offset = 0;
+    parser->temp_offset = 0;
+    parser->temp_offset_max = 0;
     int ret = DArrayChar_initialize(&parser->buf, 20);
     if (ret) {
         return SL_ERR_OUT_OF_MEMORY;
@@ -50,7 +52,21 @@ SLErr SLParser_collect_token(char **iter, SLParser *parser) {
                 **iter >= '0' &&
                 **iter <= '9'
             ) ||
-            **iter == '_' ) {
+            **iter == '_' ||
+            **iter == '.' ||
+            **iter == '-' ||
+            **iter == '+' ||
+            **iter == '-' ||
+            **iter == '*' ||
+            **iter == '/' ||
+            **iter == '&' ||
+            **iter == '|' ||
+            **iter == '^' ||
+            **iter == '>' ||
+            **iter == '<' ||
+            **iter == '=' ||
+            **iter == '[' ||
+            **iter == ']') {
             ret = DArrayChar_push_back(&parser->buf, *iter);
             if (ret) {
                 return SL_ERR_OUT_OF_MEMORY;
@@ -72,6 +88,15 @@ SLErr SLParser_parse_module_text_handle_keyword(
     SLParser *parser, SLModule *module);
 
 SLErr SLParser_parse_module_text_handle_identifier(
+    SLParser *parser, SLModule *module);
+
+SLErr SLParser_parse_module_text_handle_literal_numeric(
+    SLParser *parser, SLModule *module);
+
+SLErr SLParser_parse_module_text_handle_literal_string(
+    char **iter, SLModule *module);
+
+SLErr SLParser_parse_module_text_handle_operator(
     SLParser *parser, SLModule *module);
 
 SLErr SLParser_parse_module_text(
@@ -111,6 +136,51 @@ SLErr SLParser_parse_module_text(
             reterr = SLParser_collect_token(&code_iter, parser);
             if (reterr) {
                 return reterr;
+            }
+            reterr =
+                SLParser_parse_module_text_handle_literal_numeric(
+                    parser,
+                    module
+                );
+            if (reterr) {
+                return reterr;
+            }
+            DArrayChar_clear(&parser->buf);
+        } else if (*code_iter == '"') {
+            reterr =
+                SLParser_parse_module_text_handle_literal_string(
+                    &code_iter,
+                    module
+                );
+            if (reterr) {
+                return reterr;
+            }
+        } else {
+            reterr = SLParser_collect_token(&code_iter, parser);
+            if (reterr) {
+                return reterr;
+            }
+            switch (*parser->buf.data) {
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+            case '&':
+            case '|':
+            case '^':
+            case '>':
+            case '<':
+            case '=':
+            case '[':
+                reterr =
+                    SLParser_parse_module_text_handle_operator(
+                        parser,
+                        module
+                    );
+                if (reterr) {
+                    return reterr;
+                }
+                break;
             }
             DArrayChar_clear(&parser->buf);
         }
