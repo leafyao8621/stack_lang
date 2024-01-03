@@ -65,7 +65,6 @@ SLErr SLModule_find_identifier(
     if (!module || !token || !symbol) {
         return SL_ERR_NULL_PTR;
     }
-    puts("find identifier");
     char *iter_buf = module->symbol_table.symbol_buf.data;
     SLSymbolTableValue *iter_symbol = module->symbol_table.table.data;
     for (
@@ -74,7 +73,6 @@ SLErr SLModule_find_identifier(
         ++i,
         ++iter_buf,
         ++iter_symbol) {
-        puts(iter_buf);
         if (!strcmp(iter_buf, token)) {
             *symbol = *iter_symbol;
             return SL_ERR_OK;
