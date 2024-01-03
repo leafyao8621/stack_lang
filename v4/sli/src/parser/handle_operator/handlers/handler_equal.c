@@ -20,7 +20,10 @@ SLErr SLParser_parse_module_text_handle_operator_equal(
         }
         op1 = parser->value_stack.data[parser->value_stack.size];
         op2 = parser->value_stack.data[parser->value_stack.size + 1];
-        if (op1.is_literal) {
+        if (
+            op1.is_literal ||
+            op1.data.identifier.data.variable.location ==
+            SL_VALUE_VARIABLE_LOCATION_TEMP) {
             return SL_ERR_INVALID_OPERAND_TYPE;
         }
         switch (op1.data.identifier.type) {
@@ -34,6 +37,11 @@ SLErr SLParser_parse_module_text_handle_operator_equal(
                     return SL_ERR_INVALID_OPERAND_TYPE;
                 }
             } else {
+                if (
+                    op2.data.identifier.data.variable.location ==
+                    SL_VALUE_VARIABLE_LOCATION_TEMP) {
+                    parser->temp_offset -= 8;
+                }
                 switch (op2.data.identifier.type) {
                 case SL_VALUE_TYPE_INT64:
                 case SL_VALUE_TYPE_UINT64:
@@ -46,7 +54,7 @@ SLErr SLParser_parse_module_text_handle_operator_equal(
         default:
             return SL_ERR_INVALID_OPERAND_TYPE;
         }
-        instruction.oprator = SL_INSTRUCTION_OPERATOR_ASSIGN;
+        instruction.operator = SL_INSTRUCTION_OPERATOR_ASSIGN;
         instruction.operand.binary.operand1 = op1;
         instruction.operand.binary.operand2 = op2;
         ret =

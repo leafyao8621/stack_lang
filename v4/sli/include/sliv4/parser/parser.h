@@ -100,7 +100,7 @@ typedef enum SLInstructionOperator {
 } SLInstructionOperator;
 
 typedef struct SLInstruction {
-    SLInstructionOperator oprator;
+    SLInstructionOperator operator;
     union {
         SLValue unary;
         struct {
@@ -109,6 +109,7 @@ typedef struct SLInstruction {
         } binary;
         size_t par_list;
     } operand;
+    size_t res_offset;
 } SLInstruction;
 
 DEF_DARRAY(SLInstruction)

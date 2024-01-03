@@ -17,6 +17,11 @@ SLErr SLParser_parse_module_text_handle_operator(
     SLErr reterr = SL_ERR_OK;
     switch (*parser->buf.data) {
     case '+':
+        reterr =
+            SLParser_parse_module_text_handle_operator_plus(parser, module);
+        if (reterr) {
+            return reterr;
+        }
         break;
     case '-':
         break;

@@ -70,49 +70,130 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
         fprintf(fout, "Offset: %lu\n", symbol->offset);
         for (; *iter_buf; ++iter_buf);
     }
+    static const char *operator_lookup[] =
+        {
+            "+",
+            "="
+        };
     fputs("Code:\n", fout);
     SLInstruction *inst = module->code.code.data;
     for (size_t i = 0; i < module->code.code.size; ++i, ++inst) {
-        switch (inst->oprator) {
+        switch (inst->operator) {
+        case SL_INSTRUCTION_OPERATOR_ADD:
         case SL_INSTRUCTION_OPERATOR_ASSIGN:
-            fputs("Instruction: =\n", fout);
+            fprintf(fout, "Instruction: %s\n", operator_lookup[inst->operator]);
             fputs("OP1:\n", fout);
-            switch (inst->operand.binary.operand1.data.identifier.type) {
-            case SL_VALUE_TYPE_INT64:
-                fputs("Type: int64\n", fout);
-                break;
-            default:
-                break;
+            if (!inst->operand.binary.operand1.is_literal) {
+                switch (inst->operand.binary.operand1.data.identifier.type) {
+                case SL_VALUE_TYPE_INT64:
+                    fputs("Type: int64\n", fout);
+                    break;
+                default:
+                    break;
+                }
+                switch (
+                    inst
+                        ->operand
+                        .binary
+                        .operand1
+                        .data
+                        .identifier
+                        .data
+                        .variable
+                        .location) {
+                case SL_VALUE_VARIABLE_LOCATION_GLOBAL:
+                    fputs("Location: global\n", fout);
+                    break;
+                case SL_VALUE_VARIABLE_LOCATION_TEMP:
+                    fputs("Location: temp\n", fout);
+                default:
+                    break;
+                }
+                fprintf(
+                    fout,
+                    "Offset: %lu\n",
+                    inst
+                        ->operand
+                        .binary
+                        .operand1
+                        .data
+                        .identifier
+                        .data
+                        .variable
+                        .offset
+                );
+            } else {
+                switch (inst->operand.binary.operand1.data.literal.type) {
+                case SL_VALUE_TYPE_INT64:
+                    fputs("Type: int64\n", fout);
+                    #if INTPTR_MAX == INT64_MAX
+                    fprintf(
+                        fout,
+                        "Value: %ld 0x%016lx\n",
+                        inst->operand.binary.operand1.data.literal.data.int64,
+                        (uint64_t)
+                            inst
+                                ->operand
+                                .binary
+                                .operand1
+                                .data
+                                .literal
+                                .data
+                                .int64
+                    );
+                    #else
+                    fprintf(
+                        fout,
+                        "Value: %lld 0x%016llx\n",
+                        inst->operand.binary.operand1.data.literal.data.int64,
+                        (uint64_t)
+                            inst
+                                ->operand
+                                .binary
+                                .operand1
+                                .data
+                                .literal
+                                .data
+                                .int64
+                    );
+                    #endif
+                    break;
+                case SL_VALUE_TYPE_UINT64:
+                    fputs("Type: uint64\n", fout);
+                    #if INTPTR_MAX == INT64_MAX
+                    fprintf(
+                        fout,
+                        "Value: %ld 0x%016lx\n",
+                        inst->operand.binary.operand1.data.literal.data.uint64,
+                        inst
+                            ->operand
+                            .binary
+                            .operand1
+                            .data
+                            .literal
+                            .data
+                            .uint64
+                    );
+                    #else
+                    fprintf(
+                        fout,
+                        "Value: %lld 0x%016llx\n",
+                        inst->operand.binary.operand1.data.literal.data.uint64,
+                        inst
+                            ->operand
+                            .binary
+                            .operand1
+                            .data
+                            .literal
+                            .data
+                            .int64
+                    );
+                    #endif
+                    break;
+                default:
+                    break;
+                }
             }
-            switch (
-                inst
-                    ->operand
-                    .binary
-                    .operand1
-                    .data
-                    .identifier
-                    .data
-                    .variable
-                    .location) {
-            case SL_VALUE_VARIABLE_LOCATION_GLOBAL:
-                fputs("Location: global\n", fout);
-                break;
-            default:
-                break;
-            }
-            fprintf(
-                fout,
-                "Offset: %lu\n",
-                inst
-                    ->operand
-                    .binary
-                    .operand1
-                    .data
-                    .identifier
-                    .data
-                    .variable
-                    .offset
-            );
             fputs("OP2:\n", fout);
             if (!inst->operand.binary.operand2.is_literal) {
                 switch (inst->operand.binary.operand2.data.identifier.type) {
@@ -135,6 +216,8 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
                 case SL_VALUE_VARIABLE_LOCATION_GLOBAL:
                     fputs("Location: global\n", fout);
                     break;
+                case SL_VALUE_VARIABLE_LOCATION_TEMP:
+                    fputs("Location: temp\n", fout);
                 default:
                     break;
                 }
@@ -222,6 +305,13 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
                 default:
                     break;
                 }
+            }
+            switch (inst->operator) {
+            case SL_INSTRUCTION_OPERATOR_ADD:
+                fprintf(fout, "Res Offset: %lu\n", inst->res_offset);
+                break;
+            default:
+                break;
             }
             break;
         default:
