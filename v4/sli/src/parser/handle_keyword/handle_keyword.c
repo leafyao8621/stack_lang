@@ -15,7 +15,37 @@ typedef enum SLParserKeyword {
     SL_PARSER_KEYWORD_INVALID
 } SLParserKeyword;
 
+SLErr SLParser_parse_module_text_handle_keyword_char(
+    SLParser *parser, SLModule *module);
+
+SLErr SLParser_parse_module_text_handle_keyword_int8(
+    SLParser *parser, SLModule *module);
+
+SLErr SLParser_parse_module_text_handle_keyword_uint8(
+    SLParser *parser, SLModule *module);
+
+SLErr SLParser_parse_module_text_handle_keyword_int16(
+    SLParser *parser, SLModule *module);
+
+SLErr SLParser_parse_module_text_handle_keyword_uint16(
+    SLParser *parser, SLModule *module);
+
+SLErr SLParser_parse_module_text_handle_keyword_int32(
+    SLParser *parser, SLModule *module);
+
+SLErr SLParser_parse_module_text_handle_keyword_uint32(
+    SLParser *parser, SLModule *module);
+
 SLErr SLParser_parse_module_text_handle_keyword_int64(
+    SLParser *parser, SLModule *module);
+
+SLErr SLParser_parse_module_text_handle_keyword_uint64(
+    SLParser *parser, SLModule *module);
+
+SLErr SLParser_parse_module_text_handle_keyword_float32(
+    SLParser *parser, SLModule *module);
+
+SLErr SLParser_parse_module_text_handle_keyword_float64(
     SLParser *parser, SLModule *module);
 
 SLErr SLParser_parse_module_text_handle_keyword(
@@ -47,9 +77,79 @@ SLErr SLParser_parse_module_text_handle_keyword(
     switch (kwd) {
     case SL_PARSER_KEYWORD_INVALID:
         return SL_ERR_INVALID_KEYWORD;
+    case SL_PARSER_KEYWORD_CHAR:
+        reterr =
+            SLParser_parse_module_text_handle_keyword_char(parser, module);
+        if (reterr) {
+            return reterr;
+        }
+        break;
+    case SL_PARSER_KEYWORD_INT8:
+        reterr =
+            SLParser_parse_module_text_handle_keyword_int8(parser, module);
+        if (reterr) {
+            return reterr;
+        }
+        break;
+    case SL_PARSER_KEYWORD_UINT8:
+        reterr =
+            SLParser_parse_module_text_handle_keyword_uint8(parser, module);
+        if (reterr) {
+            return reterr;
+        }
+        break;
+    case SL_PARSER_KEYWORD_INT16:
+        reterr =
+            SLParser_parse_module_text_handle_keyword_int16(parser, module);
+        if (reterr) {
+            return reterr;
+        }
+        break;
+    case SL_PARSER_KEYWORD_UINT16:
+        reterr =
+            SLParser_parse_module_text_handle_keyword_uint16(parser, module);
+        if (reterr) {
+            return reterr;
+        }
+        break;
+    case SL_PARSER_KEYWORD_INT32:
+        reterr =
+            SLParser_parse_module_text_handle_keyword_int32(parser, module);
+        if (reterr) {
+            return reterr;
+        }
+        break;
+    case SL_PARSER_KEYWORD_UINT32:
+        reterr =
+            SLParser_parse_module_text_handle_keyword_uint32(parser, module);
+        if (reterr) {
+            return reterr;
+        }
+        break;
     case SL_PARSER_KEYWORD_INT64:
         reterr =
             SLParser_parse_module_text_handle_keyword_int64(parser, module);
+        if (reterr) {
+            return reterr;
+        }
+        break;
+    case SL_PARSER_KEYWORD_UINT64:
+        reterr =
+            SLParser_parse_module_text_handle_keyword_uint64(parser, module);
+        if (reterr) {
+            return reterr;
+        }
+        break;
+    case SL_PARSER_KEYWORD_FLOAT32:
+        reterr =
+            SLParser_parse_module_text_handle_keyword_float32(parser, module);
+        if (reterr) {
+            return reterr;
+        }
+        break;
+    case SL_PARSER_KEYWORD_FLOAT64:
+        reterr =
+            SLParser_parse_module_text_handle_keyword_float64(parser, module);
         if (reterr) {
             return reterr;
         }

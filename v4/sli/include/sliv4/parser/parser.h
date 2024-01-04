@@ -13,7 +13,17 @@ typedef size_t Offset;
 
 typedef enum SLParserState {
     SL_PARSER_STATE_GLOBAL,
-    SL_PARSER_STATE_DEFINITION_INT64
+    SL_PARSER_STATE_DEFINITION_CHAR,
+    SL_PARSER_STATE_DEFINITION_INT8,
+    SL_PARSER_STATE_DEFINITION_UINT8,
+    SL_PARSER_STATE_DEFINITION_INT16,
+    SL_PARSER_STATE_DEFINITION_UINT16,
+    SL_PARSER_STATE_DEFINITION_INT32,
+    SL_PARSER_STATE_DEFINITION_UINT32,
+    SL_PARSER_STATE_DEFINITION_INT64,
+    SL_PARSER_STATE_DEFINITION_UINT64,
+    SL_PARSER_STATE_DEFINITION_FLOAT32,
+    SL_PARSER_STATE_DEFINITION_FLOAT64
 } SLParserState;
 
 typedef enum SLValueType {
@@ -109,6 +119,7 @@ typedef struct SLInstruction {
         } binary;
         size_t par_list;
     } operand;
+    SLValueType res_type;
     size_t res_offset;
 } SLInstruction;
 

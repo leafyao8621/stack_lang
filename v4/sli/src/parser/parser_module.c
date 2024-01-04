@@ -42,7 +42,6 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
     if (!module || !fout) {
         return SL_ERR_NULL_PTR;
     }
-    printf("sz %lu\n", module->symbol_table.table.size);
     fputs("Symbol Table:\n", fout);
     char *iter_buf = module->symbol_table.symbol_buf.data;
     SLSymbolTableValue *symbol = module->symbol_table.table.data;
@@ -54,8 +53,35 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
         ++symbol) {
         fprintf(fout, "Identifier: %s\n", iter_buf);
         switch (symbol->type) {
+        case SL_VALUE_TYPE_CHAR:
+            fputs("Type: char\n", fout);
+            break;
+        case SL_VALUE_TYPE_INT8:
+            fputs("Type: int8\n", fout);
+            break;
+        case SL_VALUE_TYPE_UINT8:
+            fputs("Type: uint8\n", fout);
+            break;
+        case SL_VALUE_TYPE_INT16:
+            fputs("Type: int16\n", fout);
+            break;
+        case SL_VALUE_TYPE_UINT16:
+            fputs("Type: uint16\n", fout);
+            break;
+        case SL_VALUE_TYPE_INT32:
+            fputs("Type: int32\n", fout);
+            break;
+        case SL_VALUE_TYPE_UINT32:
+            fputs("Type: uint32\n", fout);
+            break;
         case SL_VALUE_TYPE_INT64:
             fputs("Type: int64\n", fout);
+            break;
+        case SL_VALUE_TYPE_UINT64:
+            fputs("Type: uint64\n", fout);
+            break;
+        case SL_VALUE_TYPE_FLOAT32:
+            fputs("Type: float32\n", fout);
             break;
         default:
             break;
@@ -85,8 +111,35 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
             fputs("OP1:\n", fout);
             if (!inst->operand.binary.operand1.is_literal) {
                 switch (inst->operand.binary.operand1.data.identifier.type) {
+                case SL_VALUE_TYPE_CHAR:
+                    fputs("Type: char\n", fout);
+                    break;
+                case SL_VALUE_TYPE_INT8:
+                    fputs("Type: int8\n", fout);
+                    break;
+                case SL_VALUE_TYPE_UINT8:
+                    fputs("Type: uint8\n", fout);
+                    break;
+                case SL_VALUE_TYPE_INT16:
+                    fputs("Type: int16\n", fout);
+                    break;
+                case SL_VALUE_TYPE_UINT16:
+                    fputs("Type: uint16\n", fout);
+                    break;
+                case SL_VALUE_TYPE_INT32:
+                    fputs("Type: int32\n", fout);
+                    break;
+                case SL_VALUE_TYPE_UINT32:
+                    fputs("Type: uint32\n", fout);
+                    break;
                 case SL_VALUE_TYPE_INT64:
                     fputs("Type: int64\n", fout);
+                    break;
+                case SL_VALUE_TYPE_UINT64:
+                    fputs("Type: uint64\n", fout);
+                    break;
+                case SL_VALUE_TYPE_FLOAT32:
+                    fputs("Type: float32\n", fout);
                     break;
                 default:
                     break;
@@ -197,8 +250,35 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
             fputs("OP2:\n", fout);
             if (!inst->operand.binary.operand2.is_literal) {
                 switch (inst->operand.binary.operand2.data.identifier.type) {
+                case SL_VALUE_TYPE_CHAR:
+                    fputs("Type: char\n", fout);
+                    break;
+                case SL_VALUE_TYPE_INT8:
+                    fputs("Type: int8\n", fout);
+                    break;
+                case SL_VALUE_TYPE_UINT8:
+                    fputs("Type: uint8\n", fout);
+                    break;
+                case SL_VALUE_TYPE_INT16:
+                    fputs("Type: int16\n", fout);
+                    break;
+                case SL_VALUE_TYPE_UINT16:
+                    fputs("Type: uint16\n", fout);
+                    break;
+                case SL_VALUE_TYPE_INT32:
+                    fputs("Type: int32\n", fout);
+                    break;
+                case SL_VALUE_TYPE_UINT32:
+                    fputs("Type: uint32\n", fout);
+                    break;
                 case SL_VALUE_TYPE_INT64:
                     fputs("Type: int64\n", fout);
+                    break;
+                case SL_VALUE_TYPE_UINT64:
+                    fputs("Type: uint64\n", fout);
+                    break;
+                case SL_VALUE_TYPE_FLOAT32:
+                    fputs("Type: float32\n", fout);
                     break;
                 default:
                     break;
@@ -308,7 +388,42 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
             }
             switch (inst->operator) {
             case SL_INSTRUCTION_OPERATOR_ADD:
-                fprintf(fout, "Res Offset: %lu\n", inst->res_offset);
+                fputs("Result:\n", fout);
+                switch (inst->res_type) {
+                case SL_VALUE_TYPE_CHAR:
+                    fputs("Type: char\n", fout);
+                    break;
+                case SL_VALUE_TYPE_INT8:
+                    fputs("Type: int8\n", fout);
+                    break;
+                case SL_VALUE_TYPE_UINT8:
+                    fputs("Type: uint8\n", fout);
+                    break;
+                case SL_VALUE_TYPE_INT16:
+                    fputs("Type: int16\n", fout);
+                    break;
+                case SL_VALUE_TYPE_UINT16:
+                    fputs("Type: uint16\n", fout);
+                    break;
+                case SL_VALUE_TYPE_INT32:
+                    fputs("Type: int32\n", fout);
+                    break;
+                case SL_VALUE_TYPE_UINT32:
+                    fputs("Type: uint32\n", fout);
+                    break;
+                case SL_VALUE_TYPE_INT64:
+                    fputs("Type: int64\n", fout);
+                    break;
+                case SL_VALUE_TYPE_UINT64:
+                    fputs("Type: uint64\n", fout);
+                    break;
+                case SL_VALUE_TYPE_FLOAT32:
+                    fputs("Type: float32\n", fout);
+                    break;
+                default:
+                    break;
+                }
+                fprintf(fout, "Offset: %lu\n", inst->res_offset);
                 break;
             default:
                 break;

@@ -147,6 +147,12 @@ SLErr SLParser_parse_module_text(
             }
             DArrayChar_clear(&parser->buf);
         } else if (*code_iter == '"') {
+            switch (parser->state) {
+            case SL_PARSER_STATE_GLOBAL:
+                break;
+            default:
+                return SL_ERR_RUNAWAY_VARIABLE_DEF;
+            }
             reterr =
                 SLParser_parse_module_text_handle_literal_string(
                     &code_iter,

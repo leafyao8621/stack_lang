@@ -44,7 +44,7 @@ SLErr SLParser_parse_module_text_handle_identifier(
             return reterr;
         }
         value_stack.is_literal = false;
-        value_stack.data.identifier.type = SL_VALUE_TYPE_INT64;
+        value_stack.data.identifier.type = value_table.type;
         value_stack.data.identifier.data.variable.is_reference = false;
         value_stack.data.identifier.data.variable.location =
             value_table.location;
@@ -56,10 +56,50 @@ SLErr SLParser_parse_module_text_handle_identifier(
             return SL_ERR_OUT_OF_MEMORY;
         }
         break;
+    case SL_PARSER_STATE_DEFINITION_CHAR:
+    case SL_PARSER_STATE_DEFINITION_INT8:
+    case SL_PARSER_STATE_DEFINITION_UINT8:
+    case SL_PARSER_STATE_DEFINITION_INT16:
+    case SL_PARSER_STATE_DEFINITION_UINT16:
+    case SL_PARSER_STATE_DEFINITION_INT32:
+    case SL_PARSER_STATE_DEFINITION_UINT32:
     case SL_PARSER_STATE_DEFINITION_INT64:
+    case SL_PARSER_STATE_DEFINITION_UINT64:
+    case SL_PARSER_STATE_DEFINITION_FLOAT32:
+    case SL_PARSER_STATE_DEFINITION_FLOAT64:
         switch (parser->state) {
+        case SL_PARSER_STATE_DEFINITION_CHAR:
+            value.type = SL_VALUE_TYPE_CHAR;
+            break;
+        case SL_PARSER_STATE_DEFINITION_INT8:
+            value.type = SL_VALUE_TYPE_INT8;
+            break;
+        case SL_PARSER_STATE_DEFINITION_UINT8:
+            value.type = SL_VALUE_TYPE_UINT8;
+            break;
+        case SL_PARSER_STATE_DEFINITION_INT16:
+            value.type = SL_VALUE_TYPE_INT16;
+            break;
+        case SL_PARSER_STATE_DEFINITION_UINT16:
+            value.type = SL_VALUE_TYPE_UINT16;
+            break;
+        case SL_PARSER_STATE_DEFINITION_INT32:
+            value.type = SL_VALUE_TYPE_INT32;
+            break;
+        case SL_PARSER_STATE_DEFINITION_UINT32:
+            value.type = SL_VALUE_TYPE_UINT32;
+            break;
         case SL_PARSER_STATE_DEFINITION_INT64:
             value.type = SL_VALUE_TYPE_INT64;
+            break;
+        case SL_PARSER_STATE_DEFINITION_UINT64:
+            value.type = SL_VALUE_TYPE_UINT64;
+            break;
+        case SL_PARSER_STATE_DEFINITION_FLOAT32:
+            value.type = SL_VALUE_TYPE_FLOAT32;
+            break;
+        case SL_PARSER_STATE_DEFINITION_FLOAT64:
+            value.type = SL_VALUE_TYPE_FLOAT64;
             break;
         default:
             break;
@@ -68,7 +108,29 @@ SLErr SLParser_parse_module_text_handle_identifier(
         switch (parser->prev_state) {
         case SL_PARSER_STATE_GLOBAL:
             value.location = SL_VALUE_VARIABLE_LOCATION_GLOBAL;
-            parser->global_offset += 8;
+            switch (value.type) {
+            case SL_VALUE_TYPE_CHAR:
+            case SL_VALUE_TYPE_INT8:
+            case SL_VALUE_TYPE_UINT8:
+                ++parser->global_offset;
+                break;
+            case SL_VALUE_TYPE_INT16:
+            case SL_VALUE_TYPE_UINT16:
+                parser->global_offset += 2;
+                break;
+            case SL_VALUE_TYPE_INT32:
+            case SL_VALUE_TYPE_UINT32:
+            case SL_VALUE_TYPE_FLOAT32:
+                parser->global_offset += 4;
+                break;
+            case SL_VALUE_TYPE_INT64:
+            case SL_VALUE_TYPE_UINT64:
+            case SL_VALUE_TYPE_FLOAT64:
+                parser->global_offset += 8;
+                break;
+            default:
+                break;
+            }
             break;
         default:
             break;
@@ -127,7 +189,8 @@ SLErr SLParser_parse_module_text_handle_identifier(
         }
         parser->state = parser->prev_state;
         break;
+    default:
+        break;
     }
-
     return SL_ERR_OK;
 }

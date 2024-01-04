@@ -27,7 +27,7 @@ SLErr SLParser_parse_module_text_handle_operator_plus(
         op2 = parser->value_stack.data[parser->value_stack.size + 1];
         if (!op1.is_literal) {
             switch (op1.data.identifier.type) {
-            case SL_VALUE_TYPE_INT64:
+            case SL_VALUE_TYPE_UINT64:
                 if (
                     op1.data.identifier.data.variable.location ==
                     SL_VALUE_VARIABLE_LOCATION_TEMP) {
@@ -35,9 +35,30 @@ SLErr SLParser_parse_module_text_handle_operator_plus(
                 }
                 if (op2.is_literal) {
                     switch (op2.data.literal.type) {
-                    case SL_VALUE_TYPE_INT64:
+                    case SL_VALUE_TYPE_INT8:
+                    case SL_VALUE_TYPE_UINT8:
+                    case SL_VALUE_TYPE_INT16:
+                    case SL_VALUE_TYPE_UINT16:
+                    case SL_VALUE_TYPE_INT32:
+                    case SL_VALUE_TYPE_UINT32:
                     case SL_VALUE_TYPE_UINT64:
+                        instruction.res_type = SL_VALUE_TYPE_UINT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_UINT64;
+                        offset_addition = 8;
+                        break;
+                    case SL_VALUE_TYPE_INT64:
+                        instruction.res_type = SL_VALUE_TYPE_INT64;
                         value.data.identifier.type = SL_VALUE_TYPE_INT64;
+                        offset_addition = 8;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT32:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT32;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT32;
+                        offset_addition = 4;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT64:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT64;
                         offset_addition = 8;
                         break;
                     default:
@@ -50,9 +71,97 @@ SLErr SLParser_parse_module_text_handle_operator_plus(
                         parser->temp_offset -= 8;
                     }
                     switch (op2.data.identifier.type) {
+                    case SL_VALUE_TYPE_INT8:
+                    case SL_VALUE_TYPE_UINT8:
+                    case SL_VALUE_TYPE_INT16:
+                    case SL_VALUE_TYPE_UINT16:
+                    case SL_VALUE_TYPE_INT32:
+                    case SL_VALUE_TYPE_UINT32:
+                    case SL_VALUE_TYPE_UINT64:
+                        instruction.res_type = SL_VALUE_TYPE_UINT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_UINT64;
+                        offset_addition = 8;
+                        break;
+                    case SL_VALUE_TYPE_INT64:
+                        instruction.res_type = SL_VALUE_TYPE_INT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_INT64;
+                        offset_addition = 8;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT32:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT32;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT32;
+                        offset_addition = 4;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT64:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT64;
+                        offset_addition = 8;
+                        break;
+                    default:
+                        return SL_ERR_INVALID_OPERAND_TYPE;
+                    }
+                }
+                break;
+            case SL_VALUE_TYPE_INT64:
+                if (
+                    op1.data.identifier.data.variable.location ==
+                    SL_VALUE_VARIABLE_LOCATION_TEMP) {
+                    parser->temp_offset -= 8;
+                }
+                if (op2.is_literal) {
+                    switch (op2.data.literal.type) {
+                    case SL_VALUE_TYPE_INT8:
+                    case SL_VALUE_TYPE_UINT8:
+                    case SL_VALUE_TYPE_INT16:
+                    case SL_VALUE_TYPE_UINT16:
+                    case SL_VALUE_TYPE_INT32:
+                    case SL_VALUE_TYPE_UINT32:
                     case SL_VALUE_TYPE_INT64:
                     case SL_VALUE_TYPE_UINT64:
+                        instruction.res_type = SL_VALUE_TYPE_INT64;
                         value.data.identifier.type = SL_VALUE_TYPE_INT64;
+                        offset_addition = 8;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT32:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT32;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT32;
+                        offset_addition = 4;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT64:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT64;
+                        offset_addition = 8;
+                        break;
+                    default:
+                        return SL_ERR_INVALID_OPERAND_TYPE;
+                    }
+                } else {
+                    if (
+                        op2.data.identifier.data.variable.location ==
+                        SL_VALUE_VARIABLE_LOCATION_TEMP) {
+                        parser->temp_offset -= 8;
+                    }
+                    switch (op2.data.identifier.type) {
+                    case SL_VALUE_TYPE_INT8:
+                    case SL_VALUE_TYPE_UINT8:
+                    case SL_VALUE_TYPE_INT16:
+                    case SL_VALUE_TYPE_UINT16:
+                    case SL_VALUE_TYPE_INT32:
+                    case SL_VALUE_TYPE_UINT32:
+                    case SL_VALUE_TYPE_INT64:
+                    case SL_VALUE_TYPE_UINT64:
+                        instruction.res_type = SL_VALUE_TYPE_INT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_INT64;
+                        offset_addition = 8;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT32:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT32;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT32;
+                        offset_addition = 4;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT64:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT64;
                         offset_addition = 8;
                         break;
                     default:
@@ -65,12 +174,33 @@ SLErr SLParser_parse_module_text_handle_operator_plus(
             }
         } else {
             switch (op1.data.literal.type) {
-            case SL_VALUE_TYPE_INT64:
+            case SL_VALUE_TYPE_UINT64:
                 if (op2.is_literal) {
                     switch (op2.data.literal.type) {
-                    case SL_VALUE_TYPE_INT64:
+                    case SL_VALUE_TYPE_INT8:
+                    case SL_VALUE_TYPE_UINT8:
+                    case SL_VALUE_TYPE_INT16:
+                    case SL_VALUE_TYPE_UINT16:
+                    case SL_VALUE_TYPE_INT32:
+                    case SL_VALUE_TYPE_UINT32:
                     case SL_VALUE_TYPE_UINT64:
+                        instruction.res_type = SL_VALUE_TYPE_UINT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_UINT64;
+                        offset_addition = 8;
+                        break;
+                    case SL_VALUE_TYPE_INT64:
+                        instruction.res_type = SL_VALUE_TYPE_INT64;
                         value.data.identifier.type = SL_VALUE_TYPE_INT64;
+                        offset_addition = 8;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT32:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT32;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT32;
+                        offset_addition = 4;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT64:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT64;
                         offset_addition = 8;
                         break;
                     default:
@@ -78,9 +208,87 @@ SLErr SLParser_parse_module_text_handle_operator_plus(
                     }
                 } else {
                     switch (op2.data.identifier.type) {
+                    case SL_VALUE_TYPE_INT8:
+                    case SL_VALUE_TYPE_UINT8:
+                    case SL_VALUE_TYPE_INT16:
+                    case SL_VALUE_TYPE_UINT16:
+                    case SL_VALUE_TYPE_INT32:
+                    case SL_VALUE_TYPE_UINT32:
+                    case SL_VALUE_TYPE_UINT64:
+                        instruction.res_type = SL_VALUE_TYPE_UINT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_UINT64;
+                        offset_addition = 8;
+                        break;
+                    case SL_VALUE_TYPE_INT64:
+                        instruction.res_type = SL_VALUE_TYPE_INT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_INT64;
+                        offset_addition = 8;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT32:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT32;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT32;
+                        offset_addition = 4;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT64:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT64;
+                        offset_addition = 8;
+                        break;
+                    default:
+                        return SL_ERR_INVALID_OPERAND_TYPE;
+                    }
+                }
+                break;
+            case SL_VALUE_TYPE_INT64:
+                if (op2.is_literal) {
+                    switch (op2.data.literal.type) {
+                    case SL_VALUE_TYPE_INT8:
+                    case SL_VALUE_TYPE_UINT8:
+                    case SL_VALUE_TYPE_INT16:
+                    case SL_VALUE_TYPE_UINT16:
+                    case SL_VALUE_TYPE_INT32:
+                    case SL_VALUE_TYPE_UINT32:
                     case SL_VALUE_TYPE_INT64:
                     case SL_VALUE_TYPE_UINT64:
+                        instruction.res_type = SL_VALUE_TYPE_INT64;
                         value.data.identifier.type = SL_VALUE_TYPE_INT64;
+                        offset_addition = 8;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT32:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT32;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT32;
+                        offset_addition = 4;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT64:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT64;
+                        offset_addition = 8;
+                        break;
+                    default:
+                        return SL_ERR_INVALID_OPERAND_TYPE;
+                    }
+                } else {
+                    switch (op2.data.identifier.type) {
+                    case SL_VALUE_TYPE_INT8:
+                    case SL_VALUE_TYPE_UINT8:
+                    case SL_VALUE_TYPE_INT16:
+                    case SL_VALUE_TYPE_UINT16:
+                    case SL_VALUE_TYPE_INT32:
+                    case SL_VALUE_TYPE_UINT32:
+                    case SL_VALUE_TYPE_INT64:
+                    case SL_VALUE_TYPE_UINT64:
+                        instruction.res_type = SL_VALUE_TYPE_INT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_INT64;
+                        offset_addition = 8;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT32:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT32;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT32;
+                        offset_addition = 4;
+                        break;
+                    case SL_VALUE_TYPE_FLOAT64:
+                        instruction.res_type = SL_VALUE_TYPE_FLOAT64;
+                        value.data.identifier.type = SL_VALUE_TYPE_FLOAT64;
                         offset_addition = 8;
                         break;
                     default:

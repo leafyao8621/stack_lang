@@ -15,9 +15,10 @@ typedef enum SLErr {
     SL_ERR_INVALID_LITERAL_STRING,
     SL_ERR_INVALID_OPERATOR,
     SL_ERR_INVALID_NUM_OPERAND,
-    SL_ERR_INVALID_OPERAND_TYPE
+    SL_ERR_INVALID_OPERAND_TYPE,
+    SL_ERR_RUNAWAY_VARIABLE_DEF
 } SLErr;
 
-extern const char *slerr_lookup[14];
+extern const char *slerr_lookup[15];
 
 #endif

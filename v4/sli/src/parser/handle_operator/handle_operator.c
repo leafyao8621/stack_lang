@@ -14,6 +14,12 @@ SLErr SLParser_parse_module_text_handle_operator(
     if (!parser || !module) {
         return SL_ERR_NULL_PTR;
     }
+    switch (parser->state) {
+    case SL_PARSER_STATE_GLOBAL:
+        break;
+    default:
+        return SL_ERR_RUNAWAY_VARIABLE_DEF;
+    }
     SLErr reterr = SL_ERR_OK;
     switch (*parser->buf.data) {
     case '+':
