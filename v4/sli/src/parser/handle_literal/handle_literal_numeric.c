@@ -104,6 +104,7 @@ SLErr SLParser_parse_module_text_handle_literal_numeric(
         #endif
         break;
     case SL_PARSER_NUMERIC_TYPE_FLOAT:
+        value.data.literal.type = SL_VALUE_TYPE_FLOAT64;
         sscanf(parser->buf.data, "%lf", &value.data.literal.data.float64);
         break;
     }

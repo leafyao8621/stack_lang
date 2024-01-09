@@ -83,6 +83,9 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
         case SL_VALUE_TYPE_FLOAT32:
             fputs("Type: float32\n", fout);
             break;
+        case SL_VALUE_TYPE_FLOAT64:
+            fputs("Type: float64\n", fout);
+            break;
         default:
             break;
         }
@@ -140,6 +143,9 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
                     break;
                 case SL_VALUE_TYPE_FLOAT32:
                     fputs("Type: float32\n", fout);
+                    break;
+                case SL_VALUE_TYPE_FLOAT64:
+                    fputs("Type: float64\n", fout);
                     break;
                 default:
                     break;
@@ -243,6 +249,14 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
                     );
                     #endif
                     break;
+                case SL_VALUE_TYPE_FLOAT64:
+                    fputs("Type: float64\n", fout);
+                    fprintf(
+                        fout,
+                        "Value: %lf\n",
+                        inst->operand.binary.operand1.data.literal.data.float64
+                    );
+                    break;
                 default:
                     break;
                 }
@@ -279,6 +293,9 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
                     break;
                 case SL_VALUE_TYPE_FLOAT32:
                     fputs("Type: float32\n", fout);
+                    break;
+                case SL_VALUE_TYPE_FLOAT64:
+                    fputs("Type: float64\n", fout);
                     break;
                 default:
                     break;
@@ -382,6 +399,14 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
                     );
                     #endif
                     break;
+                case SL_VALUE_TYPE_FLOAT64:
+                    fputs("Type: float64\n", fout);
+                    fprintf(
+                        fout,
+                        "Value: %lf\n",
+                        inst->operand.binary.operand2.data.literal.data.float64
+                    );
+                    break;
                 default:
                     break;
                 }
@@ -419,6 +444,9 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
                     break;
                 case SL_VALUE_TYPE_FLOAT32:
                     fputs("Type: float32\n", fout);
+                    break;
+                case SL_VALUE_TYPE_FLOAT64:
+                    fputs("Type: float64\n", fout);
                     break;
                 default:
                     break;
