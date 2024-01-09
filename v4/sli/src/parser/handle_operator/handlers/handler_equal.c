@@ -27,11 +27,21 @@ SLErr SLParser_parse_module_text_handle_operator_equal(
             return SL_ERR_INVALID_OPERAND_TYPE;
         }
         switch (op1.data.identifier.type) {
+        case SL_VALUE_TYPE_UINT8:
+        case SL_VALUE_TYPE_INT8:
+        case SL_VALUE_TYPE_UINT16:
+        case SL_VALUE_TYPE_INT16:
+        case SL_VALUE_TYPE_UINT32:
+        case SL_VALUE_TYPE_INT32:
+        case SL_VALUE_TYPE_UINT64:
         case SL_VALUE_TYPE_INT64:
+        case SL_VALUE_TYPE_FLOAT32:
+        case SL_VALUE_TYPE_FLOAT64:
             if (op2.is_literal) {
                 switch (op2.data.literal.type) {
-                case SL_VALUE_TYPE_INT64:
                 case SL_VALUE_TYPE_UINT64:
+                case SL_VALUE_TYPE_INT64:
+                case SL_VALUE_TYPE_FLOAT64:
                     break;
                 default:
                     return SL_ERR_INVALID_OPERAND_TYPE;
@@ -43,8 +53,16 @@ SLErr SLParser_parse_module_text_handle_operator_equal(
                     parser->temp_offset -= 8;
                 }
                 switch (op2.data.identifier.type) {
-                case SL_VALUE_TYPE_INT64:
+                case SL_VALUE_TYPE_UINT8:
+                case SL_VALUE_TYPE_INT8:
+                case SL_VALUE_TYPE_UINT16:
+                case SL_VALUE_TYPE_INT16:
+                case SL_VALUE_TYPE_UINT32:
+                case SL_VALUE_TYPE_INT32:
                 case SL_VALUE_TYPE_UINT64:
+                case SL_VALUE_TYPE_INT64:
+                case SL_VALUE_TYPE_FLOAT32:
+                case SL_VALUE_TYPE_FLOAT64:
                     break;
                 default:
                     return SL_ERR_INVALID_OPERAND_TYPE;

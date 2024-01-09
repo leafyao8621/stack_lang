@@ -125,6 +125,9 @@ SLErr SLParser_parse_module_text(
                     reterr =
                         SLParser_parse_module_text_handle_identifier(
                             parser, module);
+                    if (reterr) {
+                        return reterr;
+                    }
                 } else {
                     return reterr;
                 }
