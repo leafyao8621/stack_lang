@@ -1,9 +1,109 @@
-int32 a
-int32 b
-uint64 c
-int64 d
+uint8 a
+int8 b
+uint16 c
+int16 d
+uint32 e
+uint32 f
+int32 g
+uint64 h
+int64 i
+a a +
 a b +
 a c +
 a d +
+a e +
+a f +
+a g +
+a h +
+a i +
+b a +
+b b +
+b c +
+b d +
+b e +
+b f +
+b g +
+b h +
+b i +
+c a +
+c b +
+c c +
+d d +
+c e +
+c f +
+c g +
+c h +
+c i +
+d a +
+d b +
+d c +
+d d +
+d e +
+d f +
+d g +
+d h +
+d i +
+e a +
+e b +
+e c +
+e d +
+e e +
+e f +
+e g +
+e h +
+e i +
+f a +
+f b +
+f c +
+f d +
+f e +
+f f +
+f g +
+f h +
+f i +
+g a +
+g b +
+g c +
+g d +
+g e +
+g f +
+g g +
+g h +
+g i +
+h a +
+h b +
+h c +
+h d +
+h e +
+h f +
+h g +
+h h +
+h i +
+i a +
+i b +
+i c +
+i d +
+i e +
+i f +
+i g +
+i h +
+i i +
+
 a 10 +
 a 0x10 +
+b 10 +
+b 0x10 +
+c 10 +
+c 0x10 +
+d 10 +
+d 0x10 +
+e 10 +
+e 0x10 +
+f 10 +
+f 0x10 +
+g 10 +
+g 0x10 +
+h 10 +
+h 0x10 +
+i 10 +
+i 0x10 +
