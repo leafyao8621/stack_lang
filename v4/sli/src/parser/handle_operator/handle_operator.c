@@ -30,6 +30,11 @@ SLErr SLParser_parse_module_text_handle_operator(
         }
         break;
     case '-':
+        reterr =
+            SLParser_parse_module_text_handle_operator_minus(parser, module);
+        if (reterr) {
+            return reterr;
+        }
         break;
     case '=':
         reterr =
