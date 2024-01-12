@@ -858,7 +858,7 @@ SLErr SLParser_parse_module_text_handle_operator_plus(
                 if (
                     op1.data.identifier.data.variable.location ==
                     SL_VALUE_VARIABLE_LOCATION_TEMP) {
-                    parser->temp_offset -= 4;
+                    parser->temp_offset -= 8;
                 }
                 if (op2.is_literal) {
                     switch (op2.data.literal.type) {
