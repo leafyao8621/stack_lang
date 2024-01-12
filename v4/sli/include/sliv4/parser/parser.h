@@ -107,7 +107,8 @@ typedef struct SLSymbolTable {
 typedef enum SLInstructionOperator {
     SL_INSTRUCTION_OPERATOR_ADD,
     SL_INSTRUCTION_OPERATOR_ASSIGN,
-    SL_INSTRUCTION_OPERATOR_SUBTRACT
+    SL_INSTRUCTION_OPERATOR_SUBTRACT,
+    SL_INSTRUCTION_OPERATOR_MULTIPLY
 } SLInstructionOperator;
 
 typedef struct SLInstruction {

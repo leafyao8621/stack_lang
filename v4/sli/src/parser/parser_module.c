@@ -103,7 +103,8 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
         {
             "+",
             "=",
-            "-"
+            "-",
+            "*"
         };
     fputs("Code:\n", fout);
     SLInstruction *inst = module->code.code.data;
@@ -112,6 +113,7 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
         case SL_INSTRUCTION_OPERATOR_ADD:
         case SL_INSTRUCTION_OPERATOR_ASSIGN:
         case SL_INSTRUCTION_OPERATOR_SUBTRACT:
+        case SL_INSTRUCTION_OPERATOR_MULTIPLY:
             fprintf(fout, "Instruction: %s\n", operator_lookup[inst->operator]);
             fputs("OP1:\n", fout);
             if (!inst->operand.binary.operand1.is_literal) {
@@ -415,6 +417,8 @@ SLErr SLModule_log(SLModule *module, FILE *fout) {
             }
             switch (inst->operator) {
             case SL_INSTRUCTION_OPERATOR_ADD:
+            case SL_INSTRUCTION_OPERATOR_SUBTRACT:
+            case SL_INSTRUCTION_OPERATOR_MULTIPLY:
                 fputs("Result:\n", fout);
                 switch (inst->res_type) {
                 case SL_VALUE_TYPE_CHAR:

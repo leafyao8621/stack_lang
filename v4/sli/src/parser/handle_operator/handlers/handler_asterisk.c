@@ -3,7 +3,7 @@
 SLErr SLParser_parse_module_text_handle_literal_numeric(
     SLParser *parser, SLModule *module);
 
-SLErr SLParser_parse_module_text_handle_operator_dash(
+SLErr SLParser_parse_module_text_handle_operator_asterisk(
     SLParser *parser, SLModule *module) {
     if (!parser || !module) {
         return SL_ERR_NULL_PTR;
@@ -13,7 +13,7 @@ SLErr SLParser_parse_module_text_handle_operator_dash(
     SLValue op1;
     SLValue op2;
     SLValue value;
-    if (!strcmp(parser->buf.data, "-")) {
+    if (!strcmp(parser->buf.data, "*")) {
         ret = DArraySLValue_pop_back(&parser->value_stack);
         if (ret) {
             return SL_ERR_INVALID_NUM_OPERAND;
@@ -861,7 +861,7 @@ SLErr SLParser_parse_module_text_handle_operator_dash(
                 if (
                     op1.data.identifier.data.variable.location ==
                     SL_VALUE_VARIABLE_LOCATION_TEMP) {
-                    parser->temp_offset -= 4;
+                    parser->temp_offset -= 8;
                 }
                 if (op2.is_literal) {
                     switch (op2.data.literal.type) {
@@ -1159,7 +1159,7 @@ SLErr SLParser_parse_module_text_handle_operator_dash(
             value.is_literal = false;
             value.data.identifier.data.variable.location =
                 SL_VALUE_VARIABLE_LOCATION_TEMP;
-            instruction.operator = SL_INSTRUCTION_OPERATOR_SUBTRACT;
+            instruction.operator = SL_INSTRUCTION_OPERATOR_MULTIPLY;
             instruction.operand.binary.operand1 = op1;
             instruction.operand.binary.operand2 = op2;
             instruction.res_offset = parser->temp_offset;
@@ -1180,14 +1180,8 @@ SLErr SLParser_parse_module_text_handle_operator_dash(
         if (ret) {
             return SL_ERR_OUT_OF_MEMORY;
         }
-    } else if (!strcmp(parser->buf.data, "--")) {
-
     } else {
-        return
-            SLParser_parse_module_text_handle_literal_numeric(
-                parser,
-                module
-            );
+        return SL_ERR_INVALID_OPERATOR;
     }
     return SL_ERR_OK;
 }

@@ -10,4 +10,4 @@ int64 i
 float32 j
 float64 k
 
-10 a -10.0 - 0x10 a - - -
+10 a -10.0 * 0x10 a * * *

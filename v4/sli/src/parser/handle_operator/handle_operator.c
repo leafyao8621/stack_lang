@@ -3,7 +3,10 @@
 SLErr SLParser_parse_module_text_handle_operator_plus(
     SLParser *parser, SLModule *module);
 
-SLErr SLParser_parse_module_text_handle_operator_minus(
+SLErr SLParser_parse_module_text_handle_operator_dash(
+    SLParser *parser, SLModule *module);
+
+SLErr SLParser_parse_module_text_handle_operator_asterisk(
     SLParser *parser, SLModule *module);
 
 SLErr SLParser_parse_module_text_handle_operator_equal(
@@ -31,7 +34,14 @@ SLErr SLParser_parse_module_text_handle_operator(
         break;
     case '-':
         reterr =
-            SLParser_parse_module_text_handle_operator_minus(parser, module);
+            SLParser_parse_module_text_handle_operator_dash(parser, module);
+        if (reterr) {
+            return reterr;
+        }
+        break;
+    case '*':
+        reterr =
+            SLParser_parse_module_text_handle_operator_asterisk(parser, module);
         if (reterr) {
             return reterr;
         }
