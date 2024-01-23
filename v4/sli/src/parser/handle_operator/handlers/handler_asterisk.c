@@ -935,19 +935,19 @@ SLErr SLParser_parse_module_text_handle_operator_asterisk(
                     case SL_VALUE_TYPE_UINT64:
                         value.data.literal.type = SL_VALUE_TYPE_UINT64;
                         value.data.literal.data.uint64 =
-                            op1.data.literal.data.uint64 +
+                            op1.data.literal.data.uint64 *
                             op2.data.literal.data.uint64;
                         break;
                     case SL_VALUE_TYPE_INT64:
                         value.data.literal.type = SL_VALUE_TYPE_INT64;
                         value.data.literal.data.int64 =
-                            op1.data.literal.data.uint64 +
+                            op1.data.literal.data.uint64 *
                             op2.data.literal.data.int64;
                         break;
                     case SL_VALUE_TYPE_FLOAT64:
                         value.data.literal.type = SL_VALUE_TYPE_FLOAT64;
                         value.data.literal.data.float64 =
-                            op1.data.literal.data.uint64 +
+                            op1.data.literal.data.uint64 *
                             op2.data.literal.data.float64;
                         break;
                     default:
@@ -1021,13 +1021,13 @@ SLErr SLParser_parse_module_text_handle_operator_asterisk(
                     case SL_VALUE_TYPE_INT64:
                         value.data.literal.type = SL_VALUE_TYPE_INT64;
                         value.data.literal.data.int64 =
-                            op1.data.literal.data.int64 +
+                            op1.data.literal.data.int64 *
                             op2.data.literal.data.int64;
                         break;
                     case SL_VALUE_TYPE_FLOAT64:
                         value.data.literal.type = SL_VALUE_TYPE_FLOAT64;
                         value.data.literal.data.float64 =
-                            op1.data.literal.data.int64 +
+                            op1.data.literal.data.int64 *
                             op2.data.literal.data.float64;
                         break;
                     default:
@@ -1098,7 +1098,7 @@ SLErr SLParser_parse_module_text_handle_operator_asterisk(
                     case SL_VALUE_TYPE_FLOAT64:
                         value.data.literal.type = SL_VALUE_TYPE_FLOAT64;
                         value.data.literal.data.float64 =
-                            op1.data.literal.data.int64 +
+                            op1.data.literal.data.int64 *
                             op2.data.literal.data.float64;
                         break;
                     default:
